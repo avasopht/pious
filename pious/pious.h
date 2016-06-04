@@ -24,6 +24,8 @@
 #ifndef PIOUS_PIOUS_H
 #define PIOUS_PIOUS_H
 
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -36,25 +38,34 @@ extern "C" {
 struct pious;
 
 /*
+ * The pious_browser manages browsing state so that you can examine what
+ * devices are loaded, what their port names and types are, etc.
+ */
+struct pious_browser;
+
+/*
  * About module and composite modules:
  *
- *  GLOBAL_DEVICES = [
+ *  GLOBAL_MODULES = [
  *    MODULE: {
  *      ID,
  *      port_type*: [   // e.g. audio_inputs
  *        PORT_ID       // e.g. "audio_in"
  *      ],
- *      DEVICES: [
- *        MODULE_ID,      // ID of the module
- *        REF_ID,       // how this device will be referenced in the connections section
- *        ALIASES: [
- *          [original, alias] // e.g. port named "out" renamed to "gr_out"
- *        ]
+ *      MODULE_REFS: [     // Composite modules
+ *        MODULE_REF: {
+ *          SECTION,        // monophonic or polyphonic section (optional, assumed monophonic).
+ *          MODULE_ID,      // ID of the module
+ *          REF_ID,         // ID this module will be referenced by in the connections section.
+ *          ALIASES: [
+ *            [original, alias] // e.g. port named "out" renamed to "gr_out"
+ *          ]
+ *        }
  *      ],
  *      CONNECTIONS: [
  *        {
- *          FIRST: [ "path", "to_port" ], // e.g. ["gain_device", "out"]
- *          SECOND: [ "path/to_port" ]    // e.g. ["rc_device/audio_in"]
+ *          FIRST: ["path", "to_port"], // e.g. ["gain_module", "out"]
+ *          SECOND: ["path/to_port"]    // e.g. ["rc_module/audio_in"]
  *        }
  *      ]
  *    }
@@ -72,19 +83,55 @@ enum pious_io_type {
 };
 
 
+
+enum pious_bool {
+  PIOUS_FALSE,
+  PIOUS_TRUE
+};
+
 /* Creates and initializes a pious database. */
 struct pious *create_pious();
 /* Destroys pious database and all objects. */
 void destroy_pious(struct pious *p);
+
+/****
+ * Query and navigation methods.
+ */
+
+
+void pious_browser_init(struct pious_browser *p, struct pious *context);
+
+/* Returns number of constructed modules. */
+int pious_browser_get_module_count(struct pious_browser *p);
+/* Enters n'th module, returning PIOUS_TRUE on success */
+enum pious_bool pious_browser_enter_module_at(struct pious_browser *p, int index);
+/* Exits current module (thus returning to the root node). */
+void pious_browser_exit_module(struct pious_browser *p);
+/* Returns name of current module into `out_name` or null. */
+const char* pious_browser_read_module_name(struct pious_browser *p, char *out_name, size_t buf_size);
+/* Returns whether current module is a plugin. */
+enum pious_bool pious_browser_is_module_plugin(struct pious_browser *p);
+/* Reads name of plugin of module (if any) into `out_name`. Returns actual size of plugin name. */
+size_t pious_browser_read_plugin_name(struct pious_browser *p, char *out_name, size_t buf_size);
+/* Returns current module's number of io ports for the current module (or -1 on error). */
+int pious_browser_get_io_count(struct pious_browser *p);
+/* Returns current module's number of io ports of a particular type (or -1 on error). */
+int pious_browser_get_io_type_count(struct pious_browser *p, enum pious_io_type io_type);
+/* Enters module's nth io port. */
+void pious_browser_enter_io_at(struct pious_browser *p, char *out_path, size_t buf_size, int index);
+/* Enters module's nth io port. */
+void pious_browser_enter_io_type_at(struct pious_browser *p, char *path_out, int index, enum pious_io_type io_type);
+
+/****
+ * Module building methods.
+ */
+
 /* Creates a module and enters MODULE state. */
-void pious_begin_module(struct pious *p, const char *sid, int iid);
-void pious_begin_module_s(struct pious *p, const char *sid);
+void pious_begin_module(struct pious *p, const char *id);
+void pious_begin_module_si(struct pious *p, const char *sid, int iid);
 void pious_begin_module_i(struct pious *p, int iid);
 /* Ends MODULE state. */
 void pious_end_module(struct pious *p);
-struct pious_module *pious_find_module(struct pious *p, const char *sid, int iid);
-struct pious_module *pious_find_module_s(struct pious *p, const char *sid);
-struct pious_module *pious_find_module_i(struct pious *p, int iid);
 /*
  * Registers a DSP processor (unnecessary for composite modules).
  */
@@ -97,9 +144,10 @@ void pious_add_io(struct pious *p, enum pious_io_type io_type, const char *sid, 
  * Begin state: MODULE
  * Return state: MODULE_REF
  */
-void pious_begin_module_ref(struct pious *p, const char *sid, int iid);
-void pious_begin_module_ref_s(struct pious *p, const char *sid);
+void pious_begin_module_ref(struct pious *p, const char *sid);
+void pious_begin_module_ref_si(struct pious *p, const char *sid, int iid);
 void pious_begin_module_ref_i(struct pious *p, int iid);
+void pious_begin_module_ref_p(struct pious *p, const char *plugin_uuid);
 /*
  * Ends module ref creation.
  *
@@ -107,6 +155,10 @@ void pious_begin_module_ref_i(struct pious *p, int iid);
  * Return state: MODULE
  */
 void pious_end_module_ref(struct pious *p);
+/*
+ * Sets whether the reference module is polyphonic.
+ */
+void pious_set_ref_polyphonic(struct pious *p, enum pious_bool is_polyphonic);
 /*
  * Begins creation of an alias.
  * 
@@ -117,20 +169,29 @@ void pious_begin_alias(struct pious *p);
 /*
  * Sets the original port id that can be referenced by an alias.
  *
- *
  * Begin state: MODULE_REF_ALIAS
  */
-void pious_set_original(struct pious *p, const char *original_sid, int original_iid);
-void pious_set_original_s(struct pious *p, const char *original_sid);
+void pious_set_original(struct pious *p, const char *original_id);
+/* As pious_set_original but with explicit string and integer id. */
+void pious_set_original_si(struct pious *p, const char *original_sid, int original_iid);
+/* As pious_set_original, but sets only the integer id. */
 void pious_set_original_i(struct pious *p, int original_iid);
 /*
  * Sets the alias id to reference a named port of a module.
  *
  * Begin state: MODULE_REF_ALIAS
  */
-void pious_set_alias(struct pious *p, const char *alias_sid, int alias_iid);
-void pious_set_alias_s(struct pious *p, const char *alias_sid);
+void pious_set_alias(struct pious *p, const char *alias_id);
+/* Same as pious_set_alias, but providing explicit string and integer id */
+void pious_set_alias_si(struct pious *p, const char *alias_sid, int alias_iid);
+/* Same as pious_set_alias, but providing explicit integer id */
 void pious_set_alias_i(struct pious *p, int alias_iid);
+/*
+ * Ends creation of alias.
+ *
+ * Begin state: MODULE_REF_ALIAS
+ * Return state: MODULE_REF
+ */
 void pious_end_alias(struct pious *p);
 /*
  * Begins creation of a module connection within a composite module.
@@ -164,6 +225,14 @@ void pious_set_second_connection(struct pious *p, const struct pious_path *path)
  * as desired. Modules that have 
  */
 void pious_construct_modules(struct pious *p);
+/*
+ * Constructs module with a given id.
+ */
+void pious_construct_module(struct pious *p, const char *id);
+/* Same as pious_construct_module but providing explicit string and integer id. */
+void pious_construct_module_si(struct pious *p, const char *sid, int iid);
+/* Same as pious_construct_module but providing explicit integer id. */
+void pious_construct_module_i(struct pious *p, int iid);
 
 struct pious_instance *pious_create_instance_s(struct pious *p, const char *sid);
 struct pious_instance *pious_create_instance_i(struct pious *p, const char *iid);

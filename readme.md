@@ -1,23 +1,45 @@
 Pious: Polyphonic I/O Unit System
 =================================
 
-Pious is a platform-independent polyphonic audio DSP processing and device
-routing framework written in [C].
+Pious is a cross-platform polyphonic audio DSP processing and device routing
+framework written in [C] that also includes a plugin API with the following
+features:
+
+1. Target multiple platforms with a single code base (include Rack Extensions and VST).
+2. Design new devices from existing plugins using a modular device builder.
+3. Design polyphonic synthesizers capable of being extended by user effects!
 
 We are in early stages of development so here is what to expect.
 
-Write once, run everywhere
---------------------------
+Pious v0.0.1 Road Map
+---------------------
 
-Writing to this framework allows you to create platform-independent [VSTs],
+1. I can define a module with audio, cv and midi inputs and outputs.
+2. I can connect a module to the MASTER interface.
+3. I can connect, disconnect and reconnect a module to the environment audio interface.
+4. I can connect a chain of modules together and manually schedule the programming
+5. I can create a module processing queue
+6. I can generate a module processing queue
+7. I can create a monophonic composite module
+8. I can create a polyphonic composite module
+9. I can route between monophonic and polyphonic submodules
+10. Module state is managed and can be saved and reloaded
+0. I can load modules from a plugin
+
+
+Cross platform
+--------------
+
+Writing to this framework allows you to target [VSTs],
 [Rack Extensions] and [Audio Units] with a single codebase, while also being
 able to support future platforms without a single change in code so long as
-it is compatible with a modest C/C++ subset.
+it is compatible with a modest C/C++ subset and uses the API to access assets
+and manage device state.
 
 Pious is in early stages of development but will eventually provide
 standardized methods for accessing file assets from a database, managing
-device state and also taking care of undo while also providing a mechanism
-for DAWs undo integration.
+device state and taking care of undo while providing a mechanism for DAWs
+undo integration.
 
 Create devices with internal wiring
 -----------------------------------

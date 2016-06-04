@@ -1,0 +1,46 @@
+[
+  {
+    "import": {
+      "md5": "76a2749a9d63703f1694fd68e0218659",
+      "#/md5-COMMENT": "md5 provides unique binary identifier",
+      "uuid": "b596e2c2-8c78-4dd9-a6b5-2c170944d2b2",
+      "#/uuid-COMMENT": "uuid provides unique platform independent release id",
+      "id": "avasopht.gain",
+      "#/id-COMMENT": "Above ID is redundant but used to make reading this file easier.",
+      "version": "0.0.1r",
+      "repo": "pioushub.com/avasopht/gain.p10"
+    }
+  },
+  {
+    "id": [
+      "avasopht.rf",
+      1001
+    ],
+    "inputs": [
+      {
+        "type": "audio",
+        "id": [
+          "in",
+          100
+        ]
+      }
+    ]
+  },
+  {
+    "id": [
+      "avasopht.compressor"
+    ],
+    "inputs": [
+      {
+        "type": "audio",
+        "id": "in"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "audio",
+        "id": "out"
+      }
+    ]
+  }
+]
