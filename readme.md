@@ -11,8 +11,10 @@ features:
 
 We are in early stages of development so here is what to expect.
 
-Pious v0.0.1 Road Map
----------------------
+Pious Road Map
+--------------
+
+## v0.0.1 User Stories
 
 1. I can define a module with audio, cv and midi inputs and outputs.
 2. I can connect a module to the MASTER interface.
@@ -24,7 +26,10 @@ Pious v0.0.1 Road Map
 8. I can create a polyphonic composite module
 9. I can route between monophonic and polyphonic submodules
 10. Module state is managed and can be saved and reloaded
-0. I can load modules from a plugin
+
+## Future User Stories
+
+1. Modules can reference modules compiled as plugins
 
 
 Cross platform
