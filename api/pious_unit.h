@@ -24,15 +24,15 @@
  *  \brief  Declares API for Pious Units.
  *
  *  A Pious Unit processes incoming data and produces an output without the
- *  need for an interface.
+ *  need for a graphical interface (unlike Pious Modules).
+ *
+ *  Pious units have input and output ports that can transmit audio, sample and hold
+ *  signals (aka Control Voltage) and raw data.
  */
 #ifndef PIOUS_PIOUS_UNIT_H
 #define PIOUS_PIOUS_UNIT_H
 
 #include "pious_types.h"
-
-/***
- ***/
 
 
 enum /* Pious_UnitConstants */ {
@@ -103,46 +103,24 @@ struct Pious_UnitSpec {
   char short_name[Pious_UnitShortNameMax];
 };
 
-struct Pious_HoldSignalEvent {
-  Pious_S32 offset;
-  Pious_F32 old_value;
-  Pious_F32 new_value;
-};
-
-struct Pious_UnitIoRef {
-  const float* (*GetSignalInPtr)();
-  float* (*GetSignalOutPtr)();
-  void (*SetSignalOutEmpty)(bool is_empty);
-  const Pious_DataPacket* (*GetDataIn)();
-  void (*WriteData)(const Pious_DataPacket *data);
-};
-
-struct Pious_UnitScope {
-  struct Pious_UnitIoRef* (*GetUnitIoRef)(struct Pious_UnitScope *scope, const char *id);
-  struct Pious_UnitIoRef* (*GetUnitIoRef_i)(struct Pious_UnitScope *scope, Pious_S32 iid);
-  float (*GetSampleRate)(struct Pious_UnitScope *scope);
-  void (*SetPluginDelay)(struct Pious_UnitScope *scope, float plugin_delay_samples);
-  void (*SetUnitSpec)(struct Pious_UnitScope *scope, struct Pious_UnitSpec *spec);
-  void (*AddUnitIoSpec)(struct Pious_UnitScope *scope, struct Pious_UnitIoSpec *spec);
-};
 
 
 /** Methods PiousUnits will have to implement **/
 
-/*! \typedef  Pious_UnitPluginSpec
+/*! \typedef  TPious_UnitPluginSpec
  *  \brief    Echoes plugin spec to the scope.
  */
-typedef void (*Pious_UnitPluginSpec)(struct Pious_UnitScope *scope);
-/*! \typedef  Pious_UnitPluginUnit
+typedef void (*TPious_UnitPluginSpec)(struct Pious_UnitScope *scope);
+/*! \typedef  TPious_UnitPluginUnit
  *  \brief    Initializes plugin and returns new data pointer.
  *
  *  Initializes the plugin and returns a new pointer to its data to be used by
  *  the Pious_UnitPluginRender method.
  */
-typedef void* (*Pious_UnitPluginInit)(struct Pious_UnitScope *scope);
-/*! \typedef  Pious_UnitPluginRender
+typedef void* (*TPious_UnitPluginInit)(struct Pious_UnitScope *scope);
+/*! \typedef  TPious_UnitPluginRender
  *  \brief    Renders output
  */
-typedef void (*Pious_UnitPluginRender)(struct Pious_UnitScope *scope, void *data, Pious_S32 frames);
+typedef void (*TPious_UnitPluginRender)(struct Pious_UnitScope *scope, void *data, Pious_S32 frames);
 
 #endif /*PIOUS_PIOUS_UNIT_H*/

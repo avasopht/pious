@@ -24,6 +24,10 @@
 #ifndef PIOUS_PIOUS_TYPES_H
 #define PIOUS_PIOUS_TYPES_H
 
+struct Pious_Scope;
+struct Pious_UnitSpec;
+struct Pious_UnitIoSpec;
+
 typedef char Pious_S8;
 typedef unsigned char Pious_U8;
 typedef short Pious_S16;
@@ -35,6 +39,15 @@ typedef unsigned long long Pious_U64;
 typedef float Pious_F32;
 typedef double Pious_F64;
 
+/*! \struct   Pious_HoldSignalEvent
+ *  \brief    Stores a 'hold signal' event.
+ */
+struct Pious_HoldSignalEvent {
+  /*! Batch offset in samples */
+  Pious_S32 offset;
+  Pious_F32 old_value;
+  Pious_F32 new_value;
+};
 
 /*! \struct Pious_DataPacket
  *  \brief  Holds a variable length data packet.
@@ -56,5 +69,45 @@ struct Pious_DataPacket {
    */
   char data[4];
 };
+
+/* Pious Scope methods */
+
+/*! \typedef  TPious_GetSampleRate
+ *  \brief    Returns samplerate of scope.
+ */
+typedef float (*TPious_GetSampleRate)(struct Pious_Scope *scope);
+
+/*! \typedef  TPious_SetPluginDelay
+ *  \brief    Sets plugin delay in samples for the current batch.
+ *
+ *  \warning  Must be called during unit/module init or render method.
+ */
+typedef void (*TPious_SetPluginDelay)(struct Pious_Scope *scope, float plugin_delay_samples);
+
+/*! \typedef  TPious_SetUnitSpec
+ *  \brief    Sets spec for currently executing unit/module during initialization.
+ */
+typedef void (*TPious_SetUnitSpec)(struct Pious_Scope *scope, struct Pious_UnitSpec *spec);
+
+/*! \typedef  TPious_AddUnitIoSpec
+ *  \brief    Adds i/o spec for currently executing unit/module during initialization.
+ */
+typedef void (*TPious_AddUnitIoSpec)(struct Pious_Scope *scope, struct Pious_UnitIoSpec *spec);
+
+/*! \struct Pious_Scope
+ *  \brief  Provides a scoped API for units and modules to call during initialization and render.
+ */
+struct Pious_Scope {
+  Pious_U8 private_data[16];
+  /*! \sa TPious_GetSampleRate */
+  TPious_GetSampleRate GetSampleRate;
+  /*! \sa TPious_SetPluginDelay */
+  TPious_SetPluginDelay SetPluginDelay;
+  /*! \sa TPious_SetUnitSpec */
+  TPious_SetUnitSpec SetUnitSpec;
+  /*! \sa TPious_AddUnitIoSpec */
+  TPious_AddUnitIoSpec AddUnitIoSpec;
+};
+
 
 #endif /*PIOUS_PIOUS_TYPES_H*/

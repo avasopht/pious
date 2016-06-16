@@ -4,6 +4,10 @@
 
 1. (done) I can define a module with audio, cv and midi inputs and outputs.
 2. I can connect a module to the MASTER interface.
+    * The MASTER interface could be connected to a VST interface, an Audio Interface or
+      just be being rendered for use in another plugin!
+    * Connecting the module will make use of a C++ routing library (eventually
+      AudioTK after prototyping).
 3. I can connect, disconnect and reconnect a module to the environment audio interface.
 4. I can connect a chain of modules together and manually schedule the programming
 5. I can create a module processing queue
