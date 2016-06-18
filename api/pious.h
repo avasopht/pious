@@ -24,18 +24,7 @@
 #ifndef PIOUS_PIOUS_H
 #define PIOUS_PIOUS_H
 
-/** Basic types */
-
-typedef char Pious_S8;
-typedef unsigned char Pious_U8;
-typedef short Pious_S16;
-typedef unsigned short Pious_U16;
-typedef int Pious_S32;
-typedef unsigned int Pious_U32;
-typedef long long Pious_S64;
-typedef unsigned long long Pious_U64;
-typedef float Pious_F32;
-typedef double Pious_F64;
+#include "pious_types.h"
 
 /** Forward declaration */
 
