@@ -20,9 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+/*! \file   pious_device.h
+ *  \brief  Declares API for Pious Devices.
+ *
+ *  There are two types of devices, units and modules.
+ *
+ *  A Pious Unit processes incoming data and produces an output without the
+ *  need for a graphical interface (unlike Pious Modules).
+ *
+ *  Pious units have input and output ports that can transmit audio, sample and hold
+ *  signals (aka Control Voltage) and raw data.
+ *
+ *  Pious Modules have the same functionality of Pious Units but also have an
+ *  optional user interface.
+ */
 
-#ifndef PIOUS_PIOUS_H
-#define PIOUS_PIOUS_H
+#ifndef PIOUS_PIOUS_DEVICE_H
+#define PIOUS_PIOUS_DEVICE_H
 
 #include "pious_types.h"
 
@@ -194,4 +208,4 @@ struct Pious_Scope {
   TPious_AddUnitIoSpec AddUnitIoSpec;
 };
 
-#endif /*PIOUS_PIOUS_H*/
+#endif /*PIOUS_PIOUS_DEVICE_H*/
