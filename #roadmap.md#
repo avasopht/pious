@@ -8,7 +8,8 @@
       Interface or just be being rendered for use in another plugin!
     * Connecting the module will make use of a C++ routing library (eventually
       AudioTK after prototyping).
-3. I can connect, disconnect and reconnect a module to the environment audio interface.
+3. I can connect, disconnect and reconnect a module to the environment audio
+interface.
 4. I can connect a chain of modules together and manually schedule the programming
 5. I can create a module processing queue
 6. I can generate a module processing queue

@@ -1,6 +1,8 @@
 # CLion project
 *.idea/
 
+build/
+
 # Object files
 *.o
 *.ko
