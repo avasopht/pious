@@ -38,7 +38,7 @@
 #ifndef PIOUS_PIOUS_DEVICE_H
 #define PIOUS_PIOUS_DEVICE_H
 
-#include "pious_types.h"
+#include <inttypes.h>
 
 /** Forward declaration */
 
@@ -46,68 +46,64 @@ struct Pious_Scope;
 struct Pious_UnitSpec;
 struct Pious_UnitIoSpec;
 
-/** I/o data types */
 
-/*! \struct   Pious_HoldSignalEvent
+/******************************************************************************
+ * I/o data types */
+
+/*!
  *  \brief    Stores a 'hold signal' event.
  */
 struct Pious_HoldSignalEvent {
   /*! Batch offset in samples */
-  Pious_S32 offset;
-  Pious_F32 old_value;
-  Pious_F32 new_value;
+  int32_t offset;
+  float old_value;
+  float new_value;
 };
 
-/*! \struct Pious_DataPacket
+struct Pious_Handle {
+  uint8_t private_data[16];
+};
+
+/*!
  *  \brief  Holds a variable length data packet.
  *
  *  Holds a variable length data packet sent and received by Pious units and
  *  modules.
  */
 struct Pious_DataPacket {
-  /*! \var    offset
+  /*!
    *  \brief  Batch offset in samples.
    */
-  Pious_S32 offset;
-  /*! \var    data_length
+  int32_t offset;
+  /*!
    *  \brief  Length of data array in bytes.
    */
-  Pious_S32 data_length;
-  /*! \var    data
+  uint32_t data_length;
+  /*!
    *  \brief  Variable length data.
    */
-  char data[4];
+  uint8_t data[4];
 };
 
-/** Pious Unit */
+
+/******************************************************************************
+ * Pious Unit */
 
 /* Methods PiousUnits will have to implement **/
 
-/*! \typedef  TPious_UnitPluginSpec
- *  \brief    Echoes plugin spec to the scope.
- */
-typedef void (*TPious_UnitPluginSpec)(struct Pious_UnitScope *scope);
-/*! \typedef  TPious_UnitPluginUnit
+/*!
  *  \brief    Initializes plugin and returns new data pointer.
  *
  *  Initializes the plugin and returns a new pointer to its data to be used by
  *  the Pious_UnitPluginRender method.
  */
 typedef void* (*TPious_UnitPluginInit)(struct Pious_UnitScope *scope);
-/*! \typedef  TPious_UnitPluginRender
+/*!
  *  \brief    Renders output
  */
-typedef void (*TPious_UnitPluginRender)(struct Pious_UnitScope *scope, void *data, Pious_S32 frames);
+typedef void (*TPious_UnitPluginRender)(struct Pious_UnitScope *scope, void *data, uint32_t frames);
 
-
-enum /* Pious_UnitConstants */ {
-  Pious_UnitNameMax = 256,
-  Pious_UnitShortNameMax = 8,
-  Pious_UnitIoMax = 2048,
-  Pious_UnitIdMax = 128
-};
-
-/*! \enum   Pious_UnitIoType
+/*!
  *  \brief  Describes type of io port on a unit.
  *
  *  Units can input and output signals (audio / continuous control voltage),
@@ -126,86 +122,73 @@ enum Pious_UnitIoType {
 };
 
 
-/*! \struct   Pious_UnitIoSpec
- *  \brief    Specification for a Unit I/O port.
- */
-struct Pious_UnitIoSpec {
-  /*! \var    name
-   *  \brief  Full name of io port.
-   */
-  char name[Pious_UnitNameMax];
-  /*! \var    short_name
-   *  \brief  Short name of io port.
-   */
-  char short_name[Pious_UnitShortNameMax];
-  /*! \var    iid
-   *  \brief  Integer id of port.
-   *
-   *  Can be zero or negative, indicating no integer id.
-   *  IO port must have at least one valid method of id.
-   */
-  Pious_S32 iid;
-  /*! \var    sid
-   *  \brief  String id of port.
-   *
-   *  Can be zero length, indicating no string id.
-   *  IO port must have at least one valid method of id.
-   */
-  char sid[Pious_UnitIdMax];
-  /*  \var    io_type
-   *  \brief  Type of io.
-   *
-   *  See Pious_IoType enum for
-   */
-  char io_type;
-};
-
-/*! \struct   Pious_UnitSpec
- *  \brief    Specification for Unit.
- */
-struct Pious_UnitSpec {
-  char name[Pious_UnitNameMax];
-  char short_name[Pious_UnitShortNameMax];
-};
+/******************************************************************************
+ * Pious Scope methods */
 
 
-/** Pious Scope methods */
-
-/*! \typedef  TPious_GetSampleRate
+/*!
  *  \brief    Returns samplerate of scope.
  */
 typedef float (*TPious_GetSampleRate)(struct Pious_Scope *scope);
 
-/*! \typedef  TPious_SetPluginDelay
+/*!
  *  \brief    Sets plugin delay in samples for the current batch.
  *
  *  \warning  Must be called during unit/module init or render method.
  */
 typedef void (*TPious_SetPluginDelay)(struct Pious_Scope *scope, float plugin_delay_samples);
 
-/*! \typedef  TPious_SetUnitSpec
- *  \brief    Sets spec for currently executing unit/module during initialization.
+/*!
+ *  \brief  Reads signal for given signal handle into dest. Returns number of samples read.
  */
-typedef void (*TPious_SetUnitSpec)(struct Pious_Scope *scope, struct Pious_UnitSpec *spec);
+typedef uint32_t (*TPious_ReadSignal)(struct Pious_Scope *scope, Pious_Handle signal_handle,
+                                      float *dest, uint32_t max_samples);
 
-/*! \typedef  TPious_AddUnitIoSpec
- *  \brief    Adds i/o spec for currently executing unit/module during initialization.
+/*! \brief  Reads signal hold events, returning number of events read. */
+typedef uint32_t (*TPious_ReadSignalEvents)(struct Pious_Scope *scope, Pious_Handle handle,
+                                            Pious_HoldSignalEvent *dest, uint32_t max_event_count);
+
+/*! \brief Writes signal hold events. */
+typedef bool (*TPious_WriteSignalEvents)(struct Pious_Scope *scope, Pious_Handle handle,
+                                         const Pious_HoldSignalEvent *events, uint32_t event_count);
+
+/*!
+ *  \brief  Writes signal to buffer indicated by handle.
  */
-typedef void (*TPious_AddUnitIoSpec)(struct Pious_Scope *scope, struct Pious_UnitIoSpec *spec);
+typedef bool (*TPious_WriteSignal)(struct Pious_Scope *scope, Pious_Handle signal_handle,
+                                   const float *source, uint32_t sample_count);
 
-/*! \struct Pious_Scope
+/*! \brief  Returns handle given by object uri */
+typedef PiousHandle (*TPious_GetHandle)(struct Pious_Scope *scope, const char *object_uri);
+
+/*! \brief  Returns whether handle is valid. */
+typedef bool (*TPious_IsValidHandle)(struct Pious_Scope *scope, Pious_Handle handle);
+
+/*!
  *  \brief  Provides a scoped API for units and modules to call during initialization and render.
  */
 struct Pious_Scope {
-  Pious_U8 private_data[16];
+  int8_t private_data[16];
   /*! \sa TPious_GetSampleRate */
   TPious_GetSampleRate GetSampleRate;
   /*! \sa TPious_SetPluginDelay */
   TPious_SetPluginDelay SetPluginDelay;
-  /*! \sa TPious_SetUnitSpec */
-  TPious_SetUnitSpec SetUnitSpec;
-  /*! \sa TPious_AddUnitIoSpec */
-  TPious_AddUnitIoSpec AddUnitIoSpec;
+  /*! \sa TPious_ReadSignal */
+  TPious_ReadSignal ReadSignal;
+  /*! \sa TPious_WriteSignal */
+  TPious_WriteSignal WriteSignal;
+  /*! \sa TPious_GetHandle */
+  TPious_GetHandle GetHandle;
+  /*! \sa TPious_IsValidHandle */
+  TPious_IsValidHandle IsValidHandle;
+  /*! \sa TPious_ReadSignal */
+  TPious_ReadSignal ReadSignal;
+  /*! \sa TPious_ReadSignalEvents */
+  TPious_ReadSignalEvents ReadSignalEvents;
+  /*! \sa TPious_WriteSignal */
+  TPious_WriteSignal WriteSignal;
+  /*! \sa TPious_WriteSignalEvents */
+  TPious_WriteSignalEvents WriteSignalEvents;
 };
 
 #endif /*PIOUS_PIOUS_DEVICE_H*/

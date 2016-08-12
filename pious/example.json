@@ -2,7 +2,7 @@
   {
     "import": {
       "md5": "76a2749a9d63703f1694fd68e0218659",
-      "#/md5-COMMENT": "md5 provides unique binary identifier",
+      "#/md5-COMMENT": "md5 provides unique binary identifier (of submitted code or 'binary').",
       "uuid": "b596e2c2-8c78-4dd9-a6b5-2c170944d2b2",
       "#/uuid-COMMENT": "uuid provides unique platform independent release id",
       "id": "avasopht.gain",

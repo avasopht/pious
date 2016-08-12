@@ -1,8 +1,8 @@
 # Pious Road Map
 
-## v0.0.1 User Stories
+## v0.0.1 User Stories / features
 
-1. (done) I can define a module with audio, cv and midi inputs and outputs.
+1. _(done)_ Callback function for devices
 2. I can connect a module to the MASTER interface.
     * The MASTER interface could be connected to a VST interface, an Audio
       Interface or just be being rendered for use in another plugin!
