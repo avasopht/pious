@@ -40,6 +40,10 @@
 
 #include <inttypes.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** Forward declaration */
 
 struct Pious_Scope;
@@ -159,7 +163,7 @@ typedef bool (*TPious_WriteSignal)(struct Pious_Scope *scope, Pious_Handle signa
                                    const float *source, uint32_t sample_count);
 
 /*! \brief  Returns handle given by object uri */
-typedef PiousHandle (*TPious_GetHandle)(struct Pious_Scope *scope, const char *object_uri);
+typedef struct Pious_Handle (*TPious_GetHandle)(struct Pious_Scope *scope, const char *object_uri);
 
 /*! \brief  Returns whether handle is valid. */
 typedef bool (*TPious_IsValidHandle)(struct Pious_Scope *scope, Pious_Handle handle);
@@ -173,10 +177,6 @@ struct Pious_Scope {
   TPious_GetSampleRate GetSampleRate;
   /*! \sa TPious_SetPluginDelay */
   TPious_SetPluginDelay SetPluginDelay;
-  /*! \sa TPious_ReadSignal */
-  TPious_ReadSignal ReadSignal;
-  /*! \sa TPious_WriteSignal */
-  TPious_WriteSignal WriteSignal;
   /*! \sa TPious_GetHandle */
   TPious_GetHandle GetHandle;
   /*! \sa TPious_IsValidHandle */
@@ -190,5 +190,9 @@ struct Pious_Scope {
   /*! \sa TPious_WriteSignalEvents */
   TPious_WriteSignalEvents WriteSignalEvents;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*PIOUS_PIOUS_DEVICE_H*/

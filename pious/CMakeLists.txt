@@ -1,5 +1,10 @@
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES pious/main.cpp)
+set(SOURCE_FILES
+        device_spec.cpp
+        main.cpp
+        )
 
-add_executable(exe ${PROJECT_SOURCE_DIR}/${SOURCE_FILES})
+include_directories(${MY_SOURCE_DIR}/pious)
+
+add_executable(exe ${SOURCE_FILES})
