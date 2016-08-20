@@ -7,10 +7,14 @@
 
 namespace pious {
 
-DeviceSpec::Connection::Connection(uint64_t source_ref_id, uint64_t source_port_id,
-                                   uint64_t dest_ref_id, uint64_t dest_port_id)
-    : source_ref_id(source_ref_id), source_port_id(source_port_id),
-      dest_ref_id(dest_ref_id), dest_port_id(dest_port_id) {}
+DeviceSpec::Connection::Connection(const Id &source_ref_id,
+                                   const Id &source_port_id,
+                                   const Id &dest_ref_id,
+                                   const Id &dest_port_id)
+  : source_ref_id(source_ref_id),
+    source_port_id(source_port_id),
+    dest_ref_id(dest_ref_id),
+    dest_port_id(dest_port_id) { }
 
 bool DeviceSpec::Connection::operator==(const DeviceSpec::Connection &rhs) const {
   return rhs.source_port_id == source_port_id &&
@@ -19,17 +23,17 @@ bool DeviceSpec::Connection::operator==(const DeviceSpec::Connection &rhs) const
       rhs.dest_ref_id == dest_ref_id;
 }
 
-DeviceSpec::DeviceSpec(struct Pious_Allocator &allocator)
-    : allocator_(&allocator),
-      devices_(allocator, kMaxDevices),
-      io_ports_(allocator, kMaxPorts),
-      connections_(allocator, kMaxConnections) {
+DeviceSpec::DeviceSpec(Os &os)
+    : os_(os),
+      devices_(os, kMaxDevices),
+      io_ports_(os, kMaxPorts),
+      connections_(os, kMaxConnections) {
 }
 
 void DeviceSpec::AddIo(enum Pious_UnitIoType io_type, uint64_t port_id) {
-  io_ports_.PushBack(IoPort(io_type, port_id));
+  io_ports_.PushBack(IoPortPtr(new IoPort(io_type, Id(port_id))));
 }
-uint64_t DeviceSpec::PortIdAt(size_t index) const {
+Id DeviceSpec::PortIdAt(size_t index) const {
   assert(index < io_ports_.size());
   return io_ports_.At(index).port_id;
 }
@@ -44,7 +48,7 @@ enum Pious_UnitIoType DeviceSpec::PortTypeAt(size_t index) const {
 
 size_t DeviceSpec::FindPortIndex(uint64_t port_id) const {
   for (size_t i = 0; i < io_ports_.size(); ++i) {
-    if (PortIdAt(i) == port_id)
+    if (PortIdAt(i).Matches(port_id))
       return i;
   }
   return invalid_io_index();
@@ -65,19 +69,19 @@ size_t DeviceSpec::device_count() const {
 bool DeviceSpec::HasIoWithPortId(uint64_t port_id) const {
   return FindPortIndex(port_id) == invalid_io_index();
 }
-uint64_t DeviceSpec::DeviceAt(size_t idx) const {
+Id DeviceSpec::DeviceAt(size_t idx) const {
   assert(idx < devices_.size());
   return devices_.At(idx).device_id;
 }
-bool DeviceSpec::HasRef(uint64_t id) {
+bool DeviceSpec::HasRef(uint64_t id) const {
   return FindDeviceRefIndex(id) == invalid_device_index();
 }
-uint64_t DeviceSpec::RefAt(size_t idx) const {
+Id DeviceSpec::RefAt(size_t idx) const {
   assert(idx < devices_.size());
   return devices_.At(idx).device_ref;
 }
 
-size_t DeviceSpec::FindDeviceRefIndex(uint64_t ref_id) {
+size_t DeviceSpec::FindDeviceRefIndex(uint64_t ref_id) const {
   for (size_t i = 0; i < devices_.size(); ++i) {
     if (devices_.At(i).device_ref == ref_id)
       return i;
@@ -94,19 +98,19 @@ size_t DeviceSpec::invalid_device_index() const {
 size_t DeviceSpec::connection_count() const {
   return connections_.size();
 }
-uint64_t DeviceSpec::ConnectionSourceRefIdAt(size_t idx) const {
+Id DeviceSpec::ConnectionSourceRefIdAt(size_t idx) const {
   assert(idx < connections_.size());
   return connections_.At(idx).source_ref_id;
 }
-uint64_t DeviceSpec::ConnectionSourcePortIdAt(size_t idx) const {
+Id DeviceSpec::ConnectionSourcePortIdAt(size_t idx) const {
   assert(idx < connections_.size());
   return connections_.At(idx).source_port_id;
 }
-uint64_t DeviceSpec::ConnectionDestRefIdAt(size_t idx) const {
+Id DeviceSpec::ConnectionDestRefIdAt(size_t idx) const {
   assert(idx < connections_.size());
   return connections_.At(idx).dest_ref_id;
 }
-uint64_t DeviceSpec::ConnectionDestPortIdAt(size_t idx) const {
+Id DeviceSpec::ConnectionDestPortIdAt(size_t idx) const {
   assert(idx < connections_.size());
   return connections_.At(idx).dest_port_id;
 }
@@ -121,7 +125,21 @@ void DeviceSpec::Connect(uint64_t source_ref_id, uint64_t source_port_id, uint64
 
   connections_.PushBack(new_connection);
 }
+void DeviceSpec::SetDevicePolyphonic(uint64_t ref_id, bool is_polyphonic) {
+  for(size_t i = 0; i < devices_.size(); ++i) {
+    if(devices_.At(i).device_ref == ref_id) {
+      devices_.At(i).is_polyphonic = is_polyphonic;
+      return;
+    }
+  }
+}
+void DeviceSpec::LoadPlugin(Pious_UnitPlugin *plugin) {
+  plugin_ = plugin;
+}
+void DeviceSpec::AddIo(enum Pious_UnitIoType io_type, const Id &id) {
 
-DeviceSpec::Device::Device(uint64_t device_id, uint64_t device_ref) :
-    device_id(device_id), device_ref(device_ref) {}
+}
+
+DeviceSpec::Device::Device(const Id &device_id, const Id &device_ref) :
+    device_id(device_id), device_ref(device_ref), is_polyphonic(false) {}
 }

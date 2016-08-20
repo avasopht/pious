@@ -2,7 +2,7 @@ Pious: Polyphonic I/O Unit System
 =================================
 
 Pious is a cross-platform polyphonic audio DSP processing and device routing
-framework written in [C] that also includes a plugin API with the following
+framework written in [C] that also includes a plugin_ API with the following
 features:
 
 1. Target multiple platforms with a single code base (include Rack Extensions and VST).
@@ -60,8 +60,8 @@ will allow you to do this in real time to allow yourself and designers to
 create new devices, synthesizers and effects through rapid experimentation.
 
 Auto-delay compensation can be calculated within the devices using this system
-so that you can report back plugin delay in response to what's actually going
-on inside your plugin, plus it will allow internal plugin delay compensation
+so that you can report back plugin_ delay in response to what's actually going
+on inside your plugin_, plus it will allow internal plugin_ delay compensation
 when needed.
 
 Did I forget to mention polyphonic!

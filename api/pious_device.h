@@ -107,6 +107,11 @@ typedef void* (*TPious_UnitPluginInit)(struct Pious_UnitScope *scope);
  */
 typedef void (*TPious_UnitPluginRender)(struct Pious_UnitScope *scope, void *data, uint32_t frames);
 
+struct Pious_UnitPlugin {
+  TPious_UnitPluginInit Init;
+  TPious_UnitPluginRender Render;
+};
+
 /*!
  *  \brief  Describes type of io port on a unit.
  *

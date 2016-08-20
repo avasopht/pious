@@ -5,7 +5,7 @@
 1. _(done)_ Callback function for devices
 2. I can connect a module to the MASTER interface.
     * The MASTER interface could be connected to a VST interface, an Audio
-      Interface or just be being rendered for use in another plugin!
+      Interface or just be being rendered for use in another plugin_!
     * Connecting the module will make use of a C++ routing library (eventually
       AudioTK after prototyping).
 3. I can connect, disconnect and reconnect a module to the environment audio interface.

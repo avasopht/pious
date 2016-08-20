@@ -6,16 +6,21 @@
 #define PIOUS_VECTOR_H
 
 #include "pious_allocator.h"
+#include "os.hpp"
 
 #include <cassert>
 #include <cstddef> // size_t
+#include <cstring>
+#include <new>
 
 namespace pious {
+
+class Os;
 
 template<typename T>
 class Vector {
  public:
-  Vector(struct Pious_Allocator &allocator, size_t capacity);
+  Vector(Os &os, size_t capacity);
   ~Vector();
 
   void PushBack(const T &t);
@@ -37,7 +42,7 @@ class Vector {
   size_t size() const { return size_; }
   size_t capacity() const { return capacity_; }
  private:
-  struct Pious_Allocator *alloc_;
+  Os &os_;
   size_t capacity_;
   size_t size_;
   T *array_;
@@ -48,22 +53,23 @@ class Vector {
 };
 
 template<typename T>
-Vector<T>::Vector(struct Pious_Allocator &allocator, size_t capacity)
-    : alloc_(&allocator), capacity_(capacity), size_(0) {
-  assert(alloc_);
-  array_ = static_cast<T *>(alloc_->Calloc(alloc_->data, capacity, sizeof(T)));
+Vector<T>::Vector(Os &os, size_t capacity)
+    : os_(os), capacity_(capacity), size_(0) {
+  array_ = static_cast<T *>(os_.Calloc(capacity, sizeof(T)));
 }
 
 template<typename T>
 void Vector<T>::PushBack(const T &t) {
   assert(size_ < capacity_);
-  array_[size_] = t;
+
+  memset(&array_[size_], 0, sizeof(T));
+  new (&array_[size_]) T(t);
   ++size_;
 }
 
 template<typename T>
 Vector<T>::~Vector() {
-  alloc_->Free(alloc_->data, array_);
+  os_.Free(array_);
   array_ = 0;
 }
 
@@ -74,7 +80,8 @@ void Vector<T>::EraseAt(size_t idx) {
     array_[i] = array_[i + 1];
   }
 
-  array_[size_ - 1] = {0};
+  array_[size_ - 1].~T();
+  memset(&array_[size() - 1], 0, sizeof(T));
   --size_;
 }
 
