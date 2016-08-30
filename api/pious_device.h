@@ -64,6 +64,11 @@ struct Pious_HoldSignalEvent {
   float new_value;
 };
 
+struct Pious_SignalBuffer {
+  uint64_t size;
+  float *signals;
+};
+
 struct Pious_Handle {
   uint8_t private_data[16];
 };
@@ -161,6 +166,14 @@ typedef uint32_t (*TPious_ReadSignalEvents)(struct Pious_Scope *scope, Pious_Han
 typedef bool (*TPious_WriteSignalEvents)(struct Pious_Scope *scope, Pious_Handle handle,
                                          const Pious_HoldSignalEvent *events, uint32_t event_count);
 
+/*! \brief Reads data packets. */
+typedef uint32_t (*TPious_ReadPackets)(struct Pious_Scope *scope, Pious_Handle handle,
+                                           Pious_DataPacket *dest, uint32_t max_packet_count);
+
+/*! \brief Writes data packets. */
+typedef bool (*TPious_WritePackets)(struct Pious_Scope *scope, Pious_Handle handle,
+                                            const Pious_DataPacket *packets, uint32_t packet_count);
+
 /*!
  *  \brief  Writes signal to buffer indicated by handle.
  */
@@ -194,6 +207,10 @@ struct Pious_Scope {
   TPious_WriteSignal WriteSignal;
   /*! \sa TPious_WriteSignalEvents */
   TPious_WriteSignalEvents WriteSignalEvents;
+  /*! \sa TPious_ReadPackets */
+  TPious_ReadPackets ReadPackets;
+  /*! \sa TPious_WritePackets */
+  TPious_WritePackets WritePackets;
 };
 
 #ifdef __cplusplus
