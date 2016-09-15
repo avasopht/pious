@@ -3,7 +3,6 @@
 //
 
 #include "device_spec.hpp"
-#include "pious_allocator.h"
 
 namespace pious {
 
@@ -31,7 +30,7 @@ DeviceSpec::DeviceSpec(Os &os)
 }
 
 void DeviceSpec::AddIo(enum Pious_UnitIoType io_type, uint64_t port_id) {
-  io_ports_.PushBack(IoPortPtr(new IoPort(io_type, Id(port_id))));
+  io_ports_.PushBack(IoPortPtr(os_, new IoPort(io_type, Id(port_id))));
 }
 Id DeviceSpec::PortIdAt(size_t index) const {
   assert(index < io_ports_.size());

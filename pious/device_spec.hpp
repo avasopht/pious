@@ -8,7 +8,7 @@
 #include "pious_device.h"
 #include "vector.hpp"
 #include "id.hpp"
-#include "scoped_ptr.hpp"
+#include "unique_ptr.hpp"
 
 #include <cinttypes>
 #include <cstddef>

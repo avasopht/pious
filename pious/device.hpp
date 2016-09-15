@@ -26,7 +26,7 @@ class Device {
   const Port* PortAt(size_t idx) const;
   Port* PortAt(size_t idx);
 
-  void AddChild()
+  // void AddChild()
   const Device* ChildAt(size_t idx) const;
   Device* ChildAt(size_t idx);
   const Device* FindChild(const Id &child_id) const;

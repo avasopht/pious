@@ -5,8 +5,12 @@
 #ifndef PIOUS_VECTOR_H
 #define PIOUS_VECTOR_H
 
-#include "pious_allocator.h"
 #include "os.hpp"
+#include "os_setter.hpp"
+
+#include <boost/type_traits/has_trivial_constructor.hpp>
+#include <boost/type_traits/has_trivial_destructor.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 
 #include <cassert>
 #include <cstddef> // size_t
@@ -48,8 +52,40 @@ class Vector {
   T *array_;
 
   // No copy
-  Vector(const Vector &rhs);
-  Vector &operator=(const Vector &rhs);
+  Vector(const Vector &rhs) = delete;
+  Vector &operator=(const Vector &rhs) = delete;
+
+  void InitAt(size_t idx, const T &new_val) {
+    boost::has_trivial_default_constructor<T> type;
+    InitAt(type, idx, new_val);
+  }
+
+  void InitAt(boost::false_type, size_t idx, const T &new_val) {
+    // Has non-trivial constructor.
+    new (&array_[idx]) T(new_val);
+    OsSetter::InjectOs(array_[idx], &os_);
+  }
+
+  void InitAt(boost::true_type, size_t idx, const T &new_val) {
+    // Has trivial constructor.
+    array_[idx] = T();
+  }
+
+  void Destroy() {
+    boost::has_trivial_destructor<T> type;
+    Destroy(type);
+  }
+
+  void Destroy(boost::false_type) {
+    // Has non-trivial destructor.
+    for(size_t i = 0; i < size_; ++i) {
+      array_[i].~T();
+    }
+  }
+
+  void Destroy(boost::true_type) {
+    // Has trivial destructor (do nothing).
+  }
 };
 
 template<typename T>
@@ -63,12 +99,13 @@ void Vector<T>::PushBack(const T &t) {
   assert(size_ < capacity_);
 
   memset(&array_[size_], 0, sizeof(T));
-  new (&array_[size_]) T(t);
+  InitAt(size_, t);
   ++size_;
 }
 
 template<typename T>
 Vector<T>::~Vector() {
+  Destroy();
   os_.Free(array_);
   array_ = 0;
 }

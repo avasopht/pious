@@ -1,44 +1,27 @@
-#include "scoped_ptr.hpp"
+#include <cstdio>
 #include "vector.hpp"
 #include "os.hpp"
+#include "os_setter.hpp"
 
-#include <cstdlib>
-#include <cstdio>
-
-class DefaultOs : public pious::Os {
+class Foo : public pious::OsSetter {
  public:
-  virtual void *Malloc(size_t size) override {
-    return malloc(size);
+  Foo() : os_(nullptr), val_(0) {}
+  Foo(int val) : os_(nullptr), val_(val) {}
+  Foo(const Foo &rhs) : os_(rhs.os_), val_(rhs.val_) {}
+
+  virtual void SetOs(pious::Os *os) override {
+    printf("Loaded OS motherfucker(%d).\n", val_);
+    os_ = os;
   }
-  virtual void *Calloc(size_t num, size_t size) override {
-    return calloc(num, size);
-  }
-  virtual void Free(void *ptr) override {
-    free(ptr);
-  }
-  virtual int Log(const char *format, va_list arg) override {
-    return 0;
-  }
+ private:
+  pious::Os *os_;
+  int val_;
 };
 
-template<typename T>
-T* New(pious::Os &os, const T& t) {
-  T *ptr = static_cast<T*>(os.Malloc(sizeof(T)));
-  *ptr = t;
-  return ptr;
-}
-
 int main() {
-  typedef pious::ScopedPtr<int> IntPtr;
-  DefaultOs os;
-  os.Free(os.Malloc(10));
-
-  pious::Vector<IntPtr> ivec(os, 10);
-  ivec.PushBack(IntPtr(os, os.New(10)));
-  ivec.PushBack(IntPtr(os, os.New(7)));
-  ivec.PushBack(IntPtr(os, os.New(11)));
-  ivec.EraseAt(1);
-  assert((*ivec[1]) == 11);
+  pious::DefaultOs os;
+  pious::Vector<Foo> foo(os, 15);
+  foo.PushBack(Foo(10));
 
   return 0;
 }
