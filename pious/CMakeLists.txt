@@ -1,7 +1,6 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+project(pious)
 
 set(SOURCE_FILES
-        main.cpp
         id.cpp id.hpp
         os.hpp
         #device_spec.hpp device_spec.cpp
@@ -19,4 +18,4 @@ include_directories(${MY_SOURCE_DIR}/pious)
 
 include_directories(/boost_1_55_0)
 
-add_executable(exe ${SOURCE_FILES})
+add_library(pious STATIC ${SOURCE_FILES})

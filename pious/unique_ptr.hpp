@@ -34,6 +34,15 @@ class UniquePtr {
     deleter_ = os_->New(DeleterType(*os_, pointer_));
   }
 
+  T* New() {
+    if(!os_)
+      return nullptr;
+
+    T *ptr = os_->New(static_cast<T*>(nullptr));
+    assert(ptr);
+    return ptr;
+  }
+
   void Reset(T *ptr = nullptr) {
     assert(os_);
     Release();
@@ -43,9 +52,10 @@ class UniquePtr {
   void Release() {
     if(pointer_) {
       assert(deleter_);
+
       deleter_->Destroy();
+
       os_->Delete(deleter_);
-      os_->Free(pointer_);
       pointer_ = nullptr;
     }
   }
