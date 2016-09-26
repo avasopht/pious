@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 24/09/2016.
+ * Created by The Pious Authors on 26/09/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,8 +21,37 @@
  * SOFTWARE.
  */
 
-#include "gtest/gtest.h"
+#include <cassert>
+#include "os.hpp"
+#include "os_memory.hpp"
 
-TEST(basic_check, test_eq) {
-  EXPECT_EQ(1, 0);
+namespace pious {
+
+
+void *Os::Malloc(size_t size) {
+  if(memory_) {
+    return memory_->Malloc(size);
+  }
+
+  return nullptr;
+}
+
+void *Os::Calloc(size_t num, size_t size) {
+  if(memory_) {
+    return memory_->Calloc(num, size);
+  }
+
+  return nullptr;
+}
+
+void Os::Free(void *ptr) {
+  if(memory_) {
+    memory_->Free(ptr);
+  }
+}
+
+int Os::Log(const char *format, va_list arg) {
+  assert(false);
+}
+
 }

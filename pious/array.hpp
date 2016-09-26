@@ -25,6 +25,7 @@
 #define PIOUS_ARRAY_HPP
 
 #include "os.hpp"
+#include "os_setter.hpp"
 
 #include <cstddef> // size_t
 #include <cassert>

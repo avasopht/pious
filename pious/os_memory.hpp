@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 24/09/2016.
+ * Created by The Pious Authors on 26/09/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,8 +21,31 @@
  * SOFTWARE.
  */
 
-#include "gtest/gtest.h"
+#ifndef PIOUS_OS_MEMORY_HPP
+#define PIOUS_OS_MEMORY_HPP
 
-TEST(basic_check, test_eq) {
-  EXPECT_EQ(1, 0);
+#include <cstddef> // size_t
+
+namespace pious {
+
+class OsMemory {
+ public:
+  virtual ~OsMemory() = 0;
+
+  virtual void* Malloc(size_t size) = 0;
+  virtual void* Calloc(size_t num, size_t size) = 0;
+  virtual void Free(void *ptr) = 0;
+};
+
+class DefaultMemory : public OsMemory {
+ public:
+  virtual void *Malloc(size_t size) override;
+
+  virtual void *Calloc(size_t num, size_t size) override;
+
+  virtual void Free(void *ptr) override;
+};
+
 }
+
+#endif /*PIOUS_OS_MEMORY_HPP*/

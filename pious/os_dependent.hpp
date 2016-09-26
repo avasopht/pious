@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 24/09/2016.
+ * Created by The Pious Authors on 26/09/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,8 +21,19 @@
  * SOFTWARE.
  */
 
-#include "gtest/gtest.h"
+#ifndef PIOUS_OS_DEPENDENT_HPP
+#define PIOUS_OS_DEPENDENT_HPP
 
-TEST(basic_check, test_eq) {
-  EXPECT_EQ(1, 0);
+namespace pious {
+
+/*! Label for an object that accepts an Os pointer in the constructor.
+ */
+struct OsDependent {
+  virtual ~OsDependent() = 0;
+};
+
+OsDependent::~OsDependent(){}
+
 }
+
+#endif /*PIOUS_OS_DEPENDENT_HPP*/

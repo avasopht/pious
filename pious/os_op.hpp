@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 08/09/2016.
+ * Created by The Pious Authors on 26/09/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,64 +21,89 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_DELETER_HPP
-#define PIOUS_DELETER_HPP
+#ifndef PIOUS_OS_OP_HPP
+#define PIOUS_OS_OP_HPP
 
-#include "os_op.hpp"
+#include "os.hpp"
 
 #include <cassert>
 
 namespace pious {
 
-class Os;
-
-/*! \brief Interface for a deleter.
- *
- *  A Deleter has the responsibility of deleting an object from an Os instance.
- *  Use TypedDeleter to create a Deleter instance
- */
-class Deleter {
+template<typename T>
+class OsOp{
  public:
-  virtual ~Deleter() = 0;
-  virtual void Delete() = 0;
+  OsOp(Os &os) : os_(&os) {}
+
+  T* New() {
+    assert(os_);
+    if(!os_) return nullptr;
+
+    void *vptr = os_->Calloc(1, sizeof(T));
+    if(!vptr) return nullptr;
+
+    return new(vptr)T();
+  }
+
+  T* New(const T &other) {
+    assert(os_);
+    if(!os_) return nullptr;
+
+    void *vptr = os_->Calloc(1, sizeof(T));
+    if(!vptr) return nullptr;
+
+    return new(vptr)T(other);
+  }
+
+  void Delete(T *ptr) {
+    assert(os_);
+
+    ptr->~T();
+    os_->Free(ptr);
+  }
+
+
+ private:
+  Os *os_;
+
 };
 
-template<typename T>
-class TypedDeleter : public Deleter {
+template<typename T, size_t N=1>
+class OsOp <T[N]> {
  public:
-  TypedDeleter() : os_(nullptr), ptr_(nullptr) {}
-  ~TypedDeleter() {
-    Delete();
-    os_ = nullptr;
-  }
+  OsOp(Os &os) : os_(&os) {}
 
-  void Init(Os &os) {
-    os_ = &os;
-  }
-
-  TypedDeleter(Os &os) : os_(&os), ptr_(nullptr) {}
-
-  TypedDeleter(Os &os, T* ptr) : os_(&os), ptr_(ptr) { assert(os_); }
-
-  TypedDeleter(const TypedDeleter &rhs) : os_(rhs.os_), ptr_(rhs.ptr_)  { }
-
-  void Watch(T *ptr) {
+  T* New() {
     assert(os_);
-    ptr_ = ptr;
+    if(!os_)  return nullptr;
+
+    void *vptr = os_->Calloc(1, sizeof(size_t) + sizeof(T));
+    if(!vptr) return nullptr;
+
+    static_cast<size_t*>(vptr)[0] = N;
+
+    void *array_vptr = &static_cast<size_t*>(vptr)[1];
+    return static_cast<T*>(array_vptr);
   }
 
-  void Delete() override {
-    if(ptr_) {
-      OsOp<T>(*os_).Delete(ptr_);
-      ptr_ = nullptr;
+  void Delete(void *ptr) {
+    assert(os_);
+
+    size_t size = static_cast<size_t*>(ptr)[-1];
+
+    T *array = static_cast<T*>(ptr);
+
+    for(size_t i = 0; i < size; ++i) {
+      array[i]->~T();
     }
+
+    os_->Free(ptr);
   }
 
  private:
   Os *os_;
-  T *ptr_;
 };
 
 }
 
-#endif /*PIOUS_DELETER_HPP*/
+#endif /*PIOUS_OS_OP_HPP*/
