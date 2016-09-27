@@ -5,8 +5,6 @@
 #ifndef PIOUS_OS_H
 #define PIOUS_OS_H
 
-#include <boost/type_traits/is_base_of.hpp>
-
 #include <cstddef>
 #include <cstdarg>
 #include <cinttypes>

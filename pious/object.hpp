@@ -24,11 +24,21 @@
 #define PIOUS_OBJECT_HPP
 
 #include "os.hpp"
+#include "os_setter.hpp"
+#include "os_dependent.hpp"
+
+#include <boost/type_traits/is_base_of.hpp>
 
 #include <cassert>
 
 namespace pious {
 
+/*! \brief  Provides methods to instantiate and delete objects with a supplied
+ *          memory manager.
+ *
+ *  The Os instance will be injected into objects descending from OsSetter or
+ *  OsDependent.
+ */
 template<typename T>
 class Object{
  public:
@@ -41,7 +51,16 @@ class Object{
     void *vptr = os_->Calloc(1, sizeof(T));
     if(!vptr) return nullptr;
 
-    return new(vptr)T();
+    T *ptr = New(vptr);
+
+    OsSetter::InjectOs(*ptr, os_);
+    return ptr;
+  }
+
+  T *New(void *vptr) {
+    boost::is_base_of<OsDependent,T> is_os_dependent;
+    T *ptr = New(vptr, is_os_dependent);
+    return ptr;
   }
 
   T* New(const T &other) {
@@ -51,7 +70,15 @@ class Object{
     void *vptr = os_->Calloc(1, sizeof(T));
     if(!vptr) return nullptr;
 
-    return new(vptr)T(other);
+    T *ptr = New(vptr, other);
+    OsSetter::InjectOs(*ptr, os_);
+    return ptr;
+  }
+
+  T *New(void *vptr, const T &other) {
+    boost::is_base_of<OsDependent,T> is_os_dependent;
+    T *ptr = New(vptr, other, is_os_dependent);
+    return ptr;
   }
 
   void Delete(T *ptr) {
@@ -65,9 +92,31 @@ class Object{
  private:
   Os *os_;
 
+  T* New(void *vptr, boost::true_type) {
+    return new(vptr)T(*os_);
+  }
+
+  T* New(void *vptr, boost::false_type) {
+    return new(vptr)T();
+  }
+
+  T* New(void *vptr, const T& other, boost::true_type) {
+    return new(vptr)T(*os_, other);
+  }
+
+  T* New(void *vptr, const T& other, boost::false_type) {
+    return new(vptr)T(*os_);
+  }
+
 };
 
-template<typename T, size_t N=1>
+/*! \brief  Creates array of type
+ *  \example
+ *  \code
+ *      Foo *foo_array = Object<Foo[10]>(os).New();
+ *  \endcode
+ */
+template<typename T, size_t N>
 class Object <T[N]> {
  public:
   Object(Os &os) : os_(&os) {}
@@ -82,7 +131,14 @@ class Object <T[N]> {
     static_cast<size_t*>(vptr)[0] = N;
 
     void *array_vptr = &static_cast<size_t*>(vptr)[1];
-    return static_cast<T*>(array_vptr);
+    T *array = static_cast<T*>(array_vptr);
+
+    for(size_t i = 0; i < N; ++i) {
+      Object<T>(*os_).New(&array[i]);
+      OsSetter::InjectOs(array[i], os_);
+    }
+
+    return array;
   }
 
   void Delete(void *ptr) {

@@ -10,7 +10,6 @@
 
 #include <boost/type_traits/has_trivial_constructor.hpp>
 #include <boost/type_traits/has_trivial_destructor.hpp>
-#include <boost/type_traits/is_base_of.hpp>
 
 #include <cassert>
 #include <cstddef> // size_t
