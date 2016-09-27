@@ -6,7 +6,7 @@
 #define PIOUS_SCOPED_PTR_HPP
 
 #include "os.hpp"
-#include "os_op.hpp"
+#include "object.hpp"
 #include "deleter.hpp"
 
 #include <cassert>
@@ -32,14 +32,14 @@ class UniquePtr {
 
   UniquePtr() : os_(nullptr), pointer_(nullptr) {}
   UniquePtr(Os& os, T *ptr) : os_(&os), pointer_(ptr) {
-    deleter_ = OsOp<T>(*os_).New(DeleterType(*os_, pointer_));
+    deleter_ = Object<T>(*os_).New(DeleterType(*os_, pointer_));
   }
 
   T* New() {
     if(!os_)
       return nullptr;
 
-    T *ptr = OsOp<T>(*os_).New();
+    T *ptr = Object<T>(*os_).New();
     assert(ptr);
     return ptr;
   }
@@ -47,7 +47,7 @@ class UniquePtr {
   void Reset(T *ptr = nullptr) {
     assert(os_);
     Release();
-    deleter_ = OsOp<T>(*os_).New(DeleterType(*os_, pointer_));
+    deleter_ = Object<T>(*os_).New(DeleterType(*os_, pointer_));
   }
 
   void Release() {
@@ -56,7 +56,7 @@ class UniquePtr {
 
       deleter_->Delete();
 
-      OsOp<DeleterType>(*os_).Delete(deleter_);
+      Object<DeleterType>(*os_).Delete(deleter_);
       pointer_ = nullptr;
     }
   }
@@ -64,7 +64,7 @@ class UniquePtr {
   ~UniquePtr() {
     Release();
     if(os_) {
-      OsOp<DeleterType>(*os_).Delete(deleter_);
+      Object<DeleterType>(*os_).Delete(deleter_);
     }
   }
 

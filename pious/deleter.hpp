@@ -24,7 +24,7 @@
 #ifndef PIOUS_DELETER_HPP
 #define PIOUS_DELETER_HPP
 
-#include "os_op.hpp"
+#include "object.hpp"
 
 #include <cassert>
 
@@ -69,7 +69,7 @@ class TypedDeleter : public Deleter {
 
   void Delete() override {
     if(ptr_) {
-      OsOp<T>(*os_).Delete(ptr_);
+      Object<T>(*os_).Delete(ptr_);
       ptr_ = nullptr;
     }
   }

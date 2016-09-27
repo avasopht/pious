@@ -12,7 +12,7 @@ set(SOURCE_FILES
         #connection.cpp connection.hpp
         deleter.hpp
         array.hpp
-        os_setter.hpp os_setter.cpp os_memory.hpp os_memory.cpp os.cpp os_dependent.hpp os_op.hpp)
+        os_setter.hpp os_setter.cpp os_memory.hpp os_memory.cpp os.cpp os_dependent.hpp object.hpp)
 
 include_directories(${MY_SOURCE_DIR}/pious)
 

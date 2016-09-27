@@ -20,9 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-#ifndef PIOUS_OS_OP_HPP
-#define PIOUS_OS_OP_HPP
+#ifndef PIOUS_OBJECT_HPP
+#define PIOUS_OBJECT_HPP
 
 #include "os.hpp"
 
@@ -31,9 +30,9 @@
 namespace pious {
 
 template<typename T>
-class OsOp{
+class Object{
  public:
-  OsOp(Os &os) : os_(&os) {}
+  Object(Os &os) : os_(&os) {}
 
   T* New() {
     assert(os_);
@@ -69,9 +68,9 @@ class OsOp{
 };
 
 template<typename T, size_t N=1>
-class OsOp <T[N]> {
+class Object <T[N]> {
  public:
-  OsOp(Os &os) : os_(&os) {}
+  Object(Os &os) : os_(&os) {}
 
   T* New() {
     assert(os_);
