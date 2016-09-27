@@ -4,6 +4,7 @@ project(pious)
 add_definitions(-std=gnu++0x)
 
 include_directories(api)
+include_directories(pious)
 
 add_subdirectory(pious)
 add_subdirectory(pious_tests)

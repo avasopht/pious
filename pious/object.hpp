@@ -110,6 +110,30 @@ class Object{
 
 };
 
+template<typename T>
+class Object<T[]> {
+ public:
+
+  Object(Os &os) : os_(&os) {}
+
+  void Delete(void *ptr) {
+    assert(os_);
+
+    size_t size = static_cast<size_t*>(ptr)[-1];
+
+    T *array = static_cast<T*>(ptr);
+
+    for(size_t i = 0; i < size; ++i) {
+      array[i]->~T();
+    }
+
+    os_->Free(ptr);
+  }
+
+ private:
+  Os *os_;
+};
+
 /*! \brief  Creates array of type
  *  \example
  *  \code
