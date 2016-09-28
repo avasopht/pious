@@ -23,77 +23,104 @@
 #ifndef PIOUS_OBJECT_HPP
 #define PIOUS_OBJECT_HPP
 
-#include "os.hpp"
-#include "os_setter.hpp"
-#include "os_dependent.hpp"
+#include "memory.hpp"
+#include "memory_setter.hpp"
+#include "memory_dependent.hpp"
+
+#include <cassert>
+#include <cstdint>
 
 #include <boost/type_traits/is_base_of.hpp>
 
-#include <cassert>
-
 namespace pious {
+
+struct ArrayAllocation {
+  size_t size;
+  void *array;
+
+  /*!
+   * \brief Creates an instance with an `array` pointer to the address
+   *        that immediately follows this instance.
+   * \param size Size of array.
+   */
+  ArrayAllocation(size_t size);
+
+  /*!
+   * \brief Initializes and returns an instance at the address of `vptr`.
+   *
+   * \param vptr Pointer to
+   * \param size Size of array.
+   */
+  static ArrayAllocation* InitFromPtr(void *vptr, size_t size);
+
+  /*!
+   * \brief Returns a pointer to the instance associated with the array.
+   *    nullptr is returned if there is no associated instance.
+   */
+  static ArrayAllocation* FindFromArrayPtr(void *array);
+};
 
 /*! \brief  Provides methods to instantiate and delete objects with a supplied
  *          memory manager.
  *
- *  The Os instance will be injected into objects descending from OsSetter or
- *  OsDependent.
+ *  The Memory instance will be injected into objects descending from
+ *  MemorySetter or MemoryDependent.
  */
 template<typename T>
 class Object{
  public:
-  Object(Os &os) : os_(&os) {}
+  Object(Memory &memory) : mem_(&memory) {}
 
   T* New() {
-    assert(os_);
-    if(!os_) return nullptr;
+    assert(mem_);
+    if(!mem_) return nullptr;
 
-    void *vptr = os_->Calloc(1, sizeof(T));
+    void *vptr = mem_->Calloc(1, sizeof(T));
     if(!vptr) return nullptr;
 
     T *ptr = New(vptr);
 
-    OsSetter::InjectOs(*ptr, os_);
+    MemorySetter::InjectMemory(*ptr, mem_);
     return ptr;
   }
 
   T *New(void *vptr) {
-    boost::is_base_of<OsDependent,T> is_os_dependent;
-    T *ptr = New(vptr, is_os_dependent);
+    boost::is_base_of<MemoryDependent,T> is_memory_dependent;
+    T *ptr = New(vptr, is_memory_dependent);
     return ptr;
   }
 
   T* New(const T &other) {
-    assert(os_);
-    if(!os_) return nullptr;
+    assert(mem_);
+    if(!mem_) return nullptr;
 
-    void *vptr = os_->Calloc(1, sizeof(T));
+    void *vptr = mem_->Calloc(1, sizeof(T));
     if(!vptr) return nullptr;
 
     T *ptr = New(vptr, other);
-    OsSetter::InjectOs(*ptr, os_);
+    MemorySetter::InjectMemory(*ptr, mem_);
     return ptr;
   }
 
   T *New(void *vptr, const T &other) {
-    boost::is_base_of<OsDependent,T> is_os_dependent;
+    boost::is_base_of<MemoryDependent,T> is_os_dependent;
     T *ptr = New(vptr, other, is_os_dependent);
     return ptr;
   }
 
   void Delete(T *ptr) {
-    assert(os_);
+    assert(mem_);
 
     ptr->~T();
-    os_->Free(ptr);
+    mem_->Free(ptr);
   }
 
 
  private:
-  Os *os_;
+  Memory *mem_;
 
   T* New(void *vptr, boost::true_type) {
-    return new(vptr)T(*os_);
+    return new(vptr)T(*mem_);
   }
 
   T* New(void *vptr, boost::false_type) {
@@ -101,11 +128,11 @@ class Object{
   }
 
   T* New(void *vptr, const T& other, boost::true_type) {
-    return new(vptr)T(*os_, other);
+    return new(vptr)T(*mem_, other);
   }
 
   T* New(void *vptr, const T& other, boost::false_type) {
-    return new(vptr)T(*os_);
+    return new(vptr)T(*mem_);
   }
 
 };
@@ -114,24 +141,35 @@ template<typename T>
 class Object<T[]> {
  public:
 
-  Object(Os &os) : os_(&os) {}
+  Object(Memory &memory) : mem_(&memory) {}
 
+  /*! \brief Deletes an array of `T`.
+   *
+   *
+   */
   void Delete(void *ptr) {
-    assert(os_);
+    assert(mem_);
 
-    size_t size = static_cast<size_t*>(ptr)[-1];
 
     T *array = static_cast<T*>(ptr);
+
+    ArrayAllocation *allocation =
+        ArrayAllocation::FindFromArrayPtr(array);
+
+    assert(allocation);
+    assert(allocation->array == array);
+
+    size_t size = allocation->size;
 
     for(size_t i = 0; i < size; ++i) {
       array[i]->~T();
     }
 
-    os_->Free(ptr);
+    mem_->Free(allocation);
   }
 
  private:
-  Os *os_;
+  Memory *mem_;
 };
 
 /*! \brief  Creates array of type
@@ -143,44 +181,41 @@ class Object<T[]> {
 template<typename T, size_t N>
 class Object <T[N]> {
  public:
-  Object(Os &os) : os_(&os) {}
+  Object(Memory &memory) : mem_(&memory) {}
+
+  T* New(const T &other) {
+    assert(mem_);
+    if(!mem_) return nullptr;
+  }
 
   T* New() {
-    assert(os_);
-    if(!os_)  return nullptr;
+    assert(mem_);
+    if(!mem_)  return nullptr;
 
-    void *vptr = os_->Calloc(1, sizeof(size_t) + sizeof(T));
+    void *vptr = mem_->Calloc(1, sizeof(ArrayAllocation) + sizeof(T[N]));
     if(!vptr) return nullptr;
 
-    static_cast<size_t*>(vptr)[0] = N;
+    ArrayAllocation *allocation =
+        ArrayAllocation::InitFromPtr(vptr, N);
+    assert(allocation);
 
-    void *array_vptr = &static_cast<size_t*>(vptr)[1];
-    T *array = static_cast<T*>(array_vptr);
+    T *array = allocation->array;
 
     for(size_t i = 0; i < N; ++i) {
-      Object<T>(*os_).New(&array[i]);
-      OsSetter::InjectOs(array[i], os_);
+      Object<T>(*mem_).New(&array[i]);
+      MemorySetter::InjectMemory(array[i], mem_);
+      MemorySetter::InjectMemory(array[i], mem_);
     }
 
     return array;
   }
 
   void Delete(void *ptr) {
-    assert(os_);
-
-    size_t size = static_cast<size_t*>(ptr)[-1];
-
-    T *array = static_cast<T*>(ptr);
-
-    for(size_t i = 0; i < size; ++i) {
-      array[i]->~T();
-    }
-
-    os_->Free(ptr);
+    return Object<T[]>(*mem_).Delete(ptr);
   }
 
  private:
-  Os *os_;
+  Memory *mem_;
 };
 
 }

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 24/09/2016.
+ * Created by The Pious Authors on 26/09/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,8 +21,46 @@
  * SOFTWARE.
  */
 
-#include "gtest/gtest.h"
+#ifndef PIOUS_MEMORY_HPP
+#define PIOUS_MEMORY_HPP
 
-TEST(basic_check, test_eq) {
-  EXPECT_EQ(1, 0);
+#include <cstddef> // size_t
+
+namespace pious {
+
+class Memory {
+ public:
+  virtual ~Memory() {}
+
+  /*! \brief Sets pointer to data used in a unique way by the implementation.
+   *    \sa Data()
+   *
+   *  Implementations do not have to accept the pointer.
+   */
+  virtual void SetData(void *ptr) = 0;
+  /*! \brief Returns pointer to data object associated with memory instance.
+   *
+   *    Use `data` to point to a singleton object to manage an application.
+   */
+  virtual void* Data() = 0;
+  virtual void* Malloc(size_t size) = 0;
+  virtual void* Calloc(size_t num, size_t size) = 0;
+  virtual void Free(void *ptr) = 0;
+};
+
+class DefaultMemory : public Memory {
+ public:
+  DefaultMemory() : data_(nullptr){}
+
+  virtual void SetData(void *ptr) override;
+  virtual void* Data() override;
+  virtual void *Malloc(size_t size) override;
+  virtual void *Calloc(size_t num, size_t size) override;
+  virtual void Free(void *ptr) override;
+ private:
+  void *data_;
+};
+
 }
+
+#endif /*PIOUS_MEMORY_HPP*/

@@ -5,8 +5,8 @@
 #ifndef PIOUS_VECTOR_H
 #define PIOUS_VECTOR_H
 
-#include "os.hpp"
-#include "os_setter.hpp"
+#include "memory.hpp"
+#include "memory_setter.hpp"
 
 #include <boost/type_traits/has_trivial_constructor.hpp>
 #include <boost/type_traits/has_trivial_destructor.hpp>
@@ -18,12 +18,12 @@
 
 namespace pious {
 
-class Os;
+class Memory;
 
 template<typename T>
 class Vector {
  public:
-  Vector(Os &os, size_t capacity);
+  Vector(Memory &memory, size_t capacity);
   ~Vector();
 
   void PushBack(const T &t);
@@ -45,7 +45,7 @@ class Vector {
   size_t size() const { return size_; }
   size_t capacity() const { return capacity_; }
  private:
-  Os &os_;
+  Memory &memory_;
   size_t capacity_;
   size_t size_;
   T *array_;
@@ -62,7 +62,7 @@ class Vector {
   void InitAt(boost::false_type, size_t idx, const T &new_val) {
     // Has non-trivial constructor.
     new (&array_[idx]) T(new_val);
-    OsSetter::InjectOs(array_[idx], &os_);
+    MemorySetter::InjectMemory(array_[idx], &memory_);
   }
 
   void InitAt(boost::true_type, size_t idx, const T &new_val) {
@@ -88,9 +88,9 @@ class Vector {
 };
 
 template<typename T>
-Vector<T>::Vector(Os &os, size_t capacity)
-    : os_(os), capacity_(capacity), size_(0) {
-  array_ = static_cast<T *>(os_.Calloc(capacity, sizeof(T)));
+Vector<T>::Vector(Memory &memory, size_t capacity)
+    : memory_(memory), capacity_(capacity), size_(0) {
+  array_ = static_cast<T *>(memory_.Calloc(capacity, sizeof(T)));
 }
 
 template<typename T>
@@ -105,7 +105,7 @@ void Vector<T>::PushBack(const T &t) {
 template<typename T>
 Vector<T>::~Vector() {
   Destroy();
-  os_.Free(array_);
+  memory_.Free(array_);
   array_ = 0;
 }
 

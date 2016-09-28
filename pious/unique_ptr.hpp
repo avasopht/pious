@@ -5,7 +5,7 @@
 #ifndef PIOUS_SCOPED_PTR_HPP
 #define PIOUS_SCOPED_PTR_HPP
 
-#include "os.hpp"
+#include "memory.hpp"
 #include "object.hpp"
 #include "deleter.hpp"
 
@@ -23,31 +23,31 @@ template <typename T, typename DeleterType = TypedDeleter<T> >
 class UniquePtr {
  public:
 
-  UniquePtr(const UniquePtr &other) : os_(other.os_), pointer_(other.pointer_), deleter_(other.deleter_) {
+  UniquePtr(const UniquePtr &other) : memory_(other.memory_), pointer_(other.pointer_), deleter_(other.deleter_) {
     const_cast<UniquePtr*>(&other)->pointer_ = nullptr;
     const_cast<UniquePtr*>(&other)->deleter_ = nullptr;
   }
 
-  UniquePtr(Os &os) : os_(&os), pointer_(nullptr){}
+  UniquePtr(Memory &memory) : memory_(&memory), pointer_(nullptr){}
 
-  UniquePtr() : os_(nullptr), pointer_(nullptr) {}
-  UniquePtr(Os& os, T *ptr) : os_(&os), pointer_(ptr) {
-    deleter_ = Object<T>(*os_).New(DeleterType(*os_, pointer_));
+  UniquePtr() : memory_(nullptr), pointer_(nullptr) {}
+  UniquePtr(Memory& os, T *ptr) : memory_(&os), pointer_(ptr) {
+    deleter_ = Object<T>(*memory_).New(DeleterType(*memory_, pointer_));
   }
 
   T* New() {
-    if(!os_)
+    if(!memory_)
       return nullptr;
 
-    T *ptr = Object<T>(*os_).New();
+    T *ptr = Object<T>(*memory_).New();
     assert(ptr);
     return ptr;
   }
 
   void Reset(T *ptr = nullptr) {
-    assert(os_);
+    assert(memory_);
     Release();
-    deleter_ = Object<T>(*os_).New(DeleterType(*os_, pointer_));
+    deleter_ = Object<T>(*memory_).New(DeleterType(*memory_, pointer_));
   }
 
   void Release() {
@@ -56,15 +56,15 @@ class UniquePtr {
 
       deleter_->Delete();
 
-      Object<DeleterType>(*os_).Delete(deleter_);
+      Object<DeleterType>(*memory_).Delete(deleter_);
       pointer_ = nullptr;
     }
   }
 
   ~UniquePtr() {
     Release();
-    if(os_) {
-      Object<DeleterType>(*os_).Delete(deleter_);
+    if(memory_) {
+      Object<DeleterType>(*memory_).Delete(deleter_);
     }
   }
 
@@ -76,7 +76,7 @@ class UniquePtr {
   T& operator*() { return *get(); }
 
   UniquePtr& operator=(const UniquePtr &rhs) {
-    assert(rhs.os_ == os_);
+    assert(rhs.memory_ == memory_);
 
     if(&rhs == this) return *this;
 
@@ -90,7 +90,7 @@ class UniquePtr {
   }
 
  private:
-  Os *os_;
+  Memory *memory_;
   T *pointer_;
   Deleter *deleter_;
 };

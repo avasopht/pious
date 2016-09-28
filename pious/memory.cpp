@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 14/09/2016.
+ * Created by The Pious Authors on 26/09/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,40 +21,24 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_OS_SETTER_HPP
-#define PIOUS_OS_SETTER_HPP
+#include <cstdlib>
+#include "memory.hpp"
 
-#include <boost/type_traits/is_base_of.hpp>
 
-namespace pious {
-
-class Os;
-
-/*!
- * Inherit from OsSetter for an Os instance to be injected by compatible classes.
- */
-class OsSetter {
- public:
-  virtual ~OsSetter() = 0;
-
-  virtual void SetOs(Os *os) = 0;
-
-  /*! Injects an os into the instance if the type derives from OsSetter */
-  template<typename T> static void InjectOs(T &ref, Os *os) {
-    boost::is_base_of<OsSetter,T> type;
-    InjectOs(type, ref, os);
-  }
-
- private:
-
-  /* Injects os into instance */
-  template<typename T> static void InjectOs(boost::true_type, T &ref, Os *os) {
-    ref.SetOs(os);
-  }
-
-  template<typename T> static void InjectOs(boost::false_type, T&, Os*) {}
-};
-
+void *pious::DefaultMemory::Malloc(size_t size) {
+  return malloc(size);
 }
 
-#endif /*PIOUS_OS_SETTER_HPP*/
+void *pious::DefaultMemory::Calloc(size_t num, size_t size) {
+  return calloc(num, size);
+}
+
+void pious::DefaultMemory::Free(void *ptr) {
+  free(ptr);
+}
+void *pious::DefaultMemory::Data() {
+  return data_;
+}
+void pious::DefaultMemory::SetData(void *ptr) {
+  data_ = ptr;
+}

@@ -23,11 +23,37 @@
 
 #include "gtest/gtest.h"
 
-#include "os.hpp"
-#include "os_memory.hpp"
 #include "object.hpp"
 
+TEST(ArrayAllocation, creates_valid_instance) {
+  using namespace pious;
+  enum { kSize = 10 };
+  void *ptr = malloc(sizeof(ArrayAllocation) + sizeof(int[kSize]));
+  {
+    void *array_ptr = &static_cast<uint8_t *>(ptr)[sizeof(ArrayAllocation)];
 
-TEST(Object, calls_constructor) {
-  ASSERT_TRUE(false);
+    ArrayAllocation *allocation = ArrayAllocation::InitFromPtr(ptr, kSize);
+
+    ASSERT_EQ(ptr, allocation);
+    ASSERT_EQ(kSize, allocation->size);
+    ASSERT_EQ(array_ptr, allocation->array);
+  }
+  free(ptr);
+}
+
+TEST(ArrayAllocation, loads_allocation) {
+  using namespace pious;
+
+  typedef struct { int first, second; } Type;
+
+  enum { kSize = 10 };
+  void *ptr = malloc(sizeof(ArrayAllocation) + sizeof(Type[kSize]));
+  {
+    ArrayAllocation *allocation = ArrayAllocation::InitFromPtr(ptr, kSize);
+    Type *array = static_cast<Type*>(allocation->array);
+    ArrayAllocation *found_allocation = ArrayAllocation::FindFromArrayPtr(array);
+    ASSERT_EQ(allocation, found_allocation);
+    ASSERT_EQ(allocation->array, array);
+  }
+  free(ptr);
 }
