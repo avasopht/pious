@@ -24,6 +24,7 @@
 #include "gtest/gtest.h"
 
 #include "object.hpp"
+#include "memory.hpp"
 
 TEST(ArrayAllocation, creates_valid_instance) {
   using namespace pious;
@@ -56,4 +57,31 @@ TEST(ArrayAllocation, loads_allocation) {
     ASSERT_EQ(allocation->array, array);
   }
   free(ptr);
+}
+
+TEST(Array, default_constructs) {
+  using pious::Memory;
+
+  class Foo {
+   public:
+    Foo() : this_count (0) {
+      this_count = total_count();
+      ++total_count();
+    }
+
+    int& total_count() const {
+      static int count = 0;
+      return count;
+    }
+
+   private:
+    int this_count;
+  };
+
+  Memory *memory = new pious::DefaultMemory();
+  Foo *foo = pious::Object<Foo>(*memory).New();
+  ASSERT_NE(nullptr, foo);
+  ASSERT_EQ(foo->total_count(), 1);
+
+  delete memory;
 }

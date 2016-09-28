@@ -71,6 +71,10 @@ class Object{
  public:
   Object(Memory &memory) : mem_(&memory) {}
 
+  /*!
+   * Allocates and constructs a default instance of T, injecting a pointer
+   * to memory if T derives from MemoryDependent or MemorySetter.
+   */
   T* New() {
     assert(mem_);
     if(!mem_) return nullptr;
@@ -80,16 +84,28 @@ class Object{
 
     T *ptr = New(vptr);
 
-    MemorySetter::InjectMemory(*ptr, mem_);
+    MemorySetter::Inject(*ptr, mem_);
     return ptr;
   }
 
+  /*!
+   * \brief Constructs a default instance of T at the given address.
+   *
+   * Injects pointer to memory if T derives from MemorySetter or MemoryDependent.
+   */
   T *New(void *vptr) {
     boost::is_base_of<MemoryDependent,T> is_memory_dependent;
-    T *ptr = New(vptr, is_memory_dependent);
+    T *ptr = Construct(vptr, is_memory_dependent);
+    MemorySetter::Inject(*ptr, mem_);
     return ptr;
   }
 
+  /*!
+   * \brief Allocates and copy constructs an instance of T.
+   *
+   * Injects a pointer to memory if T derives from MemorySetter or
+   * MemoryDependent.
+   */
   T* New(const T &other) {
     assert(mem_);
     if(!mem_) return nullptr;
@@ -97,14 +113,22 @@ class Object{
     void *vptr = mem_->Calloc(1, sizeof(T));
     if(!vptr) return nullptr;
 
-    T *ptr = New(vptr, other);
-    MemorySetter::InjectMemory(*ptr, mem_);
+    T *ptr = Construct(vptr, other);
+    MemorySetter::Inject(*ptr, mem_);
     return ptr;
   }
 
+  /*!
+   * Copy constructs an instance of T at the given address.
+   *
+   * Injects a pointer to memory of T derives from MemorySetter or
+   * MemoryDepenent.
+   */
   T *New(void *vptr, const T &other) {
+    // It is useful to provide this method for New[].
+
     boost::is_base_of<MemoryDependent,T> is_os_dependent;
-    T *ptr = New(vptr, other, is_os_dependent);
+    T *ptr = Construct(vptr, other, is_os_dependent);
     return ptr;
   }
 
@@ -119,19 +143,19 @@ class Object{
  private:
   Memory *mem_;
 
-  T* New(void *vptr, boost::true_type) {
+  T* Construct(void *vptr, boost::true_type) {
     return new(vptr)T(*mem_);
   }
 
-  T* New(void *vptr, boost::false_type) {
+  T* Construct(void *vptr, boost::false_type) {
     return new(vptr)T();
   }
 
-  T* New(void *vptr, const T& other, boost::true_type) {
+  T* Construct(void *vptr, const T &other, boost::true_type) {
     return new(vptr)T(*mem_, other);
   }
 
-  T* New(void *vptr, const T& other, boost::false_type) {
+  T* Construct(void *vptr, const T &other, boost::false_type) {
     return new(vptr)T(*mem_);
   }
 
@@ -144,14 +168,9 @@ class Object<T[]> {
   Object(Memory &memory) : mem_(&memory) {}
 
   /*! \brief Deletes an array of `T`.
-   *
-   *
    */
-  void Delete(void *ptr) {
+  void Delete(T *array) {
     assert(mem_);
-
-
-    T *array = static_cast<T*>(ptr);
 
     ArrayAllocation *allocation =
         ArrayAllocation::FindFromArrayPtr(array);
@@ -181,41 +200,88 @@ class Object<T[]> {
 template<typename T, size_t N>
 class Object <T[N]> {
  public:
+  enum { kArraySize = sizeof(T[N]) };
+
   Object(Memory &memory) : mem_(&memory) {}
 
+  /*!
+   * \brief Allocates and copy constructs an array of T.
+   *
+   * A pointer to a `Memory` instance will be injected into the object if
+   * it descends from MemoryDependent or MemorySetter.
+   */
   T* New(const T &other) {
-    assert(mem_);
-    if(!mem_) return nullptr;
+    ArrayAllocation *allocation = NewAllocation(other);
+    if(allocation)
+      return static_cast<T*>(allocation->array);
+
+    return nullptr;
   }
 
+  /*!
+   * \brief Allocates and default constructs an array of T.
+   *
+   * A pointer to a `Memory` instance will be injected into the object if
+   * it descends from MemoryDependent or MemorySetter.
+   */
   T* New() {
-    assert(mem_);
-    if(!mem_)  return nullptr;
+    ArrayAllocation *allocation = NewAllocation();
+    if(allocation)
+      return static_cast<T*>(allocation->array);
 
-    void *vptr = mem_->Calloc(1, sizeof(ArrayAllocation) + sizeof(T[N]));
-    if(!vptr) return nullptr;
+    return nullptr;
+  }
 
-    ArrayAllocation *allocation =
-        ArrayAllocation::InitFromPtr(vptr, N);
-    assert(allocation);
+  /*!
+   * Allocates and default constructs an array of T, returning the
+   * ArrayAllocation pointer.
+   *
+   * \sa template<typename T,size_t N> Object::New(const T&other)
+   */
+  ArrayAllocation* NewAllocation(const T&other) {
+    ArrayAllocation *allocation = AllocateArray();
+    T *array = static_cast<T*>(allocation->array);
 
-    T *array = allocation->array;
+    for(size_t i = 0; i < N; ++i) {
+      Object<T>(*mem_).New(&array[i], other);
+    }
+
+    return allocation;
+  }
+
+  /*!
+   * Allocates and copy constructs an array of T, returning the
+   * ArrayAllocation pointer.
+   *
+   * \sa template<typename T,size_t N> Object::New(const T&other)
+   */
+  ArrayAllocation* NewAllocation() {
+    ArrayAllocation *allocation = AllocateArray();
+
+    T *array = static_cast<T*>(allocation->array);
 
     for(size_t i = 0; i < N; ++i) {
       Object<T>(*mem_).New(&array[i]);
-      MemorySetter::InjectMemory(array[i], mem_);
-      MemorySetter::InjectMemory(array[i], mem_);
     }
 
-    return array;
+    return allocation;
   }
 
-  void Delete(void *ptr) {
-    return Object<T[]>(*mem_).Delete(ptr);
+  void Delete(T *array) {
+    return Object<T[]>(*mem_).Delete(array);
   }
 
  private:
   Memory *mem_;
+
+  ArrayAllocation* AllocateArray() {
+    assert(mem_);
+
+    size_t total_size = sizeof(AllocateArray) + kArraySize;
+    void *ptr = mem_->Malloc(total_size);
+    ArrayAllocation *allocation = ArrayAllocation::InitFromPtr(ptr, N);
+    return allocation;
+  }
 };
 
 }

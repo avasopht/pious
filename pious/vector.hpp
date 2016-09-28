@@ -62,7 +62,7 @@ class Vector {
   void InitAt(boost::false_type, size_t idx, const T &new_val) {
     // Has non-trivial constructor.
     new (&array_[idx]) T(new_val);
-    MemorySetter::InjectMemory(array_[idx], &memory_);
+    MemorySetter::Inject(array_[idx], &memory_);
   }
 
   void InitAt(boost::true_type, size_t idx, const T &new_val) {
