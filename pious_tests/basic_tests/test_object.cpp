@@ -59,19 +59,32 @@ TEST(ArrayAllocation, loads_allocation) {
   free(ptr);
 }
 
-TEST(Array, default_constructs) {
+TEST(Array, default_constructs_and_deletes) {
   using pious::Memory;
 
-  class Foo {
+  class InstanceCounter {
    public:
-    Foo() : this_count (0) {
-      this_count = total_count();
-      ++total_count();
+    InstanceCounter() : this_count (0) {
+      this_count = constructor_count();
+      ++constructor_count();
     }
 
-    int& total_count() const {
+    ~InstanceCounter() {
+      ++destructor_count();
+    }
+
+    static int& constructor_count() {
       static int count = 0;
       return count;
+    }
+
+    static int& destructor_count() {
+      static int destructor_count = 0;
+      return destructor_count;
+    }
+
+    static void ClearCount() {
+      constructor_count() = destructor_count() = 0;
     }
 
    private:
@@ -79,9 +92,25 @@ TEST(Array, default_constructs) {
   };
 
   Memory *memory = new pious::DefaultMemory();
-  Foo *foo = pious::Object<Foo>(*memory).New();
-  ASSERT_NE(nullptr, foo);
-  ASSERT_EQ(foo->total_count(), 1);
+
+  // Test new/delete
+  {
+    InstanceCounter *foo = pious::Object<InstanceCounter>(*memory).New();
+    ASSERT_NE(nullptr, foo);
+    ASSERT_EQ(foo->constructor_count(), 1);
+
+    pious::Object<InstanceCounter>(*memory).Delete(foo);
+    ASSERT_EQ(foo->destructor_count(), 1);
+  }
+
+  // Test new[]/delete[]
+  {
+    InstanceCounter::ClearCount(); // Yes I know, this is not the way to do it.
+    InstanceCounter *default_array = pious::Object<InstanceCounter[10]>(*memory).New();
+    ASSERT_EQ(InstanceCounter::constructor_count(), 10);
+    pious::Object<InstanceCounter[]>(*memory).Delete(default_array);
+    ASSERT_EQ(InstanceCounter::destructor_count(), 10);
+  }
 
   delete memory;
 }

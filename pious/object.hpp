@@ -181,7 +181,7 @@ class Object<T[]> {
     size_t size = allocation->size;
 
     for(size_t i = 0; i < size; ++i) {
-      array[i]->~T();
+      array[i].~T();
     }
 
     mem_->Free(allocation);
@@ -277,7 +277,7 @@ class Object <T[N]> {
   ArrayAllocation* AllocateArray() {
     assert(mem_);
 
-    size_t total_size = sizeof(AllocateArray) + kArraySize;
+    size_t total_size = sizeof(ArrayAllocation) + kArraySize;
     void *ptr = mem_->Malloc(total_size);
     ArrayAllocation *allocation = ArrayAllocation::InitFromPtr(ptr, N);
     return allocation;
