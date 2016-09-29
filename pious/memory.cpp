@@ -25,12 +25,8 @@
 #include "memory.hpp"
 
 
-void *pious::DefaultMemory::Malloc(size_t size) {
+void *pious::DefaultMemory::Allocate(size_t size) {
   return malloc(size);
-}
-
-void *pious::DefaultMemory::Calloc(size_t num, size_t size) {
-  return calloc(num, size);
 }
 
 void pious::DefaultMemory::Free(void *ptr) {
@@ -41,4 +37,11 @@ void *pious::DefaultMemory::Data() {
 }
 void pious::DefaultMemory::SetData(void *ptr) {
   data_ = ptr;
+}
+void *pious::DefaultMemory::Allocate(size_t size, int arena) {
+  (void) arena;
+  return Allocate(size);
+}
+int pious::DefaultMemory::GetArenaCount() const {
+  return 1;
 }

@@ -79,7 +79,7 @@ class Object{
     assert(mem_);
     if(!mem_) return nullptr;
 
-    void *vptr = mem_->Calloc(1, sizeof(T));
+    void *vptr = mem_->Allocate(sizeof(T));
     if(!vptr) return nullptr;
 
     T *ptr = New(vptr);
@@ -110,7 +110,7 @@ class Object{
     assert(mem_);
     if(!mem_) return nullptr;
 
-    void *vptr = mem_->Calloc(1, sizeof(T));
+    void *vptr = mem_->Allocate(1, sizeof(T));
     if(!vptr) return nullptr;
 
     T *ptr = Construct(vptr, other);
@@ -278,7 +278,7 @@ class Object <T[N]> {
     assert(mem_);
 
     size_t total_size = sizeof(ArrayAllocation) + kArraySize;
-    void *ptr = mem_->Malloc(total_size);
+    void *ptr = mem_->Allocate(total_size);
     ArrayAllocation *allocation = ArrayAllocation::InitFromPtr(ptr, N);
     return allocation;
   }

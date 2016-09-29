@@ -16,7 +16,7 @@ A workaround in the `Os` class will be provided.
 This means no calls to `malloc()`, `free()`, `new` (without placement)
 and `delete` (for any object created without placement).
  
-To get around this limitation the library includes `Malloc()` and
+To get around this limitation the library includes `Allocate()` and
 `Free()` methods in the `Os` class.
 
 This limitation means that the Standard Template Library (and the use

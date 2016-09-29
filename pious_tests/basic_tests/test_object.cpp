@@ -105,7 +105,7 @@ TEST(Array, default_constructs_and_deletes) {
 
   // Test new[]/delete[]
   {
-    InstanceCounter::ClearCount(); // Yes I know, this is not the way to do it.
+    InstanceCounter::ClearCount(); // A dirty approach to test logic.
     InstanceCounter *default_array = pious::Object<InstanceCounter[10]>(*memory).New();
     ASSERT_EQ(InstanceCounter::constructor_count(), 10);
     pious::Object<InstanceCounter[]>(*memory).Delete(default_array);

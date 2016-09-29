@@ -43,9 +43,10 @@ class Memory {
    *    Use `data` to point to a singleton object to manage an application.
    */
   virtual void* Data() = 0;
-  virtual void* Malloc(size_t size) = 0;
-  virtual void* Calloc(size_t num, size_t size) = 0;
+  virtual void* Allocate(size_t size) = 0;
+  virtual void* Allocate(size_t size, int arena) = 0;
   virtual void Free(void *ptr) = 0;
+  virtual int GetArenaCount() const = 0;
 };
 
 class DefaultMemory : public Memory {
@@ -54,8 +55,9 @@ class DefaultMemory : public Memory {
 
   virtual void SetData(void *ptr) override;
   virtual void* Data() override;
-  virtual void *Malloc(size_t size) override;
-  virtual void *Calloc(size_t num, size_t size) override;
+  virtual void* Allocate(size_t size) override;
+  virtual void* Allocate(size_t size, int arena) override;
+  virtual int GetArenaCount() const override;
   virtual void Free(void *ptr) override;
  private:
   void *data_;
