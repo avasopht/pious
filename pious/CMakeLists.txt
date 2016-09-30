@@ -11,7 +11,14 @@ set(SOURCE_FILES
         #connection.cpp connection.hpp
         deleter.hpp
         array.hpp
-        memory.hpp memory.cpp object.hpp memory_dependent.cpp memory_dependent.hpp memory_setter.hpp object.cpp memory_setter.cpp)
+        memory.hpp memory.cpp
+        memory_dependent.cpp memory_dependent.hpp
+        memory_setter.hpp memory_setter.cpp
+        new.hpp
+        new_allocation_block.hpp
+        destructor.hpp
+        new_allocation_block_calculation.hpp new_allocation_block.cpp
+        util.cpp util.hpp new.cpp)
 
 include_directories(${MY_SOURCE_DIR}/pious)
 

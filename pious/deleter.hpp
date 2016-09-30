@@ -24,7 +24,7 @@
 #ifndef PIOUS_DELETER_HPP
 #define PIOUS_DELETER_HPP
 
-#include "object.hpp"
+#include "new.hpp"
 
 #include <cassert>
 
@@ -46,36 +46,36 @@ class Deleter {
 template<typename T>
 class TypedDeleter : public Deleter {
  public:
-  TypedDeleter() : os_(nullptr), ptr_(nullptr) {}
+  TypedDeleter() : mem_(nullptr), ptr_(nullptr) {}
   ~TypedDeleter() {
     Delete();
-    os_ = nullptr;
+    mem_ = nullptr;
   }
 
-  void Init(Os &os) {
-    os_ = &os;
+  void Init(Memory &mem) {
+    mem_ = &mem;
   }
 
-  TypedDeleter(Os &os) : os_(&os), ptr_(nullptr) {}
+  TypedDeleter(Memory &mem) : mem_(&mem), ptr_(nullptr) {}
 
-  TypedDeleter(Os &os, T* ptr) : os_(&os), ptr_(ptr) { assert(os_); }
+  TypedDeleter(Memory &mem, T* ptr) : mem_(&mem), ptr_(ptr) { assert(mem_); }
 
-  TypedDeleter(const TypedDeleter &rhs) : os_(rhs.os_), ptr_(rhs.ptr_)  { }
+  TypedDeleter(const TypedDeleter &rhs) : mem_(rhs.mem_), ptr_(rhs.ptr_)  { }
 
   void Watch(T *ptr) {
-    assert(os_);
+    assert(mem_);
     ptr_ = ptr;
   }
 
   void Delete() override {
     if(ptr_) {
-      Object<T>(*os_).Delete(ptr_);
+      pious::Delete(ptr_);
       ptr_ = nullptr;
     }
   }
 
  private:
-  Os *os_;
+  Memory *mem_;
   T *ptr_;
 };
 
