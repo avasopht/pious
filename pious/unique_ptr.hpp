@@ -39,7 +39,7 @@ class UniquePtr {
     if(!memory_)
       return nullptr;
 
-    T *ptr = New<T>(*memory_).Create();
+    T *ptr = pious::New<T>(*memory_).Create();
     assert(ptr);
     return ptr;
   }
@@ -47,6 +47,7 @@ class UniquePtr {
   void Reset(T *ptr = nullptr) {
     assert(memory_);
     Release();
+    pointer_ = ptr;
     deleter_ = pious::New<DeleterType>(*memory_).Create(DeleterType(*memory_, pointer_));
   }
 
@@ -55,15 +56,16 @@ class UniquePtr {
       assert(deleter_);
 
       deleter_->Delete();
-
       pious::Delete(deleter_);
+
+      deleter_ = nullptr;
       pointer_ = nullptr;
     }
   }
 
   ~UniquePtr() {
     Release();
-    if(memory_) {
+    if(memory_ && deleter_) {
       pious::Delete(deleter_);
     }
   }

@@ -7,6 +7,8 @@
 
 #include <cstddef>
 #include <new>
+#include <cassert>
+#include <cstdio>
 
 namespace pious {
 
@@ -15,9 +17,13 @@ class Memory;
 
 class NewAllocationBlock {
  public:
+
   static NewAllocationBlock* CreateDefault(
       Memory &memory, void *ptr, void *data, Destructor *destructor,
       size_t count, size_t allocation_size) {
+
+
+    assert(&memory);
 
     NewAllocationBlock *block =
         new(ptr)NewAllocationBlock(memory, data, destructor, count, allocation_size);

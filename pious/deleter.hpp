@@ -39,17 +39,17 @@ class Os;
  */
 class Deleter {
  public:
-  virtual ~Deleter() = 0;
+  virtual ~Deleter() {};
   virtual void Delete() = 0;
 };
 
 template<typename T>
 class TypedDeleter : public Deleter {
  public:
-  TypedDeleter() : mem_(nullptr), ptr_(nullptr) {}
+  TypedDeleter() : mem_(nullptr), ptr_(nullptr) { }
   ~TypedDeleter() {
-    Delete();
     mem_ = nullptr;
+    ptr_ = nullptr;
   }
 
   void Init(Memory &mem) {

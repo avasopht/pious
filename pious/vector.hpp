@@ -90,7 +90,7 @@ class Vector {
 template<typename T>
 Vector<T>::Vector(Memory &memory, size_t capacity)
     : memory_(memory), capacity_(capacity), size_(0) {
-  array_ = static_cast<T *>(memory_.Calloc(capacity, sizeof(T)));
+  array_ = static_cast<T *>(memory_.Allocate(capacity, sizeof(T)));
 }
 
 template<typename T>

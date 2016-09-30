@@ -36,15 +36,15 @@ template<typename T> class TypedDestructor {
 template<typename T, size_t N>
 class TypedDestructor <T[N]> : public Destructor {
  public:
-  TypedDestructor() : array(nullptr) {}
+  TypedDestructor(T *ptr) : array_(ptr) {}
   void Destroy() override {
     for(size_t i = 0; i < N; ++i) {
-      array[i].~T();
+      array_[i].~T();
     }
   }
 
  private:
-  T *array;
+  T *array_;
 };
 
 }

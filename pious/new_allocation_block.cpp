@@ -18,10 +18,12 @@ NewAllocationBlock *NewAllocationBlock::FromDataPointer(void *data) {
   size_t offset = calculation.padded_block_size();
   NewAllocationBlock *block = Offset<NewAllocationBlock>(data).Calc(-offset);
 
+
   if(block->data() != data) {
     // If
     return nullptr;
   }
+
 
   return block;
 }

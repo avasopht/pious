@@ -5,42 +5,8 @@
 #include "gtest/gtest.h"
 #include "new.hpp"
 #include "memory.hpp"
+#include "count_calls.hpp"
 
-namespace {
-
-class CountCalls {
- public:
-  CountCalls() { ++constructor_calls(); }
-  CountCalls(const CountCalls &) { ++copy_calls(); }
-  CountCalls &operator=(const CountCalls &) { ++assignment_calls(); }
-  ~CountCalls() { ++destructor_calls(); }
-
-  static int &constructor_calls() {
-    static int val = 0;
-    return val;
-  }
-  static int &destructor_calls() {
-    static int val = 0;
-    return val;
-  }
-  static int &copy_calls() {
-    static int val = 0;
-    return val;
-  }
-  static int &assignment_calls() {
-    static int val = 0;
-    return val;
-  }
-
-  static void ClearCount() {
-    constructor_calls() = 0;
-    destructor_calls() = 0;
-    copy_calls() = 0;
-    assignment_calls() = 0;
-  }
-};
-
-}
 
 TEST(New, CallCount) {
   /*

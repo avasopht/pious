@@ -4,7 +4,6 @@ set(SOURCE_FILES
         id.cpp id.hpp
         #device_spec.hpp device_spec.cpp
         vector.hpp
-        string.hpp string.cpp
         unique_ptr.hpp
         #device.cpp device.hpp
         #port.cpp port.hpp

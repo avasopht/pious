@@ -111,7 +111,7 @@ class New<T[N]> {
     Destructor *destructor_ptr = allocation.destructor_pointer();
     T *data = allocation.data_pointer();
     size_t count = allocation.count();
-    Destructor *destructor = new(destructor_ptr)DestructorType();
+    Destructor *destructor = new(destructor_ptr)DestructorType(data);
 
     NewAllocationBlock *block = NewAllocationBlock::CreateDefault(
         memory_, ptr, data, destructor, count, allocation_size
