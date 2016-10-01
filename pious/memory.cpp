@@ -22,7 +22,7 @@
  */
 
 #include <cstdlib>
-#include "memory.hpp"
+#include "pious/memory.hpp"
 
 
 void *pious::DefaultMemory::Allocate(size_t size) {

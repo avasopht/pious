@@ -5,9 +5,9 @@
 
 #include <gtest/gtest.h>
 
-#include "new_allocation_block_calculation.hpp"
-#include "new_allocation_block.hpp"
-#include "util.hpp"
+#include <pious/new_allocation_block_calculation.hpp>
+#include <pious/new_allocation_block.hpp>
+#include <pious/util.hpp>
 
 TEST(NewMemoryBlockCalculation, from_new_address) {
 

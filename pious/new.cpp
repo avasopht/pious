@@ -2,8 +2,8 @@
  * Created by keldon on 30/09/16.
  */
 
-#include "new.hpp"
-#include "memory.hpp"
+#include "pious/new.hpp"
+#include "pious/memory.hpp"
 
 namespace pious {
 

@@ -3,8 +3,8 @@
  */
 
 #include <gtest/gtest.h>
-#include "unique_ptr.hpp"
-#include "memory.hpp"
+#include <pious/unique_ptr.hpp>
+#include <pious/memory.hpp>
 #include "count_calls.hpp"
 
 TEST(UniquePtr, creates_and_destroys) {

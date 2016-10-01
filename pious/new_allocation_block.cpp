@@ -2,10 +2,10 @@
  * Created by keldon on 30/09/16.
  */
 
-#include "new_allocation_block.hpp"
-#include "util.hpp"
-#include "new_allocation_block_calculation.hpp"
-#include "memory.hpp"
+#include "pious/new_allocation_block.hpp"
+#include "pious/util.hpp"
+#include "pious/new_allocation_block_calculation.hpp"
+#include "pious/memory.hpp"
 
 #include <new>
 

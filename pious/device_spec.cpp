@@ -2,7 +2,7 @@
 // Created by keldon on 15/08/16.
 //
 
-#include "device_spec.hpp"
+#include "pious/device_spec.hpp"
 
 namespace pious {
 

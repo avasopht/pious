@@ -3,8 +3,8 @@
  */
 
 #include <gtest/gtest.h>
-#include "new.hpp"
-#include "memory.hpp"
+#include <pious/new.hpp>
+#include <pious/memory.hpp>
 #include "count_calls.hpp"
 
 

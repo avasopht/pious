@@ -2,8 +2,8 @@
  * Created by keldon on 30/09/16.
  */
 
+#include "pious/util.hpp"
 #include <cassert>
-#include "util.hpp"
 
 namespace pious {
 

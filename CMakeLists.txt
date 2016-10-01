@@ -5,6 +5,7 @@ add_definitions(-std=gnu++0x)
 
 include_directories(api)
 include_directories(pious)
+include_directories(include)
 
 add_subdirectory(pious)
 add_subdirectory(pious_tests)
