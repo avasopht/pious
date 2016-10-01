@@ -8,5 +8,6 @@ add_executable(runBasicPiousTests
 target_link_libraries(runBasicPiousTests gtest)
 target_link_libraries(runBasicPiousTests gmock gmock_main)
 target_link_libraries(runBasicPiousTests pious)
+target_link_libraries(runBasicPiousTests emcee)
 
 add_test(NAME pious_test COMMAND example)

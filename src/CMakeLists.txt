@@ -27,6 +27,16 @@ set(PIOUS_INCLUDE_FILES
         id.hpp
         port.hpp)
 
-set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+Prepend(EMCEE_INCLUDE_FILES "${INCLUDE_DIR}/emcee" ${EMCEE_INCLUDE_FILES})
+Prepend(PIOUS_INCLUDE_FILES "${INCLUDE_DIR}/pious" ${PIOUS_INCLUDE_FILES})
+
+
+find_package(Boost 1.55 REQUIRED)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIR})
+else()
+    message( FATAL_ERROR "Boost required.")
+endif()
 
 add_subdirectory(pious)
+add_subdirectory(emcee)
