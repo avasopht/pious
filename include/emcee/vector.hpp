@@ -16,7 +16,7 @@
 #include <cstring>
 #include <new>
 
-namespace pious {
+namespace emcee {
 
 class Memory;
 

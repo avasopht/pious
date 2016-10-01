@@ -6,9 +6,9 @@
 #define PIOUS_DEVICE_SPEC_H
 
 #include "pious_device.h"
-#include "vector.hpp"
+#include "emcee/vector.hpp"
 #include "id.hpp"
-#include "unique_ptr.hpp"
+#include "emcee/unique_ptr.hpp"
 
 #include <cinttypes>
 #include <cstddef>

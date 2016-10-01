@@ -10,7 +10,7 @@
 #include <cassert>
 #include <cstdio>
 
-namespace pious {
+namespace emcee {
 
 class Destructor;
 class Memory;

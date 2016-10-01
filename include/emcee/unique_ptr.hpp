@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-namespace pious {
+namespace emcee {
 
 class Deleter;
 
@@ -32,14 +32,14 @@ class UniquePtr {
 
   UniquePtr() : memory_(nullptr), pointer_(nullptr) {}
   UniquePtr(Memory& os, T *ptr) : memory_(&os), pointer_(ptr) {
-    deleter_ = pious::New<DeleterType>(*memory_).Create(DeleterType(*memory_, ptr));
+    deleter_ = emcee::New<DeleterType>(*memory_).Create(DeleterType(*memory_, ptr));
   }
 
   T* New() {
     if(!memory_)
       return nullptr;
 
-    T *ptr = pious::New<T>(*memory_).Create();
+    T *ptr = emcee::New<T>(*memory_).Create();
     assert(ptr);
     return ptr;
   }
@@ -48,7 +48,7 @@ class UniquePtr {
     assert(memory_);
     Release();
     pointer_ = ptr;
-    deleter_ = pious::New<DeleterType>(*memory_).Create(DeleterType(*memory_, pointer_));
+    deleter_ = emcee::New<DeleterType>(*memory_).Create(DeleterType(*memory_, pointer_));
   }
 
   void Release() {
@@ -56,7 +56,7 @@ class UniquePtr {
       assert(deleter_);
 
       deleter_->Delete();
-      pious::Delete(deleter_);
+      emcee::Delete(deleter_);
 
       deleter_ = nullptr;
       pointer_ = nullptr;
@@ -66,7 +66,7 @@ class UniquePtr {
   ~UniquePtr() {
     Release();
     if(memory_ && deleter_) {
-      pious::Delete(deleter_);
+      emcee::Delete(deleter_);
     }
   }
 

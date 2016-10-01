@@ -32,7 +32,7 @@
 #include <cassert>
 #include <cstdint>
 
-namespace pious {
+namespace emcee {
 
 template<typename T, size_t N>
 class Array {

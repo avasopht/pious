@@ -3,8 +3,8 @@
  */
 
 #include <gtest/gtest.h>
-#include <pious/new.hpp>
-#include <pious/memory.hpp>
+#include <emcee/new.hpp>
+#include <emcee/memory.hpp>
 #include "count_calls.hpp"
 
 
@@ -17,20 +17,20 @@ TEST(New, CallCount) {
 
   {
     CountCalls::ClearCount();
-    pious::DefaultMemory memory;
-    CountCalls *ptr = pious::New<CountCalls[5]>(memory).Create();
-    pious::Delete(ptr);
+    emcee::DefaultMemory memory;
+    CountCalls *ptr = emcee::New<CountCalls[5]>(memory).Create();
+    emcee::Delete(ptr);
     ASSERT_EQ(5, CountCalls::constructor_calls());
     ASSERT_EQ(5, CountCalls::destructor_calls());
   }
 
   {
     CountCalls::ClearCount();
-    pious::DefaultMemory memory;
-    CountCalls *def = pious::New<CountCalls>(memory).Create();
-    CountCalls *array = pious::New<CountCalls[5]>(memory).Create(*def);
-    pious::Delete(def);
-    pious::Delete(array);
+    emcee::DefaultMemory memory;
+    CountCalls *def = emcee::New<CountCalls>(memory).Create();
+    CountCalls *array = emcee::New<CountCalls[5]>(memory).Create(*def);
+    emcee::Delete(def);
+    emcee::Delete(array);
 
     ASSERT_EQ(1, CountCalls::constructor_calls());
     ASSERT_EQ(5, CountCalls::copy_calls());

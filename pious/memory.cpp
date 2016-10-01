@@ -22,26 +22,26 @@
  */
 
 #include <cstdlib>
-#include "pious/memory.hpp"
+#include "emcee/memory.hpp"
 
 
-void *pious::DefaultMemory::Allocate(size_t size) {
+void *emcee::DefaultMemory::Allocate(size_t size) {
   return malloc(size);
 }
 
-void pious::DefaultMemory::Free(void *ptr) {
+void emcee::DefaultMemory::Free(void *ptr) {
   free(ptr);
 }
-void *pious::DefaultMemory::Data() {
+void *emcee::DefaultMemory::Data() {
   return data_;
 }
-void pious::DefaultMemory::SetData(void *ptr) {
+void emcee::DefaultMemory::SetData(void *ptr) {
   data_ = ptr;
 }
-void *pious::DefaultMemory::Allocate(size_t size, int arena) {
+void *emcee::DefaultMemory::Allocate(size_t size, int arena) {
   (void) arena;
   return Allocate(size);
 }
-int pious::DefaultMemory::GetArenaCount() const {
+int emcee::DefaultMemory::GetArenaCount() const {
   return 1;
 }

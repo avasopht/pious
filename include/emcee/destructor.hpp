@@ -7,7 +7,7 @@
 
 #include <cstddef>
 
-namespace pious {
+namespace emcee {
 
 /*! \brief A Destructor is responsible for calling the destructor(s) for an
  * allocation of objects created by `New<T>`.

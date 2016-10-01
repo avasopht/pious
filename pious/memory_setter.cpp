@@ -2,9 +2,9 @@
  * Created by keldon on 28/09/16.
  */
 
-#include "pious/memory_setter.hpp"
+#include "emcee/memory_setter.hpp"
 
-namespace pious {
+namespace emcee {
 
 
 MemorySetter::~MemorySetter() {}

@@ -3,19 +3,19 @@
  */
 
 #include <gtest/gtest.h>
-#include <pious/unique_ptr.hpp>
-#include <pious/memory.hpp>
+#include <emcee/unique_ptr.hpp>
+#include <emcee/memory.hpp>
 #include "count_calls.hpp"
 
 TEST(UniquePtr, creates_and_destroys) {
-  pious::DefaultMemory memory;
+  emcee::DefaultMemory memory;
   CountCalls::ClearCount();
-  pious::UniquePtr<CountCalls> ptr (memory);
-  ptr.Reset(pious::New<CountCalls>(memory).Create());
+  emcee::UniquePtr<CountCalls> ptr (memory);
+  ptr.Reset(emcee::New<CountCalls>(memory).Create());
   ASSERT_EQ(1, CountCalls::constructor_calls());
   ASSERT_EQ(0, CountCalls::destructor_calls());
   {
-    pious::UniquePtr<CountCalls> thief = ptr;
+    emcee::UniquePtr<CountCalls> thief = ptr;
     (void) thief;
   }
   ASSERT_EQ(1, CountCalls::destructor_calls());

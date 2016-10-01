@@ -15,7 +15,7 @@
 #include <cassert>
 #include <boost/type_traits/is_base_of.hpp>
 
-namespace pious {
+namespace emcee {
 
 
 class Memory;

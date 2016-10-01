@@ -26,7 +26,7 @@
 
 #include <cstddef> // size_t
 
-namespace pious {
+namespace emcee {
 
 class Memory {
  public:

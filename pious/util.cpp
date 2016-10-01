@@ -2,10 +2,10 @@
  * Created by keldon on 30/09/16.
  */
 
-#include "pious/util.hpp"
+#include "emcee/util.hpp"
 #include <cassert>
 
-namespace pious {
+namespace emcee {
 
 size_t CalcPaddedSize(size_t size) {
   bool is_aligned = size % sizeof(size_t) == 0;

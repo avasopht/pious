@@ -2,10 +2,10 @@
  * Created by keldon on 30/09/16.
  */
 
-#include "pious/new.hpp"
-#include "pious/memory.hpp"
+#include "emcee/new.hpp"
+#include "emcee/memory.hpp"
 
-namespace pious {
+namespace emcee {
 
 
 void Delete(void *ptr) {

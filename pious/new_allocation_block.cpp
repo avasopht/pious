@@ -2,14 +2,14 @@
  * Created by keldon on 30/09/16.
  */
 
-#include "pious/new_allocation_block.hpp"
-#include "pious/util.hpp"
-#include "pious/new_allocation_block_calculation.hpp"
-#include "pious/memory.hpp"
+#include "emcee/new_allocation_block.hpp"
+#include "emcee/util.hpp"
+#include "emcee/new_allocation_block_calculation.hpp"
+#include "emcee/memory.hpp"
 
 #include <new>
 
-namespace pious {
+namespace emcee {
 
 
 

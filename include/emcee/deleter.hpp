@@ -28,9 +28,7 @@
 
 #include <cassert>
 
-namespace pious {
-
-class Os;
+namespace emcee {
 
 /*! \brief Interface for a deleter.
  *
@@ -69,7 +67,7 @@ class TypedDeleter : public Deleter {
 
   void Delete() override {
     if(ptr_) {
-      pious::Delete(ptr_);
+      emcee::Delete(ptr_);
       ptr_ = nullptr;
     }
   }

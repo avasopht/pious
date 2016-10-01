@@ -7,7 +7,7 @@
 
 #include <cstddef>
 #include <cstdint>
-namespace pious {
+namespace emcee {
 
 size_t CalcPaddedSize(size_t size);
 bool IsAligned(void *ptr);

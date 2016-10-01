@@ -14,7 +14,7 @@
 #include <cassert>
 #include <cstdint>
 
-namespace pious {
+namespace emcee {
 
 
 /*! \brief Provides calculations for new memory block allocations.
@@ -51,7 +51,7 @@ class NewAllocationBlockCalculationBase {
   }
 
   static size_t CalcPaddedSize(size_t size) {
-    return pious::CalcPaddedSize(size);
+    return emcee::CalcPaddedSize(size);
   }
 
   void* allocation_pointer() { return ptr_; }
