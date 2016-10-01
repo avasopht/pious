@@ -2,7 +2,7 @@
  * Created by keldon on 30/09/16.
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "new.hpp"
 #include "memory.hpp"
 #include "count_calls.hpp"

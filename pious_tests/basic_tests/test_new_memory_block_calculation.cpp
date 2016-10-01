@@ -3,7 +3,7 @@
  * NewMemoryBlockCalculation<T>::SetDataPointer.
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include "new_allocation_block_calculation.hpp"
 #include "new_allocation_block.hpp"

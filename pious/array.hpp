@@ -24,38 +24,55 @@
 #ifndef PIOUS_ARRAY_HPP
 #define PIOUS_ARRAY_HPP
 
-#include "os.hpp"
-#include "os_setter.hpp"
+#include "memory.hpp"
+#include "memory_setter.hpp"
+#include "memory_dependent.hpp"
 
 #include <cstddef> // size_t
 #include <cassert>
+#include <cstdint>
 
 namespace pious {
-
-class Os;
 
 template<typename T, size_t N>
 class Array {
  public:
-  Array(Os &os) : size_(N) {
-    InitArray(os);
+  Array(Memory &memory) : size_(N) {
+    InitArray(memory);
   }
 
-  const T& At(size_t idx) const { assert(idx < size_); return array_[idx]; }
-  T& At(size_t idx) { assert(idx < size_); return array_[idx]; }
+  const T& At(size_t idx) const { assert(idx < size_); return array()[idx]; }
+  T& At(size_t idx) { assert(idx < size_); return array()[idx]; }
 
-  const T& operator[](size_t idx) const { return array_[idx]; }
-  T& operator[](size_t idx) { return array_[idx]; }
+  const T& operator[](size_t idx) const { return array()[idx]; }
+  T& operator[](size_t idx) { return array()[idx]; }
 
   size_t size() const { return size_; }
 
  private:
   size_t size_;
-  T array_[N];
+  uint8_t data_[sizeof(T[N])];
 
-  void InitArray(Os &os) {
+  const T* array() const { return reinterpret_cast<const T*>(data_); }
+  T* array() { return reinterpret_cast<T*>(data_); }
+
+  void Construct(Memory &memory, T &obj) {
+    boost::is_base_of<MemoryDependent,T> is_memory_dependent;
+    Construct(obj, is_memory_dependent);
+  }
+
+  void Construct(Memory &memory, T &obj, boost::true_type) {
+    new(&obj)T(memory);
+  }
+
+  void Construct(Memory &memory, T &obj, boost::false_type) {
+    new(&obj)T();
+  }
+
+  void InitArray(Memory &memory) {
     for(size_t i = 0; i < N; ++i) {
-      OsSetter::InjectOs(array_[i], &os);
+      Construct(memory, operator[](i));
+      MemorySetter::Inject(operator[](i), &memory);
     }
   }
 };

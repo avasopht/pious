@@ -46,6 +46,8 @@ class NewAllocationBlockCalculationBase {
     assert(IsAligned(block_pointer));
 
     ptr_ = block_pointer;
+
+    return *this;
   }
 
   static size_t CalcPaddedSize(size_t size) {
@@ -75,7 +77,7 @@ class NewAllocationBlockCalculationBase {
   }
 
   static size_t padded_destructor_size() {
-    CalcPaddedSize(sizeof(TypedDestructor<T>));
+    return CalcPaddedSize(sizeof(TypedDestructor<T>));
   }
 
   static size_t allocation_size() {
@@ -83,7 +85,6 @@ class NewAllocationBlockCalculationBase {
   }
 
   size_t count() {
-
     return TypeCount<T>().count();
   }
  private:
