@@ -12,8 +12,11 @@ TEST(UniquePtr, creates_and_destroys) {
   CountCalls::ClearCount();
   pious::UniquePtr<CountCalls> ptr (memory);
   ptr.Reset(pious::New<CountCalls>(memory).Create());
-  ptr.Reset();
-
   ASSERT_EQ(1, CountCalls::constructor_calls());
+  ASSERT_EQ(0, CountCalls::destructor_calls());
+  {
+    pious::UniquePtr<CountCalls> thief = ptr;
+    (void) thief;
+  }
   ASSERT_EQ(1, CountCalls::destructor_calls());
 }
