@@ -1,20 +1,12 @@
-project(pious)
+
+
+Prepend(EMCEE_INCLUDE_FILES "${INCLUDE_DIR}/emcee" ${EMCEE_INCLUDE_FILES})
+Prepend(PIOUS_INCLUDE_FILES "${INCLUDE_DIR}/pious" ${PIOUS_INCLUDE_FILES})
 
 set(INCLUDE_FILES
-        id.hpp
-        vector.hpp
-        unique_ptr.hpp
-        array.hpp
-        deleter.hpp
-        util.hpp
-        destructor.hpp
-        new_allocation_block_calculation.hpp
-        new_allocation_block.hpp
-        memory_dependent.hpp
-        memory_setter.hpp
-        new.hpp
-        memory.hpp
-        )
+        ${EMCEE_INCLUDE_FILES}
+        ${PIOUS_INCLUDE_FILES})
+
 
 set(SOURCE_FILES
         id.cpp
