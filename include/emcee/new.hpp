@@ -33,6 +33,7 @@
 #include <cstddef>
 #include <cassert>
 #include <boost/type_traits/is_base_of.hpp>
+#include <boost/type_traits/has_trivial_constructor.hpp>
 
 namespace emcee {
 
@@ -68,6 +69,7 @@ class New<T[N]> {
 
   New(Memory &memory) : memory_(memory) {};
 
+  /*! Allocates and constructs a new T to be managed by this instance. */
   T* Create() {
     NewAllocationBlock *block = Allocate();
     T *ptr = static_cast<T*>(block->data());
@@ -79,6 +81,7 @@ class New<T[N]> {
     return ptr;
   }
 
+  /*! Allocates and constructs a new T to be managed by this instance. */
   T* Create(const T&other) {
     NewAllocationBlock *block = Allocate();
     T *ptr = static_cast<T*>(block->data());
@@ -105,12 +108,22 @@ class New<T[N]> {
     Construct(ptr, other, is_memory_dependent);
   }
 
-  void Construct(void *ptr, boost::true_type) {
+  void Construct(void *ptr, boost::true_type /*is memory dependent */) {
     new(ptr)T(memory_);
   }
 
-  void Construct(void *ptr, boost::false_type) {
+  void Construct(void *ptr, boost::false_type /*not memory dependent */) {
+    boost::has_trivial_constructor<T> has_trivial_constructor;
     new(ptr)T();
+  }
+
+  void SansMemoryConstruct(void *ptr, boost::true_type has_trivial_constructor) {
+    (void) has_trivial_constructor;
+    // new (T(ptr))();
+  }
+
+  void SansMemoryConstruct(void *ptr, boost::false_type has_trivial_constructor) {
+    (void) has_trivial_constructor;
   }
 
   void Construct(void *ptr, const T &other, boost::true_type) {

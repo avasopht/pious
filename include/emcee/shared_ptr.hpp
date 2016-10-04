@@ -25,13 +25,98 @@
 #define PIOUS_SHARED_PTR_HPP
 
 #include "emcee/memory.hpp"
+#include "emcee/deleter.hpp"
+#include "emcee/reference_counter.hpp"
+#include "emcee/shared_count.hpp"
 
 namespace emcee {
 
-template<typename T>
+template<typename T, typename DeleterType = TypedDeleter<T>>
 class SharedPtr {
  public:
-  SharedPtr(Memory *memory);
+  SharedPtr(Memory *memory) : memory_(memory), ptr_(nullptr) {}
+  template<typename Y> SharedPtr(Memory *memory, Y *p)
+      : memory_(memory),
+        ptr_(nullptr) {
+    Reset(p);
+  }
+
+  SharedPtr(const SharedPtr &other) {
+    Reset(other);
+  }
+
+  SharedPtr& Create() {
+    if(!memory_)
+      return *this;
+
+    T* ptr = emcee::New<T>(*memory_).Create();
+    Reset(ptr);
+    return *this;
+  }
+
+  SharedPtr& Create(const T &other) {
+    if(!memory_)
+      return *this;
+
+    T* ptr = emcee::New<T>(*memory_).Create(other);
+    Reset(ptr);
+    return *this;
+  }
+
+  void Reset() {
+    count_ = SharedCount();
+  }
+
+  size_t use_count() const { return count_.use_count(); }
+  bool unique() const { return use_count() == 1; }
+
+  template<typename Y> void Reset(Y *p) {
+    if(!memory_)
+      return;
+
+    if(!p) {
+      Reset();
+    } else {
+      ptr_ = p;
+      DeleterType *deleter = emcee::New<DeleterType>(*memory_).Create();
+      deleter->Watch(ptr_);
+
+      ReferenceCounter *counter = emcee::New<ReferenceCounter>(*memory_).Create();
+      counter->SetDeleter(deleter);
+      count_ = SharedCount(counter);
+    }
+  }
+
+  template<typename Y> void Reset(const SharedPtr<Y> &other) {
+    if(&other == this || other.ptr_ == ptr_) {
+      return;
+    } else {
+      memory_ = other.memory_;
+      ptr_ = other.ptr_;
+      count_ = SharedCount(other.count_);
+    }
+  }
+
+  T* Get() const { return ptr_; }
+  T& operator*() const { return *Get(); }
+  T* operator->() const { return Get(); }
+
+
+  SharedPtr& operator=(const SharedPtr &rhs) {
+    Reset(rhs);
+    return *this;
+  }
+
+  template<typename Y> SharedPtr& operator=(const SharedPtr<Y> &rhs) {
+    Reset(rhs);
+    return *this;
+  }
+
+ private:
+  Memory *memory_;
+  T *ptr_;
+  SharedCount count_;
+
 };
 
 }

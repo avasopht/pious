@@ -16,6 +16,9 @@ set(EMCEE_INCLUDE_FILES
         new.hpp
         new_allocation_block.hpp
         new_allocation_block_calculation.hpp
+        reference_counter.hpp
+        shared_count.hpp
+        shared_ptr.hpp
         unique_ptr.hpp
         util.hpp
         vector.hpp)
