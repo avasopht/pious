@@ -6067,7 +6067,7 @@ if test "$_lt_caught_CXX_error" != yes; then
         else
           # not using gcc
           if test "$host_cpu" = ia64; then
-	  # VisualAge C++, Version 5.5 for AIX 5L for IA-64, Beta 3 Release
+	  # VisualAge C++, Version 5.5 for AIX 5L for IA-64, Beta 3 Destroy
 	  # chokes on -Wl,-G. The following line is correct:
 	  shared_flag='-G'
           else

@@ -94,7 +94,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Destroy|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(OutDir)\$(ProjectName)"
 			ConfigurationType="1"

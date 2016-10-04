@@ -971,7 +971,7 @@
 			};
 			name = Debug;
 		};
-		40C84996101A36A60083642A /* Release */ = {
+		40C84996101A36A60083642A /* Destroy */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;

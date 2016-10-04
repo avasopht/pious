@@ -401,7 +401,7 @@
 				GCC_VERSION = 4.0;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
-			name = Release;
+			name = Destroy;
 		};
 /* End XCBuildConfiguration section */
 

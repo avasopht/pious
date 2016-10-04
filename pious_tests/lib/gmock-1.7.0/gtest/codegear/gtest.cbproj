@@ -131,7 +131,7 @@
     <BuildConfiguration Include="Debug">
       <Key>Cfg_1</Key>
     </BuildConfiguration>
-    <BuildConfiguration Include="Release">
+    <BuildConfiguration Include="Destroy">
       <Key>Cfg_2</Key>
     </BuildConfiguration>
   </ItemGroup>

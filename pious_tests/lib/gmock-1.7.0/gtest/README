@@ -213,7 +213,7 @@ Alternatively, at the command line, enter:
 
   xcodebuild
 
-This will build the "Release" configuration of gtest.framework in your
+This will build the "Destroy" configuration of gtest.framework in your
 default build location.  See the "xcodebuild" man page for more
 information about building different configurations and building in
 different locations.

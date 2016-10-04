@@ -63,14 +63,27 @@ class UniquePtr {
     return ptr;
   }
 
+  Memory* memory() const { return memory_; }
+
+  T* Release() {
+    T *ptr = pointer_;
+    if(deleter_) {
+      emcee::Delete(deleter_);
+      deleter_ = nullptr;
+      pointer_ = nullptr;
+    }
+
+    return ptr;
+  }
+
   void Reset(T *ptr = nullptr) {
     assert(memory_);
-    Release();
+    Destroy();
     pointer_ = ptr;
     deleter_ = emcee::New<DeleterType>(*memory_).Create(DeleterType(*memory_, pointer_));
   }
 
-  void Release() {
+  void Destroy() {
     if(pointer_) {
       assert(deleter_);
 
@@ -83,10 +96,12 @@ class UniquePtr {
   }
 
   ~UniquePtr() {
-    Release();
-    if(memory_ && deleter_) {
-      emcee::Delete(deleter_);
-    }
+    Destroy();
+
+    assert(!deleter_);
+    assert(!pointer_);
+
+    memory_ = nullptr;
   }
 
 
@@ -101,7 +116,7 @@ class UniquePtr {
 
     if(&rhs == this) return *this;
 
-    Release();
+    Destroy();
     pointer_ = rhs.pointer_;
     deleter_ = rhs.deleter_;
     const_cast< UniquePtr* >(&rhs)->pointer_ = nullptr;

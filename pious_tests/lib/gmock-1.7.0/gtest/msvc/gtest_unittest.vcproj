@@ -128,7 +128,7 @@
 						DebugInformationFormat="3"/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Destroy|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories="&quot;..&quot;;&quot;..\include&quot;"

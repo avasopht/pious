@@ -166,7 +166,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Destroy|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

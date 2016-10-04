@@ -28,6 +28,7 @@
 #include "emcee/deleter.hpp"
 #include "emcee/reference_counter.hpp"
 #include "emcee/shared_count.hpp"
+#include "unique_ptr.hpp"
 
 namespace emcee {
 
@@ -43,6 +44,12 @@ class SharedPtr {
 
   SharedPtr(const SharedPtr &other) {
     Reset(other);
+  }
+
+  template<typename Y> SharedPtr(UniquePtr<Y> &unique)
+    : memory_(nullptr),
+      ptr_(nullptr) {
+    Reset(unique);
   }
 
   SharedPtr& Create() {
@@ -67,9 +74,6 @@ class SharedPtr {
     count_ = SharedCount();
   }
 
-  size_t use_count() const { return count_.use_count(); }
-  bool unique() const { return use_count() == 1; }
-
   template<typename Y> void Reset(Y *p) {
     if(!memory_)
       return;
@@ -87,6 +91,11 @@ class SharedPtr {
     }
   }
 
+  template<typename Y> void Reset(UniquePtr<Y> &unique) {
+    memory_ = unique.memory();
+    Reset(unique.Release());
+  }
+
   template<typename Y> void Reset(const SharedPtr<Y> &other) {
     if(&other == this || other.ptr_ == ptr_) {
       return;
@@ -96,6 +105,9 @@ class SharedPtr {
       count_ = SharedCount(other.count_);
     }
   }
+
+  size_t use_count() const { return count_.use_count(); }
+  bool unique() const { return use_count() == 1; }
 
   T* Get() const { return ptr_; }
   T& operator*() const { return *Get(); }
@@ -109,6 +121,11 @@ class SharedPtr {
 
   template<typename Y> SharedPtr& operator=(const SharedPtr<Y> &rhs) {
     Reset(rhs);
+    return *this;
+  }
+
+  template<typename Y>SharedPtr& operator=(const UniquePtr<Y> &unique) {
+    Reset(unique);
     return *this;
   }
 

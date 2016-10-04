@@ -42,3 +42,16 @@ TEST(SharedPtr,BasicTest) {
   ASSERT_EQ(0, first.use_count());
 
 }
+
+TEST(SharedPtr,FromUnique) {
+  int *iptr = new int(1337);
+  emcee::DefaultMemory mem;
+  emcee::UniquePtr<int> unique(mem, iptr);
+
+  ASSERT_EQ(iptr, unique.get());
+
+  emcee::SharedPtr<int> shared = unique;
+  ASSERT_NE(iptr, unique.get());
+  ASSERT_TRUE(shared.unique());
+  ASSERT_EQ(iptr, shared.Get());
+}
