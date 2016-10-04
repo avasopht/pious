@@ -5,7 +5,7 @@
 #ifndef PIOUS_MEMORY_SETTER_HPP
 #define PIOUS_MEMORY_SETTER_HPP
 
-#include "boost/type_traits/is_base_of.hpp"
+#include <boost/type_traits/is_base_of.hpp>
 
 namespace emcee {
 
