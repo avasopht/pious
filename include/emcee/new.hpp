@@ -24,11 +24,11 @@
 #ifndef PIOUS_NEW_HPP
 #define PIOUS_NEW_HPP
 
-#include "destructor.hpp"
-#include "new_allocation_block.hpp"
-#include "new_allocation_block_calculation.hpp"
-#include "memory_dependent.hpp"
-#include "memory.hpp"
+#include "emcee/destructor.hpp"
+#include "emcee/new_allocation_block.hpp"
+#include "emcee/new_allocation_block_calculation.hpp"
+#include "emcee/memory_dependent.hpp"
+#include "emcee/memory.hpp"
 
 #include <cstddef>
 #include <cassert>

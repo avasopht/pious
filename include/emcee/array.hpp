@@ -24,9 +24,9 @@
 #ifndef PIOUS_ARRAY_HPP
 #define PIOUS_ARRAY_HPP
 
-#include "memory.hpp"
-#include "memory_setter.hpp"
-#include "memory_dependent.hpp"
+#include "emcee/memory.hpp"
+#include "emcee/memory_setter.hpp"
+#include "emcee/memory_dependent.hpp"
 
 #include <cstddef> // size_t
 #include <cassert>

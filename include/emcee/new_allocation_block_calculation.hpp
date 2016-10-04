@@ -25,9 +25,9 @@
 #define PIOUS_NEW_ALLOCATION_BLOCK_CALCULATION_HPP
 
 
-#include "new_allocation_block.hpp"
-#include "destructor.hpp"
-#include "util.hpp"
+#include "emcee/new_allocation_block.hpp"
+#include "emcee/destructor.hpp"
+#include "emcee/util.hpp"
 
 #include <cstddef>
 #include <cassert>

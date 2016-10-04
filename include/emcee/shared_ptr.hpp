@@ -24,12 +24,14 @@
 #ifndef PIOUS_SHARED_PTR_HPP
 #define PIOUS_SHARED_PTR_HPP
 
+#include "emcee/memory.hpp"
+
 namespace emcee {
 
 template<typename T>
 class SharedPtr {
  public:
-
+  SharedPtr(Memory *memory);
 };
 
 }

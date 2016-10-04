@@ -24,8 +24,8 @@
 #ifndef PIOUS_VECTOR_H
 #define PIOUS_VECTOR_H
 
-#include "memory.hpp"
-#include "memory_setter.hpp"
+#include "emcee/memory.hpp"
+#include "emcee/memory_setter.hpp"
 
 #include <boost/type_traits/has_trivial_constructor.hpp>
 #include <boost/type_traits/has_trivial_destructor.hpp>

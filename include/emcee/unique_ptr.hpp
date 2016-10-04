@@ -24,9 +24,9 @@
 #ifndef PIOUS_SCOPED_PTR_HPP
 #define PIOUS_SCOPED_PTR_HPP
 
-#include "memory.hpp"
-#include "new.hpp"
-#include "deleter.hpp"
+#include "emcee/memory.hpp"
+#include "emcee/new.hpp"
+#include "emcee/deleter.hpp"
 
 #include <cassert>
 
