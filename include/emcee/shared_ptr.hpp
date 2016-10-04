@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 28/09/2016.
+ * Created by The Pious Authors on 04/10/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,17 +21,17 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_MEMORY_DEPENDENT_HPP
-#define PIOUS_MEMORY_DEPENDENT_HPP
+#ifndef PIOUS_SHARED_PTR_HPP
+#define PIOUS_SHARED_PTR_HPP
 
 namespace emcee {
 
-class MemoryDependent {
+template<typename T>
+class SharedPtr {
  public:
-  virtual ~MemoryDependent() = 0;
 
 };
 
 }
 
-#endif /* PIOUS_MEMORY_DEPENDENT_HPP */
+#endif /* PIOUS_SHARED_PTR_HPP */
