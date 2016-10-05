@@ -43,7 +43,17 @@ class Memory;
 template<typename T>
 class Vector {
  public:
-  Vector(Memory &memory, size_t capacity);
+  Vector(Memory &memory, size_t n, const T &val = T())
+      : memory_(&memory), array_(nullptr), capacity_(0), size_(n) {
+    assert(&memory);
+
+    capacity_ = CalcReserveSize(n);
+    array_ = AllocateArray(capacity_);
+    for(size_t i = 0; i < n; ++i) {
+      InitAt(i, val);
+    }
+  }
+
   Vector(Memory &memory) :
       memory_(&memory),
       array_(nullptr),
@@ -59,9 +69,11 @@ class Vector {
 
     assert(memory_);
 
-    Reserve(CalcReserveSize(rhs.size()));
+    capacity_ = CalcReserveSize(rhs.size());
+    array_ = AllocateArray(capacity_);
+    size_ = rhs.size_;
     for(size_t i = 0; i < rhs.size(); ++i) {
-      PushBack(rhs[i]);
+      (*this)[i] = rhs[i];
     }
   }
 
@@ -83,15 +95,15 @@ class Vector {
     if(n <= capacity())
       return;
 
-    Vector second(*memory_, n);
+    size_t old_capacity = capacity_;
+    T *old_array = array_;
+    capacity_ = CalcReserveSize(n);
+    array_ = AllocateArray(capacity_);
     for(size_t i = 0; i < size(); ++i) {
-      second.PushBack(At(i));
+      InitAt(i, old_array[i]);
     }
-
-    std::swap(memory_, second.memory_);
-    std::swap(array_, second.array_);
-    std::swap(size_, second.size_);
-    std::swap(capacity_, second.capacity_);
+    DestroyArray(old_array, old_capacity);
+    memory_->Free(old_array);
   }
 
   Vector& operator=(const Vector& rhs) {
@@ -148,16 +160,29 @@ class Vector {
     array_[idx] = T(new_val);
   }
 
-  void Destroy() {
-    boost::has_trivial_destructor<T> type;
-    Destroy(type);
+  void DestroyArray() {
+    DestroyArray(array_, size_);
   }
 
-  void Destroy(boost::false_type) {
-    // Has non-trivial destructor.
-    for(size_t i = 0; i < size_; ++i) {
+  void DestroyArray(T *p, size_t size) {
+    boost::has_trivial_destructor<T> has_trivial_destructor;
+    DestroyArray(array_, size_, has_trivial_destructor);
+  }
+
+  void DestroyArray(T *p, size_t size, boost::true_type) {
+    for(size_t i = 0; i < size; ++i) {
       array_[i].~T();
     }
+  }
+
+  void DestroyArray(T*, size_t, boost::false_type) {}
+
+  T* AllocateArray(size_t size) {
+    assert(memory_);
+
+    void *ptr = memory_->Allocate(sizeof(T) * size);
+    T *array = static_cast<T*>(ptr);
+    return array;
   }
 
   void Destroy(boost::true_type) {
@@ -165,13 +190,6 @@ class Vector {
   }
 };
 
-template<typename T>
-Vector<T>::Vector(Memory &memory, size_t capacity)
-    : memory_(&memory), array_(nullptr), capacity_(capacity), size_(0) {
-  assert(&memory);
-  void *vptr = memory_->Allocate(capacity * sizeof(T));
-  array_ = static_cast<T *>(vptr);
-}
 
 template<typename T>
 void Vector<T>::PushBack(const T &t) {
@@ -186,7 +204,7 @@ void Vector<T>::PushBack(const T &t) {
 
 template<typename T>
 Vector<T>::~Vector() {
-  Destroy();
+  DestroyArray();
   if(memory_ && array_) {
     memory_->Free(array_);
     array_ = nullptr;

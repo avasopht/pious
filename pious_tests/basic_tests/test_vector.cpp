@@ -37,4 +37,10 @@ TEST(Vector, CopyAndAssignment) {
   first[0] = 0;
   ASSERT_EQ(first[0], 0);
   ASSERT_EQ(second[0], 1337);
+
+  emcee::Vector<int> with_default(mem, 3, 11);
+  ASSERT_EQ(3, with_default.size());
+  ASSERT_EQ(11, with_default[0]);
+  ASSERT_EQ(11, with_default[1]);
+  ASSERT_EQ(11, with_default[2]);
 }

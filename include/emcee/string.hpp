@@ -25,7 +25,7 @@
 #define PIOUS_STRING_HPP
 
 #include "emcee/memory_dependent.hpp"
-#include "vector.hpp"
+#include "emcee/shared_ptr.hpp"
 
 namespace emcee {
 
@@ -37,10 +37,14 @@ class String : public virtual MemoryDependent {
   String(Memory &memory, const char *str);
   String(const String &s);
 
+  const char *c_str() const;
+  size_t size() const;
+  char operator[](size_t idx) const;
 
+  String operator+(const String &rhs) const;
 
  private:
-  // Vector<char> string_;
+  SharedPtr<char[]> string_;
 
 };
 
