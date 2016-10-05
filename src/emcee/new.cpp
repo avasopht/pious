@@ -28,18 +28,25 @@ namespace emcee {
 
 
 void Delete(void *ptr) {
-  NewAllocationBlock *block = NewAllocationBlock::FromDataPointer(ptr);
+  ObjectBlock *block = ObjectBlock::FromDataPtr(ptr);
   if(block) {
-    Memory * mem = block->memory();
+    Memory * mem = block->allocation_block->memory();
     assert(mem);
-    block->destructor()->Destroy();
+
+    NewAllocationBlock *allocation = block->allocation_block;
+    assert(allocation);
+
+    allocation->destructor()->Destroy();
     mem->Free(block);
+    mem->Free(allocation->destructor());
+    mem->Free(allocation);
   }
 }
 size_t ArraySize(void *ptr) {
-  NewAllocationBlock *block = NewAllocationBlock::FromDataPointer(ptr);
+  ObjectBlock *block = ObjectBlock::FromDataPtr(ptr);
   if(block) {
-    return block->count();
+    assert(block->allocation_block);
+    return block->allocation_block->count();
   }
 
   return 0;

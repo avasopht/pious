@@ -37,37 +37,23 @@ class Memory;
 class NewAllocationBlock {
  public:
 
-  static NewAllocationBlock* CreateDefault(
-      Memory &memory, void *ptr, void *data, Destructor *destructor,
-      size_t count, size_t allocation_size) {
+  NewAllocationBlock(Memory &memory);
 
-
-    assert(&memory);
-
-    NewAllocationBlock *block =
-        new(ptr)NewAllocationBlock(memory, data, destructor, count, allocation_size);
-
-    return block;
-  }
-
-  static NewAllocationBlock* FromDataPointer(void *data);
+  NewAllocationBlock& WithDestructor(Destructor *d) { destructor_ = d; return *this; }
+  NewAllocationBlock& WithData(void *data) { data_ = data; return *this; }
+  NewAllocationBlock& WithCount(size_t count) { count_ = count; return *this; }
 
   Destructor* destructor() { return destructor_; }
   void* data() { return data_; }
-  Memory* memory() { return &memory_; }
+  Memory* memory() { return memory_; }
   size_t count() const { return count_; }
-  size_t allocation_size() const { return allocation_size_; }
 
  private:
-  Memory &memory_;
+  Memory *memory_;
   void *data_;
   Destructor *destructor_;
   size_t count_;
-  size_t allocation_size_;
 
-
-  NewAllocationBlock(Memory &memory, void *data, Destructor *destructor,
-                     size_t count, size_t allocation_size);
   NewAllocationBlock(const NewAllocationBlock &) = delete;
 };
 

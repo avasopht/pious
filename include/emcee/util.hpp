@@ -44,6 +44,7 @@ template<typename T> class TypeCount {
 };
 
 template<typename T, size_t N> class TypeCount <T[N]> {
+  public: static const size_t kCount = N;
   public: static size_t count() { return N; }
 };
 

@@ -24,15 +24,23 @@
 #ifndef PIOUS_STRING_HPP
 #define PIOUS_STRING_HPP
 
-#include "emcee/memory.hpp"
+#include "emcee/memory_dependent.hpp"
+#include "vector.hpp"
 
 namespace emcee {
+
+class Memory;
 
 class String : public virtual MemoryDependent {
  public:
   String(Memory &memory);
+  String(Memory &memory, const char *str);
+  String(const String &s);
+
+
 
  private:
+  Vector<char> string_;
 
 };
 

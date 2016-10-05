@@ -26,9 +26,9 @@
 
 #include "emcee/destructor.hpp"
 #include "emcee/new_allocation_block.hpp"
-#include "emcee/new_allocation_block_calculation.hpp"
 #include "emcee/memory_dependent.hpp"
 #include "emcee/memory.hpp"
+#include "emcee/util.hpp"
 
 #include <cstddef>
 #include <cassert>
@@ -46,35 +46,56 @@ void Delete(void *ptr);
 template<typename T>
 class New {
  public:
-  New(Memory &memory) : memory_(memory) {}
+  New(Memory &memory) : memory_(memory), arena_(0) {}
 
   T* Create() {
-    return New<T[1]>(memory_).Create();
+    return New<T[]>(memory_, 1).WithArena(arena_).Create();
   }
 
   T* Create(const T &other) {
-    return New<T[1]>(memory_).Create(other);
+    return New<T[]>(memory_, 1).WithArena(arena_).Create(other);
   }
 
 
  private:
   Memory &memory_;
+  size_t arena_;
 };
 
-template<typename T, size_t N>
-class New<T[N]> {
- public:
-  typedef T ArrayType[N];
-  typedef TypedDestructor<ArrayType> DestructorType;
+struct ObjectBlock {
+  NewAllocationBlock *allocation_block;
+  size_t data[1];
 
-  New(Memory &memory) : memory_(memory) {};
+  void* data_ptr() { return data; }
+
+  static ObjectBlock* FromDataPtr(void *data) {
+    ObjectBlock *block = emcee::Offset<ObjectBlock>(data).Calc(-sizeof(size_t));
+    if(!block->allocation_block)
+      return nullptr;
+
+    if(block->allocation_block->data() != data)
+      return nullptr;
+
+    return block;
+  }
+};
+
+template<typename T>
+class New<T[]> {
+ public:
+
+  typedef TypedDestructor<T[]> DestructorType;
+
+  New(Memory &memory, size_t count) : memory_(memory), count_(count), arena_(0) {};
+
+  New& WithArena(size_t arena) { arena_ = arena; return *this; }
 
   /*! Allocates and constructs a new T to be managed by this instance. */
   T* Create() {
     NewAllocationBlock *block = Allocate();
     T *ptr = static_cast<T*>(block->data());
 
-    for(size_t i = 0; i < N; ++i) {
+    for(size_t i = 0; i < count_; ++i) {
       Construct(&ptr[i]);
     }
 
@@ -86,17 +107,19 @@ class New<T[N]> {
     NewAllocationBlock *block = Allocate();
     T *ptr = static_cast<T*>(block->data());
 
-    for(size_t i = 0; i < N; ++i) {
+    for(size_t i = 0; i < count(); ++i) {
       Construct(&ptr[i], other);
     }
 
     return ptr;
   }
 
-  size_t count() const { return N; }
+  size_t count() const { return count_; }
 
  private:
   Memory &memory_;
+  size_t count_;
+  size_t arena_;
 
   void Construct(void *ptr) {
     boost::is_base_of<MemoryDependent,T> is_memory_dependent;
@@ -117,39 +140,52 @@ class New<T[N]> {
     new(ptr)T();
   }
 
-  void SansMemoryConstruct(void *ptr, boost::true_type has_trivial_constructor) {
-    (void) has_trivial_constructor;
-    // new (T(ptr))();
-  }
-
-  void SansMemoryConstruct(void *ptr, boost::false_type has_trivial_constructor) {
-    (void) has_trivial_constructor;
-  }
-
   void Construct(void *ptr, const T &other, boost::true_type) {
+    /* Is memory dependent */
     new(ptr)T(memory_, other);
   }
 
   void Construct(void *ptr, const T &other, boost::false_type) {
+    /* Is not memory dependent */
     new(ptr)T(other);
   }
 
-  NewAllocationBlock* Allocate() {
-    NewAllocationBlockCalculation<ArrayType> allocation;
-    size_t allocation_size = allocation.allocation_size();
-
-    void *ptr = memory_.Allocate(allocation_size);
-    allocation.SetBlockPointer(ptr);
-    Destructor *destructor_ptr = allocation.destructor_pointer();
-    T *data = allocation.data_pointer();
-    size_t count = allocation.count();
-    Destructor *destructor = new(destructor_ptr)DestructorType(data);
-
-    NewAllocationBlock *block = NewAllocationBlock::CreateDefault(
-        memory_, ptr, data, destructor, count, allocation_size
-    );
-
+  NewAllocationBlock* NewBlock() {
+    NewAllocationBlock* block =
+        static_cast<NewAllocationBlock*>(
+            memory_.Allocate(sizeof(NewAllocationBlock)));
+    new(block)NewAllocationBlock(memory_);
+    block->WithCount(count());
     return block;
+  }
+
+  ObjectBlock* AllocateObject() {
+    size_t object_alloc_size = sizeof(T) * count_ + sizeof(size_t);
+    void *allocation = memory_.Allocate(object_alloc_size);
+    ObjectBlock *object_block = static_cast<ObjectBlock*>(allocation);
+    T *ptr = static_cast<T*>(object_block->data_ptr());
+
+    return object_block;
+  }
+
+  Destructor* NewDestructor(void *vdata) {
+    void *destructor_ptr = memory_.Allocate(sizeof(DestructorType));
+    T *data = static_cast<T*>(vdata);
+    DestructorType *destructor = new(destructor_ptr)DestructorType(data, count());
+    return destructor;
+  }
+
+  NewAllocationBlock* Allocate() {
+
+    NewAllocationBlock *allocation_block = NewBlock();
+
+    ObjectBlock *object_block = AllocateObject();
+    object_block->allocation_block = allocation_block;
+    allocation_block->WithData(object_block->data);
+
+    Destructor *destructor = NewDestructor(object_block->data);
+    allocation_block->WithDestructor(destructor);
+
   }
 };
 

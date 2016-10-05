@@ -27,6 +27,15 @@
 #include "count_calls.hpp"
 
 
+TEST(New, BasicTypesCompilesAndRuns) {
+  emcee::DefaultMemory mem;
+  int *first = emcee::New<int>(mem).Create();
+  emcee::Delete(first);
+
+  int *array = emcee::New<int[]>(mem,10).Create();
+  emcee::Delete(array);
+}
+
 TEST(New, CallCount) {
   /*
    * Note beforehand: this tests for the number of times object construction
@@ -37,7 +46,7 @@ TEST(New, CallCount) {
   {
     CountCalls::ClearCount();
     emcee::DefaultMemory memory;
-    CountCalls *ptr = emcee::New<CountCalls[5]>(memory).Create();
+    CountCalls *ptr = emcee::New<CountCalls[]>(memory, 5).Create();
     emcee::Delete(ptr);
     ASSERT_EQ(5, CountCalls::constructor_calls());
     ASSERT_EQ(5, CountCalls::destructor_calls());
@@ -47,7 +56,7 @@ TEST(New, CallCount) {
     CountCalls::ClearCount();
     emcee::DefaultMemory memory;
     CountCalls *def = emcee::New<CountCalls>(memory).Create();
-    CountCalls *array = emcee::New<CountCalls[5]>(memory).Create(*def);
+    CountCalls *array = emcee::New<CountCalls[]>(memory, 5).Create(*def);
     emcee::Delete(def);
     emcee::Delete(array);
 

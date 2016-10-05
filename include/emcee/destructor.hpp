@@ -21,10 +21,33 @@ class Destructor {
 };
 
 
-template<typename T> class TypedDestructor {
+template<typename T> class TypedDestructor : public Destructor {
+ public:
+  TypedDestructor(T *ptr) : ptr_(ptr) {}
+
+  void Destroy() override {
+    ptr_->~T();
+  }
+
+
  private:
-  TypedDestructor() = delete;
-  TypedDestructor(const TypedDestructor&) = delete;
+  T *ptr_;
+};
+
+template<typename T> class TypedDestructor<T[]> : public Destructor {
+ public:
+  TypedDestructor(T *ptr, size_t count) : ptr_(ptr), count_(count) {}
+
+  void Destroy() override {
+    for(size_t i = 0; i < count_; ++i) {
+      ptr_[i].~T();
+    }
+  }
+
+
+ private:
+  T *ptr_;
+  size_t count_;
 };
 
 
@@ -36,15 +59,16 @@ template<typename T> class TypedDestructor {
 template<typename T, size_t N>
 class TypedDestructor <T[N]> : public Destructor {
  public:
-  TypedDestructor(T *ptr) : array_(ptr) {}
+  TypedDestructor(T *ptr) : array_(ptr), count_(N) {}
   void Destroy() override {
-    for(size_t i = 0; i < N; ++i) {
+    for(size_t i = 0; i < count_; ++i) {
       array_[i].~T();
     }
   }
 
  private:
   T *array_;
+  size_t count_;
 };
 
 }
