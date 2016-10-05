@@ -124,7 +124,7 @@ class SharedPtr {
     return *this;
   }
 
-  template<typename Y>SharedPtr& operator=(const UniquePtr<Y> &unique) {
+  template<typename Y>SharedPtr& operator=(UniquePtr<Y> &unique) {
     Reset(unique);
     return *this;
   }
