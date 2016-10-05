@@ -39,7 +39,7 @@ class Deleter;
  *  destroying that object when the unique pointer goes out of scope or is assigned to a new pointer.
  */
 template <typename T, typename DeleterType = TypedDeleter<T>>
-class UniquePtr {
+class UniquePtr : public virtual MemoryDependent {
  public:
 
   UniquePtr(const UniquePtr &other) : memory_(other.memory_), pointer_(other.pointer_), deleter_(other.deleter_) {
@@ -74,6 +74,11 @@ class UniquePtr {
     }
 
     return ptr;
+  }
+
+  T& operator[](size_t idx) const {
+    assert(emcee::TypeCount<T>::count() > idx);
+    return pointer_[idx];
   }
 
   void Reset(T *ptr = nullptr) {

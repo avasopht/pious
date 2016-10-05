@@ -120,6 +120,11 @@ class SharedPtr : public MemoryDependent {
   size_t use_count() const { return count_.use_count(); }
   bool unique() const { return use_count() == 1; }
 
+  T& operator[](size_t idx) const {
+    assert(emcee::TypeCount<T>::count() > idx);
+    return ptr_[idx];
+  }
+
   T* get() const { return ptr_; }
   T& operator*() const { return *get(); }
   T* operator->() const { return get(); }

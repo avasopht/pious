@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 30/09/2016.
+ * Created by The Pious Authors on 05/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,53 +21,21 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_UTIL_HPP
-#define PIOUS_UTIL_HPP
+#ifndef PIOUS_STRING_HPP
+#define PIOUS_STRING_HPP
 
-#include <cstddef>
-#include <cstdint>
+#include "emcee/memory.hpp"
+
 namespace emcee {
 
-size_t CalcPaddedSize(size_t size);
-bool IsAligned(void *ptr);
-
-void* NextAligned(void *ptr);
-
-//! \sa class Offset
-void* CalcOffset(void *ptr, ptrdiff_t offset);
-
-
-/*! \brief Gets the element count of a typename. */
-template<typename T> class TypeCount {
-  /*! Returns 1 for types that are not arrays. */
-  public: static size_t count() { return 1; }
-};
-
-template<typename T, size_t N> class TypeCount <T[N]> {
-  public: static size_t count() { return N; }
-};
-
-/*! \brief Returns a type T pointer to an address at an offset from a pointer
- *
- * Using this class can make it cleaner to
- */
-template<typename T>
-class Offset {
+class String : public virtual MemoryDependent {
  public:
-  Offset(void *ptr) : ptr_(ptr) {}
-
-  const T* Calc(ptrdiff_t offset) const {
-    return reinterpret_cast<T*>(&reinterpret_cast<uint8_t*>(ptr_)[offset]);
-  }
-
-  T* Calc(ptrdiff_t offset) {
-    return const_cast<T*>(static_cast<const Offset<T>*>(this)->Calc(offset));
-  }
+  String(Memory &memory);
 
  private:
-  void *ptr_;
+
 };
 
 }
 
-#endif /* PIOUS_UTIL_HPP */
+#endif /* PIOUS_STRING_HPP */
