@@ -20,30 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include <gtest/gtest.h>
+#include <emcee/vector.hpp>
+#include <emcee/memory.hpp>
 
-#ifndef PIOUS_STRING_HPP
-#define PIOUS_STRING_HPP
+TEST(Vector, CopyAndAssignment) {
+  emcee::DefaultMemory mem;
+  emcee::Vector<int> first(mem);
+  first.PushBack(1337);
+  ASSERT_EQ(1337, first[0]);
+  emcee::Vector<int> second(mem);
+  ASSERT_EQ(0, second.size());
+  second = first;
+  ASSERT_EQ(1337, second[0]);
 
-#include "emcee/memory_dependent.hpp"
-#include "vector.hpp"
-
-namespace emcee {
-
-class Memory;
-
-class String : public virtual MemoryDependent {
- public:
-  String(Memory &memory);
-  String(Memory &memory, const char *str);
-  String(const String &s);
-
-
-
- private:
-  // Vector<char> string_;
-
-};
-
+  first[0] = 0;
+  ASSERT_EQ(first[0], 0);
+  ASSERT_EQ(second[0], 1337);
 }
-
-#endif /* PIOUS_STRING_HPP */

@@ -8,6 +8,7 @@ add_executable(runBasicPiousTests
         test_new.cpp
         test_unique_ptr.cpp
         test_shared_ptr.cpp
+        test_vector.cpp
         count_calls.hpp)
 
 target_link_libraries(runBasicPiousTests gtest)
