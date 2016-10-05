@@ -27,7 +27,7 @@
 
 TEST(SharedPtr,BasicTest) {
   emcee::DefaultMemory mem;
-  emcee::SharedPtr<int> first(&mem);
+  emcee::SharedPtr<int> first(mem);
 
   ASSERT_EQ(0, first.use_count());
   first.Create();
@@ -44,8 +44,8 @@ TEST(SharedPtr,BasicTest) {
 }
 
 TEST(SharedPtr,FromUnique) {
-  int *iptr = new int(1337);
   emcee::DefaultMemory mem;
+  int *iptr = emcee::New<int>(mem).Create(1337);
   emcee::UniquePtr<int> unique(mem, iptr);
 
   ASSERT_EQ(iptr, unique.get());
@@ -53,5 +53,18 @@ TEST(SharedPtr,FromUnique) {
   emcee::SharedPtr<int> shared = unique;
   ASSERT_NE(iptr, unique.get());
   ASSERT_TRUE(shared.unique());
-  ASSERT_EQ(iptr, shared.Get());
+  ASSERT_EQ(iptr, shared.get());
+}
+
+TEST(SharedPtr, Swap) {
+  emcee::DefaultMemory mem;
+  int *first_ptr = emcee::New<int>(mem).Create(1);
+  int *second_ptr = emcee::New<int>(mem).Create(2);
+  emcee::SharedPtr<int> first(mem, first_ptr);
+  emcee::SharedPtr<int> second(mem, second_ptr);
+
+  first.Swap(second);
+
+  ASSERT_EQ(*first, *second_ptr);
+  ASSERT_EQ(*second, *first_ptr);
 }

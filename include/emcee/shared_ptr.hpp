@@ -32,12 +32,17 @@
 
 namespace emcee {
 
-template<typename T, typename DeleterType = TypedDeleter<T>>
-class SharedPtr {
+template<typename T>
+class SharedPtr : public MemoryDependent {
  public:
-  SharedPtr(Memory *memory) : memory_(memory), ptr_(nullptr) {}
-  template<typename Y> SharedPtr(Memory *memory, Y *p)
-      : memory_(memory),
+  typedef TypedDeleter<T> DefaultDeleterType;
+
+
+  SharedPtr(Memory &memory) : memory_(&memory), ptr_(nullptr) {}
+
+
+  template<typename Y> SharedPtr(Memory &memory, Y *p)
+      : memory_(&memory),
         ptr_(nullptr) {
     Reset(p);
   }
@@ -82,7 +87,7 @@ class SharedPtr {
       Reset();
     } else {
       ptr_ = p;
-      DeleterType *deleter = emcee::New<DeleterType>(*memory_).Create();
+      DefaultDeleterType *deleter = emcee::New<DefaultDeleterType>(*memory_).Create();
       deleter->Watch(ptr_);
 
       ReferenceCounter *counter = emcee::New<ReferenceCounter>(*memory_).Create();
@@ -106,12 +111,18 @@ class SharedPtr {
     }
   }
 
+  void Swap(SharedPtr &b) {
+    std::swap(memory_, b.memory_);
+    std::swap(ptr_, b.ptr_);
+    std::swap(count_, b.count_);
+  }
+
   size_t use_count() const { return count_.use_count(); }
   bool unique() const { return use_count() == 1; }
 
-  T* Get() const { return ptr_; }
-  T& operator*() const { return *Get(); }
-  T* operator->() const { return Get(); }
+  T* get() const { return ptr_; }
+  T& operator*() const { return *get(); }
+  T* operator->() const { return get(); }
 
 
   SharedPtr& operator=(const SharedPtr &rhs) {

@@ -26,6 +26,8 @@
 
 namespace emcee {
 
+/*! \brief
+ */
 class MemoryDependent {
  public:
   virtual ~MemoryDependent() = 0;

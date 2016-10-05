@@ -95,6 +95,12 @@ class UniquePtr {
     }
   }
 
+  void Swap(UniquePtr &b) {
+    std::swap(memory_, b.memory_);
+    std::swap(pointer_, b.pointer_);
+    std::swap(deleter_, b.deleter_);
+  }
+
   ~UniquePtr() {
     Destroy();
 
