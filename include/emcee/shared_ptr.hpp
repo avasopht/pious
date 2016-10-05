@@ -33,7 +33,7 @@
 namespace emcee {
 
 template<typename T>
-class SharedPtr : public MemoryDependent {
+class SharedPtr : public virtual MemoryDependent {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
 
@@ -120,8 +120,123 @@ class SharedPtr : public MemoryDependent {
   size_t use_count() const { return count_.use_count(); }
   bool unique() const { return use_count() == 1; }
 
+  T* get() const { return ptr_; }
+  T& operator*() const { return *get(); }
+  T* operator->() const { return get(); }
+
+
+  SharedPtr& operator=(const SharedPtr &rhs) {
+    Reset(rhs);
+    return *this;
+  }
+
+  template<typename Y> SharedPtr& operator=(const SharedPtr<Y> &rhs) {
+    Reset(rhs);
+    return *this;
+  }
+
+  template<typename Y>SharedPtr& operator=(UniquePtr<Y> &unique) {
+    Reset(unique);
+    return *this;
+  }
+
+ private:
+  Memory *memory_;
+  T *ptr_;
+  SharedCount count_;
+
+};
+
+
+template<typename T>
+class SharedPtr <T[]> : public virtual MemoryDependent {
+ public:
+  typedef TypedDeleter<T> DefaultDeleterType;
+
+  SharedPtr(Memory &mem) : memory_(&mem), ptr_(nullptr) {}
+
+  template<typename Y> SharedPtr(Memory &memory, Y *p)
+      : memory_(&memory),
+        ptr_(nullptr) {
+    Reset(p);
+  }
+
+  SharedPtr(const SharedPtr &other) {
+    Reset(other);
+  }
+
+  template<typename Y> SharedPtr(UniquePtr<Y> &unique)
+      : memory_(nullptr),
+        ptr_(nullptr) {
+    Reset(unique);
+  }
+
+  SharedPtr& Create(size_t count) {
+    if(!memory_)
+      return *this;
+
+    T* ptr = emcee::New<T[]>(*memory_, count).Create();
+    Reset(ptr);
+    return *this;
+  }
+
+  SharedPtr& Create(size_t count, const T &other) {
+    if(!memory_)
+      return *this;
+
+    T* ptr = emcee::New<T[]>(*memory_, count).Create(other);
+    Reset(ptr);
+    return *this;
+  }
+
+  void Reset() {
+    count_ = SharedCount();
+  }
+
+  template<typename Y> void Reset(Y *p) {
+    if(!memory_)
+      return;
+
+    if(!p) {
+      Reset();
+    } else {
+      ptr_ = p;
+      DefaultDeleterType *deleter = emcee::New<DefaultDeleterType>(*memory_).Create();
+      deleter->Watch(ptr_);
+
+      ReferenceCounter *counter = emcee::New<ReferenceCounter>(*memory_).Create();
+      counter->SetDeleter(deleter);
+      count_ = SharedCount(counter);
+    }
+  }
+
+  template<typename Y> void Reset(UniquePtr<Y> &unique) {
+    memory_ = unique.memory();
+    Reset(unique.Release());
+  }
+
+  template<typename Y> void Reset(const SharedPtr<Y> &other) {
+    if(&other == this || other.ptr_ == ptr_) {
+      return;
+    } else {
+      memory_ = other.memory_;
+      ptr_ = other.ptr_;
+      count_ = SharedCount(other.count_);
+    }
+  }
+
+  void Swap(SharedPtr &b) {
+    std::swap(memory_, b.memory_);
+    T *tmp = ptr_;
+    ptr_ = b.ptr_;
+    b.ptr_ = tmp;
+    std::swap(count_, b.count_);
+  }
+
+  size_t use_count() const { return count_.use_count(); }
+  bool unique() const { return use_count() == 1; }
+
   T& operator[](size_t idx) const {
-    assert(emcee::TypeCount<T>::count() > idx);
     return ptr_[idx];
   }
 
@@ -149,7 +264,6 @@ class SharedPtr : public MemoryDependent {
   Memory *memory_;
   T *ptr_;
   SharedCount count_;
-
 };
 
 }

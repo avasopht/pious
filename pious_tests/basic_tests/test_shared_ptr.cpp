@@ -68,3 +68,18 @@ TEST(SharedPtr, Swap) {
   ASSERT_EQ(*first, *second_ptr);
   ASSERT_EQ(*second, *first_ptr);
 }
+
+TEST(SharedPtr, Array) {
+  emcee::DefaultMemory mem;
+  int *array = emcee::New<int[]>(mem, 10).Create();
+  emcee::SharedPtr<int[]> smart_array(mem, array);
+  array[0] = 1337;
+  ASSERT_EQ(smart_array[0], array[0]);
+
+  emcee::SharedPtr<int[]> second(mem);
+  second.Create(10);
+  ASSERT_EQ(second[0], 0);
+
+  smart_array.Swap(second);
+  ASSERT_EQ(second[0], array[0]);
+}
