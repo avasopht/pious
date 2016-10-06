@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 05/10/16.
+ * Created by The Pious Authors on 06/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,43 +21,41 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_STRING_HPP
-#define PIOUS_STRING_HPP
+#include <gtest/gtest.h>
 
-#include "emcee/memory_dependent.hpp"
-#include "emcee/shared_ptr.hpp"
+#include <emcee/memory.hpp>
+#include <emcee/string.hpp>
 
-namespace emcee {
+TEST(String, BasicTest) {
+  emcee::DefaultMemory mem;
+  emcee::String bleach(mem, "Bleach");
+  ASSERT_EQ(6, bleach.length());
+  ASSERT_EQ('B', bleach[0]);
+  ASSERT_EQ('l', bleach[1]);
+  ASSERT_EQ('e', bleach[2]);
+  ASSERT_EQ('a', bleach[3]);
+  ASSERT_EQ('c', bleach[4]);
+  ASSERT_EQ('h', bleach[5]);
 
-class Memory;
+  emcee::String ble = bleach.Substring(0, 3);
+  ASSERT_EQ(3, ble.length());
+  ASSERT_EQ('B', ble[0]);
+  ASSERT_EQ('l', ble[1]);
+  ASSERT_EQ('e', ble[2]);
 
-class String : public virtual MemoryDependent {
- public:
-  String(Memory &memory);
-  String(Memory &memory, const char *str);
-  String(Memory &memory, const char *str, size_t begin);
-  String(Memory &memory, const char *str, size_t begin, size_t end);
-  String(const String &str, size_t begin);
-  String(const String &str, size_t begin, size_t end);
-  String(const String &first, const String &second);
+  emcee::String ach = bleach.Substring(3);
+  ASSERT_EQ(3, ach.length());
+  ASSERT_EQ('a', ach[0]);
+  ASSERT_EQ('c', ach[1]);
+  ASSERT_EQ('h', ach[2]);
 
-  const char *c_str() const;
-  size_t length() const;
-
-  String Substring(size_t begin_idx) const;
-  String Substring(size_t begin_idx, size_t end_idx) const;
-
-  const char& operator[](size_t idx) const;
-  String operator+(const String &rhs) const;
-
- private:
-  Memory *memory_;
-  SharedPtr<char[]> string_;
-  size_t size_;
-
-  void ConstructString(const char *cstr, size_t begin, size_t end);
-};
+  emcee::String bleach_2 = ble + ach;
+  ASSERT_EQ(6, bleach_2.length());
+  ASSERT_EQ('B', bleach_2[0]);
+  ASSERT_EQ('l', bleach_2[1]);
+  ASSERT_EQ('e', bleach_2[2]);
+  ASSERT_EQ('a', bleach_2[3]);
+  ASSERT_EQ('c', bleach_2[4]);
+  ASSERT_EQ('h', bleach_2[5]);
 
 }
-
-#endif /* PIOUS_STRING_HPP */

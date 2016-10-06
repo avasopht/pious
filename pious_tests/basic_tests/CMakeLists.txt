@@ -3,13 +3,15 @@ include_directories(${gmock_SOURCE_DIR}/include ${gmock_SOURCE_DIR})
 include_directories(${Boost_INCLUDE_DIR})
 
 add_executable(runBasicPiousTests
-        test_main.cpp
+        count_calls.hpp
         class_method_notifier.hpp
+        test_main.cpp
         test_new.cpp
         test_unique_ptr.cpp
         test_shared_ptr.cpp
+        test_string.cpp
         test_vector.cpp
-        count_calls.hpp)
+        )
 
 target_link_libraries(runBasicPiousTests gtest)
 target_link_libraries(runBasicPiousTests gmock gmock_main)
