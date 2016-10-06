@@ -42,6 +42,7 @@ void Delete(void *ptr) {
     mem->Free(allocation);
   }
 }
+
 size_t ArraySize(void *ptr) {
   ObjectBlock *block = ObjectBlock::FromDataPtr(ptr);
   if(block) {

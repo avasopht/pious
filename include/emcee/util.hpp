@@ -28,9 +28,13 @@
 #include <cstdint>
 namespace emcee {
 
+/*! Returns an object size that is aligned with memory. */
 size_t CalcPaddedSize(size_t size);
+
+/*! Returns whether pointer is memory aligned. */
 bool IsAligned(void *ptr);
 
+/*! Returns the next aligned pointer */
 void* NextAligned(void *ptr);
 
 //! \sa class Offset
@@ -39,6 +43,7 @@ void* CalcOffset(void *ptr, ptrdiff_t offset);
 
 /*! \brief Gets the element count of a typename. */
 template<typename T> class TypeCount {
+  public: static const size_t kCount = 1;
   /*! Returns 1 for types that are not arrays. */
   public: static size_t count() { return 1; }
 };

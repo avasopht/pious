@@ -7,7 +7,6 @@ set(INCLUDE_FILES
 set(SOURCE_FILES
         memory.cpp
         memory_dependent.cpp
-        memory_setter.cpp
         new.cpp
         new_allocation_block.cpp
         reference_counter.cpp

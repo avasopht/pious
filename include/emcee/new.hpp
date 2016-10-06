@@ -40,34 +40,33 @@ namespace emcee {
 
 class Memory;
 
+/*! \brief Returns size of an array providing it was created with New<>.
+ *
+ *  Returns 1 if the object is not an array but a single element created with
+ *  New<>.
+ */
 size_t ArraySize(void *ptr);
+
+/*! Deletes object created with New<>. */
 void Delete(void *ptr);
 
-template<typename T>
-class New {
- public:
-  New(Memory &memory) : memory_(memory), arena_(0) {}
-
-  T* Create() {
-    return New<T[]>(memory_, 1).WithArena(arena_).Create();
-  }
-
-  T* Create(const T &other) {
-    return New<T[]>(memory_, 1).WithArena(arena_).Create(other);
-  }
-
-
- private:
-  Memory &memory_;
-  size_t arena_;
-};
-
+/*! \brief  An ObjectBlock is created with each New instantiation, holding
+ * a pointer to the NewAllocationBlock.
+ */
 struct ObjectBlock {
   NewAllocationBlock *allocation_block;
-  size_t data[1];
 
-  void* data_ptr() { return data; }
+  /*! Variable length data for allocation. */
+  size_t var_length_data[1];
 
+  /*! Returns pointer to ObjectBlock data. */
+  void* data_ptr() { return var_length_data; }
+
+  /*! \brief Returns a pointer to an ObjectBlock based on a data pointer.
+   *
+   * \param data pointer to data.
+   * \return Returns null if data was not created by New.
+   */
   static ObjectBlock* FromDataPtr(void *data) {
     ObjectBlock *block = emcee::Offset<ObjectBlock>(data).Calc(-sizeof(size_t));
     if(!block->allocation_block)
@@ -78,6 +77,40 @@ struct ObjectBlock {
 
     return block;
   }
+};
+
+
+/*! \brief Implements non-trivial object and array allocation and construction.
+ *
+ *  An object or array created with New<> can be deleted with emcee::Delete()
+ *  and have its size queried.
+ *
+ *  Minor support for memory arenas has been provided.
+ *
+ *  This class also respects Memory injection semantics.
+ */
+template<typename T>
+class New {
+ public:
+  New(Memory &memory) : memory_(memory), arena_(0) {}
+
+  /*! Allocates and constructs a default instance of T. */
+  T* Create() {
+    return New<T[]>(memory_, 1).WithArena(arena_).Create();
+  }
+
+  /*! Allocates and copy-constructs instance of T from `other`. */
+  T* Create(const T &other) {
+    return New<T[]>(memory_, 1).WithArena(arena_).Create(other);
+  }
+
+  /*! Sets arena of allocation when `Create()` is called */
+  New& WithArena(size_t arena) { arena_ = arena; return *this; }
+
+
+ private:
+  Memory &memory_;
+  size_t arena_;
 };
 
 template<typename T>
@@ -181,10 +214,12 @@ class New<T[]> {
 
     ObjectBlock *object_block = AllocateObject();
     object_block->allocation_block = allocation_block;
-    allocation_block->WithData(object_block->data);
+    allocation_block->WithData(object_block->var_length_data);
 
-    Destructor *destructor = NewDestructor(object_block->data);
+    Destructor *destructor = NewDestructor(object_block->var_length_data);
     allocation_block->WithDestructor(destructor);
+
+    return allocation_block;
 
   }
 };

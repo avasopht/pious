@@ -27,7 +27,8 @@
 #include "reference_counter.hpp"
 namespace emcee {
 
-/*
+/*! \brief  Implements a reference counter to be shared by value.
+ *
  *
  */
 class SharedCount {

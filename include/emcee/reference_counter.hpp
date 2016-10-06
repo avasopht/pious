@@ -36,12 +36,19 @@ class ReferenceCounter {
   /*! Constructs a instance with a use count of 1. */
   ReferenceCounter(Deleter *deleter);
 
+  /*! Increments use count. */
   void AddUse();
+
+  /*! Releases a reference. The deleter will be invokved when use count is 0. */
   void Release();
 
-  /*! Assigns deleter instance with a use count of 1. */
+  /*! \brief  Assigns deleter instance with a use count of 1.
+   *
+   * Calling this will invoke the deleter before assigning the new deleter.
+   */
   void SetDeleter(Deleter *deleter);
 
+  /*! Invokes deleter. */
   void Dispose();
 
   size_t use_count() const { return count_ ; }

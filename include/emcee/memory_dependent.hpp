@@ -26,7 +26,14 @@
 
 namespace emcee {
 
-/*! \brief
+/*! \brief  Indicates at compile time that a class accepts a Memory reference
+ *  in construction.
+ *
+ *  Subclasses should implement `Subclass(Memory&)`. Subclasses may also implement
+ *  `Subclass(Memory&, const Subclass&)` for a copy constructor that also
+ *  injects a Memory reference.
+ *
+ *  Subclass as pure virtual.
  */
 class MemoryDependent {
  public:

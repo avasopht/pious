@@ -34,6 +34,8 @@ namespace emcee {
 class Destructor;
 class Memory;
 
+/*! \brief  Implements an allocation block for New<>.
+ */
 class NewAllocationBlock {
  public:
 

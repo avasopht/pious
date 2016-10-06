@@ -32,6 +32,10 @@
 
 namespace emcee {
 
+/*! \brief Implements a reference countered smart pointer.
+ *
+ * This class respects Memory injection on its object creation methods.
+ */
 template<typename T>
 class SharedPtr : public virtual MemoryDependent {
  public:

@@ -30,17 +30,19 @@ ReferenceCounter::ReferenceCounter(Deleter *deleter) {
   SetDeleter(deleter);
 }
 
-ReferenceCounter::ReferenceCounter() : deleter_(nullptr), count_(0) {
-
-}
+ReferenceCounter::ReferenceCounter() : deleter_(nullptr), count_(0) { }
 
 void ReferenceCounter::AddUse() {
+  // If count is 0, there should be no object.
+  assert(count_ > 0);
+  // If there is no deleter, there is nothing to reference count.
+  assert(deleter_);
+
   ++count_;
 }
 
 void ReferenceCounter::Release() {
-  if(count_ == 0)
-    return;
+  assert(count_ > 0);
 
   --count_;
   if(count_ == 0) {
@@ -56,11 +58,12 @@ void ReferenceCounter::Dispose() {
   deleter_->Delete();
   deleter_ = nullptr;
 }
+
 void ReferenceCounter::SetDeleter(Deleter *deleter) {
   Dispose();
 
   deleter_ = deleter;
-  AddUse();
+  count_ = 1;
 }
 
 }

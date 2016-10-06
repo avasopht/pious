@@ -30,9 +30,13 @@ namespace emcee {
 
 class Memory;
 
+/*! \brief Interface for a class that accepts a Memory pointer.
+ *
+ * Subclass as pure virtual.
+ */
 class MemorySetter {
  public:
-  virtual ~MemorySetter() = 0;
+  virtual ~MemorySetter() {}
   virtual void SetMemory(Memory *ptr) = 0;
 
   /* Injects memory into object if object derives from MemorySetter. */
