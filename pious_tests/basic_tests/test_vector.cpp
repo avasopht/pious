@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+#include <algorithm>
 #include <gtest/gtest.h>
 #include <emcee/vector.hpp>
 #include <emcee/memory.hpp>
@@ -35,8 +37,15 @@ TEST(Vector, CopyAndAssignment) {
   ASSERT_EQ(1337, second[0]);
 
   first[0] = 0;
-  ASSERT_EQ(first[0], 0);
-  ASSERT_EQ(second[0], 1337);
+  ASSERT_EQ(0, first[0]);
+  ASSERT_EQ(1337, second[0]);
+
+
+  std::swap(first, second);
+
+
+  ASSERT_EQ(1337, first[0]);
+  ASSERT_EQ(0, second[0]);
 
   emcee::Vector<int> with_default(mem, 3, 11);
   ASSERT_EQ(3, with_default.size());

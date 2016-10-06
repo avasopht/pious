@@ -21,39 +21,10 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_STRING_HPP
-#define PIOUS_STRING_HPP
-
-#include "emcee/memory_dependent.hpp"
-#include "emcee/shared_ptr.hpp"
+#include "emcee/string.hpp"
 
 namespace emcee {
 
-class Memory;
 
-class String : public virtual MemoryDependent {
- public:
-  String(Memory &memory);
-  String(Memory &memory, const char *str);
-  String(const String &s);
-
-  const char *c_str() const;
-  size_t size() const;
-
-  String Substring(size_t begin_idx) const;
-  String Substring(size_t begin_idx, size_t end_idx) const;
-
-  const char& operator[](size_t idx) const;
-  String& operator=(const String &rhs);
-  String operator+(const String &rhs) const;
-
- private:
-  Memory *memory_;
-  SharedPtr<char[]> string_;
-  size_t size_;
-
-};
 
 }
-
-#endif /* PIOUS_STRING_HPP */

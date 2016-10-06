@@ -28,6 +28,8 @@
 #include "emcee/new.hpp"
 #include "emcee/deleter.hpp"
 
+#include <algorithm>
+
 #include <cassert>
 
 namespace emcee {
