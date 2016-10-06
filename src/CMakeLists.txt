@@ -23,12 +23,7 @@ set(EMCEE_INCLUDE_FILES
         util.hpp
         vector.hpp)
 
-set(PIOUS_INCLUDE_FILES
-        connection.hpp
-        device.hpp
-        device_spec.hpp
-        id.hpp
-        port.hpp)
+set(PIOUS_INCLUDE_FILES "")
 
 Prepend(EMCEE_INCLUDE_FILES "${INCLUDE_DIR}/emcee" ${EMCEE_INCLUDE_FILES})
 Prepend(PIOUS_INCLUDE_FILES "${INCLUDE_DIR}/pious" ${PIOUS_INCLUDE_FILES})
@@ -41,5 +36,5 @@ else()
     message( FATAL_ERROR "Boost required.")
 endif()
 
-add_subdirectory(pious)
+# add_subdirectory(pious)
 add_subdirectory(emcee)

@@ -11,7 +11,8 @@ set(SOURCE_FILES
         new_allocation_block.cpp
         reference_counter.cpp
         shared_count.cpp
-        string.cpp)
+        string.cpp
+        util.cpp)
 
 
 add_library(emcee STATIC ${SOURCE_FILES} ${INCLUDE_FILES})

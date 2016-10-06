@@ -54,8 +54,6 @@ class String : public virtual MemoryDependent {
 
   int Compare(const String &rhs) const;
 
-  String& operator=(const String &rhs);
-
   const char& operator[](size_t idx) const;
   String operator+(const String &rhs) const;
 

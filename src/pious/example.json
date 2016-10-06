@@ -12,26 +12,17 @@
     }
   },
   {
-    "id": [
-      "avasopht.rf",
-      1001
-    ],
+    "id": [ "avasopht.rf", 1001 ],
     "inputs": [
       {
         "type": "audio",
-        "id": [
-          "in",
-          100
-        ]
+        "id": [ "in", 100 ]
       }
     ],
     "outputs": [
       {
         "type": "audio",
-        "id": [
-          "out",
-          201
-        ]
+        "id": [ "out", 201 ]
       }
     ]
   },

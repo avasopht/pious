@@ -4,7 +4,6 @@ set(INCLUDE_FILES
 
 
 set(SOURCE_FILES
-        id.cpp
-        util.cpp )
+        )
 
-add_library(pious STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
+add_library(pious STATIC ${INCLUDE_FILES})
