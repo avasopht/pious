@@ -33,6 +33,8 @@ class Memory;
 
 class String : public virtual MemoryDependent {
  public:
+  // Note: default copy and assignment operators are fine.
+
   String(Memory &memory);
   String(Memory &memory, const char *str);
   String(Memory &memory, const char *str, size_t begin);
@@ -43,9 +45,16 @@ class String : public virtual MemoryDependent {
 
   const char *c_str() const;
   size_t length() const;
+  Memory* memory() const { return memory_; }
 
   String Substring(size_t begin_idx) const;
   String Substring(size_t begin_idx, size_t end_idx) const;
+
+  String ToLower() const;
+
+  int Compare(const String &rhs) const;
+
+  String& operator=(const String &rhs);
 
   const char& operator[](size_t idx) const;
   String operator+(const String &rhs) const;
@@ -57,6 +66,30 @@ class String : public virtual MemoryDependent {
 
   void ConstructString(const char *cstr, size_t begin, size_t end);
 };
+
+bool operator==(const String &lhs, const String &rhs);
+bool operator==(const char *lhs, const String &rhs);
+bool operator==(const String &lhs, const char *rhs);
+
+bool operator!=(const String &lhs, const String &rhs);
+bool operator!=(const char *lhs, const String &rhs);
+bool operator!=(const String &lhs, const char *rhs);
+
+bool operator<(const String &lhs, const String &rhs);
+bool operator<(const char *lhs, const String &rhs);
+bool operator<(const String &lhs, const char *rhs);
+
+bool operator<=(const String &lhs, const String &rhs);
+bool operator<=(const char *lhs, const String &rhs);
+bool operator<=(const String &lhs, const char *rhs);
+
+bool operator>(const String &lhs, const String &rhs);
+bool operator>(const char *lhs, const String &rhs);
+bool operator>(const String &lhs, const char *rhs);
+
+bool operator>=(const String &lhs, const String &rhs);
+bool operator>=(const char *lhs, const String &rhs);
+bool operator>=(const String &lhs, const char *rhs);
 
 }
 

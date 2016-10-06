@@ -58,4 +58,13 @@ TEST(String, BasicTest) {
   ASSERT_EQ('c', bleach_2[4]);
   ASSERT_EQ('h', bleach_2[5]);
 
+  ble = ble.ToLower();
+  ASSERT_EQ('b', ble[0]);
+
+  ASSERT_EQ(0, bleach.Compare(bleach_2));
+  ASSERT_TRUE(ach < ble);
+  ASSERT_TRUE(ble > ach);
+  ASSERT_TRUE(ble < "da");
+  ASSERT_TRUE(ble >= emcee::String(ble));
+
 }

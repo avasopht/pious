@@ -124,5 +124,104 @@ String::String(const String &first, const String &second)
   }
   string_[size_] = '\0';
 }
+int String::Compare(const String &rhs) const {
+  const String &first = *this;
+  const String &second = rhs;
+
+
+  for(size_t i = 0; ; ++i) {
+    bool exceeded_a_string = first.length() <= i || second.length() <= i;
+    if(exceeded_a_string) {
+      ptrdiff_t length_diff = first.length() - second.length();
+      return static_cast<int>(length_diff);
+    }
+
+    int diff = first[i] - second[i];
+    if(diff != 0)
+      return diff;
+  }
+
+  return 0;
+}
+String String::ToLower() const {
+  String lower(*this);
+  for(size_t i = 0; i < lower.size_; ++i) {
+    lower.string_[i] = static_cast<char>(tolower(lower.string_[i]));
+  }
+
+  return lower;
+}
+
+bool operator==(const String &lhs, const String &rhs) {
+  return !(lhs != rhs);
+}
+
+bool operator==(const char *lhs, const String &rhs) {
+  return !(lhs != rhs);
+}
+
+bool operator==(const String &lhs, const char *rhs) {
+  return !(lhs != rhs);
+}
+
+bool operator!=(const String &lhs, const String &rhs) {
+  return lhs.Compare(rhs) != 0;
+}
+
+bool operator!=(const char *lhs, const String &rhs) {
+  return String(*rhs.memory(), lhs).Compare(rhs) != 0;
+}
+
+bool operator!=(const String &lhs, const char *rhs) {
+  return lhs.Compare(String(*lhs.memory(), rhs)) != 0;
+}
+
+bool operator<(const String &lhs, const String &rhs) {
+  return lhs.Compare(rhs) < 0;
+}
+
+bool operator<(const char *lhs, const String &rhs) {
+  return String(*rhs.memory(), lhs).Compare(rhs) < 0;
+}
+
+bool operator<(const String &lhs, const char *rhs) {
+  return lhs.Compare(String(*lhs.memory(), rhs)) < 0;
+}
+
+bool operator<=(const String &lhs, const String &rhs) {
+  return !(lhs > rhs);
+}
+
+bool operator<=(const char *lhs, const String &rhs) {
+  return !(lhs > rhs);
+}
+
+bool operator<=(const String &lhs, const char *rhs) {
+  return !(lhs > rhs);
+}
+
+bool operator>(const String &lhs, const String &rhs) {
+  return lhs.Compare(rhs) > 0;
+}
+
+bool operator>(const char *lhs, const String &rhs) {
+  return String(*rhs.memory(), lhs).Compare(rhs) > 0;
+}
+
+bool operator>(const String &lhs, const char *rhs) {
+  return lhs.Compare(String(*lhs.memory(), rhs)) > 0;
+}
+
+bool operator>=(const String &lhs, const String &rhs) {
+  return !(lhs < rhs);
+}
+
+bool operator>=(const char *lhs, const String &rhs) {
+  return !(lhs < rhs);
+}
+
+bool operator>=(const String &lhs, const char *rhs) {
+  return !(lhs < rhs);
+}
 
 }
