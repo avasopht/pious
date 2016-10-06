@@ -29,7 +29,7 @@ class CountCalls {
  public:
   CountCalls() { ++constructor_calls(); }
   CountCalls(const CountCalls &) { ++copy_calls(); }
-  CountCalls &operator=(const CountCalls &) { ++assignment_calls(); }
+  CountCalls &operator=(const CountCalls &) { ++assignment_calls(); return *this; }
   ~CountCalls() { ++destructor_calls(); }
 
   static int &constructor_calls() {
