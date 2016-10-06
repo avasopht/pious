@@ -40,9 +40,24 @@ namespace emcee {
 
 class Memory;
 
+/*! \brief  The Vector class provides a growable array of objects.
+ *
+ *  Vector will inject a Memory reference to classes implementing
+ *  `MemoryDependent` or `MemorySetter`.
+ *
+ *  When a Vector is resized, pointers to its old members are invalid.
+ *
+ */
 template<typename T>
-class Vector {
+class Vector : public virtual MemoryDependent {
  public:
+
+  /*! \brief  Constructs a vector with n elements set to a default value.
+   *
+   * \param memory reference to Memory instance
+   * \param n number of elements
+   * \param val default value for elements
+   */
   Vector(Memory &memory, size_t n, const T &val = T())
       : memory_(&memory), array_(nullptr), capacity_(0), size_(n) {
     assert(&memory);
@@ -54,6 +69,7 @@ class Vector {
     }
   }
 
+  /*! \brief Constructs an empty Vector of size 0. */
   Vector(Memory &memory) :
       memory_(&memory),
       array_(nullptr),
@@ -61,22 +77,49 @@ class Vector {
       capacity_(0)
   { }
 
+  /*! \brief  Copy constructs a Vector. This constructor fulfils the
+   * `MemoryDependent` contract.
+   *
+   * \param memory
+   * \param rhs
+   * \sa emcee::MemoryDependent
+   */
+  Vector(Memory &memory, const Vector &rhs)
+      : memory_(&memory),
+        array_(nullptr),
+        capacity_(0),
+        size_(0) {
+    InitWithCopy(rhs);
+  }
+
+  /*! \brief  Copy constructs a vector.
+   *
+   * This vector contains a copy of the elements, so if the elements of `rhs`
+   * are later changed, elements in this instance are not altered.
+   *
+   * \param rhs
+   * \return
+   */
   Vector(const Vector &rhs) :
-      memory_(rhs.memory_),
+      memory_(nullptr),
       array_(nullptr),
       capacity_(0),
       size_(0) {
 
-    assert(memory_);
+    InitWithCopy(rhs);
+  }
 
-    capacity_ = CalcReserveSize(rhs.size());
-    array_ = AllocateArray(capacity_);
-    size_ = rhs.size_;
-    for(size_t i = 0; i < rhs.size(); ++i) {
-      (*this)[i] = rhs[i];
+  /*! \brief  Calls destructor on array elements. */
+  ~Vector() {
+    DestroyArray();
+    if(memory_ && array_) {
+      memory_->Free(array_);
+      array_ = nullptr;
+      memory_ = nullptr;
     }
   }
 
+  /*! \brief Calculates ideal minimum capacity to hold `min_size` elements. */
   static size_t CalcReserveSize(size_t min_size) {
     size_t size = 1;
     while(size < min_size)
@@ -85,19 +128,45 @@ class Vector {
     return size;
   }
 
-  ~Vector();
+  /*! \brief Adds new element to the end of the Vector.
+   *
+   *    Vector may be resized if the capacity has been reached.
+   */
+  void PushBack(const T &t) {
+    if(size() == capacity()) {
+      Reserve(CalcReserveSize(size()+1));
+    }
 
-  void PushBack(const T &t);
+    memset(&array_[size_], 0, sizeof(T));
+    InitAt(size_, t);
+    ++size_;
+  }
 
-  void EraseAt(size_t idx);
+  /*! \brief  Erases element at the given index.
+   *
+   *    Calling this may result in a resize.
+   *
+   * \param index
+   */
+  void EraseAt(size_t index) {
+    assert(index < size_);
+    for (size_t i = index; i < size_ - 1; ++i) {
+      array_[i] = array_[i + 1];
+    }
 
-  void Reserve(size_t n) {
-    if(n <= capacity())
+    array_[size_ - 1].~T();
+    memset(&array_[size() - 1], 0, sizeof(T));
+    --size_;
+  }
+
+  /*! \brief Requests a change in capacity. */
+  void Reserve(size_t new_capacity) {
+    if(new_capacity <= capacity())
       return;
 
     size_t old_capacity = capacity_;
     T *old_array = array_;
-    capacity_ = CalcReserveSize(n);
+    capacity_ = CalcReserveSize(new_capacity);
     array_ = AllocateArray(capacity_);
     for(size_t i = 0; i < size(); ++i) {
       InitAt(i, old_array[i]);
@@ -106,6 +175,16 @@ class Vector {
     memory_->Free(old_array);
   }
 
+  /*! \brief  Assigns content of this Vector to the elements in `rhs`.
+   *
+   *    Elements from `rhs` are copied into this Vector, while the capacity
+   *    is adjusted if necessary.
+   *
+   *    Existing elements of this Vector will be destroyed.
+   *
+   * \param rhs
+   * \return
+   */
   Vector& operator=(const Vector& rhs) {
     if(this == &rhs)
       return *this;
@@ -132,7 +211,9 @@ class Vector {
   const T &operator[](size_t idx) const { return array_[idx]; };
   T &operator[](size_t idx) { return array_[idx]; }
 
+  /*! Returns number of elements in this Vector. */
   size_t size() const { return size_; }
+  /*! Returns capacity of the Vector. */
   size_t capacity() const { return capacity_; }
  private:
   Memory *memory_;
@@ -140,11 +221,33 @@ class Vector {
   size_t capacity_;
   size_t size_;
 
+  /*
+   * Initializes this Vector by copying elements from rhs.
+   *
+   * Only call in constructor as it does not destroy existing elements.
+   */
+  void InitWithCopy(const Vector &rhs) {
+    memory_ = rhs.memory_;
+    capacity_ = CalcReserveSize(rhs.size());
+    array_ = AllocateArray(capacity_);
+    size_ = rhs.size_;
+    for(size_t i = 0; i < rhs.size(); ++i) {
+      (*this)[i] = rhs[i];
+    }
+  }
+
+  /*
+   * Initializes element at given index with provided value.
+   */
   void InitAt(size_t idx, const T &new_val) {
     boost::has_trivial_default_constructor<T> type;
     InitAt(type, idx, new_val);
   }
 
+  /*
+   * Initializes non-trivial element at given index with provided value,
+   * injecting Memory reference into compatible classes.
+   */
   void InitAt(boost::false_type, size_t idx, const T &new_val) {
     // Has non-trivial constructor.
     if(boost::is_base_of<MemoryDependent, T>::value) {
@@ -155,27 +258,42 @@ class Vector {
     MemorySetter::Inject(array_[idx], memory_);
   }
 
+  /*
+   * Initializes trivial element at given index with provided value.
+   */
   void InitAt(boost::true_type, size_t idx, const T &new_val) {
     // Has trivial constructor.
     array_[idx] = T(new_val);
   }
 
+  /*
+   * Calls destructor for elements of this Vector.
+   */
   void DestroyArray() {
     DestroyArray(array_, size_);
   }
 
-  void DestroyArray(T *p, size_t size) {
+  /*
+   * Calls destructor for elements in the array.
+   */
+  static void DestroyArray(T *p, size_t num_elements) {
     boost::has_trivial_destructor<T> has_trivial_destructor;
-    DestroyArray(array_, size_, has_trivial_destructor);
+    DestroyArray(p, num_elements, has_trivial_destructor);
   }
 
-  void DestroyArray(T *p, size_t size, boost::true_type) {
+  /*
+   * Calls destructor for non-trivial elements in the array.
+   */
+  static void DestroyArray(T *p, size_t size, boost::true_type) {
     for(size_t i = 0; i < size; ++i) {
-      array_[i].~T();
+      p[i].~T();
     }
   }
 
-  void DestroyArray(T*, size_t, boost::false_type) {}
+  /*
+   * Do nothing for trivial arrays that don't need destructor called.
+   */
+  static void DestroyArray(T*, size_t, boost::false_type) {}
 
   T* AllocateArray(size_t size) {
     assert(memory_);
@@ -189,40 +307,6 @@ class Vector {
     // Has trivial destructor (do nothing).
   }
 };
-
-
-template<typename T>
-void Vector<T>::PushBack(const T &t) {
-  if(size() == capacity()) {
-    Reserve(CalcReserveSize(size()+1));
-  }
-
-  memset(&array_[size_], 0, sizeof(T));
-  InitAt(size_, t);
-  ++size_;
-}
-
-template<typename T>
-Vector<T>::~Vector() {
-  DestroyArray();
-  if(memory_ && array_) {
-    memory_->Free(array_);
-    array_ = nullptr;
-    memory_ = nullptr;
-  }
-}
-
-template<typename T>
-void Vector<T>::EraseAt(size_t idx) {
-  assert(idx < size_);
-  for (size_t i = idx; i < size_ - 1; ++i) {
-    array_[i] = array_[i + 1];
-  }
-
-  array_[size_ - 1].~T();
-  memset(&array_[size() - 1], 0, sizeof(T));
-  --size_;
-}
 
 }
 
