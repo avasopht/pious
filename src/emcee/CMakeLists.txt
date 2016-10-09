@@ -1,5 +1,7 @@
 project(emcee)
 
+include_directories(${INCLUDE_DIR}/emcee)
+
 set(INCLUDE_FILES
         ${EMCEE_INCLUDE_FILES}
         ${PIOUS_INCLUDE_FILES})

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 04/10/16.
+ * Created by The Pious Authors on 09/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,32 +21,18 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SHARED_COUNT_HPP
-#define PIOUS_SHARED_COUNT_HPP
+#ifndef PIOUS_PROCESS_HPP
+#define PIOUS_PROCESS_HPP
 
-#include "reference_counter.hpp"
-namespace emcee {
+namespace pious {
 
-/*! \brief  Implements a reference counter to be shared by value.
- */
-class SharedCount {
+class Process {
  public:
-  SharedCount();
-  SharedCount(const SharedCount &other);
-  SharedCount(ReferenceCounter *counter);
+  virtual ~Process() {}
 
-  ~SharedCount();
-
-  SharedCount& operator=(const SharedCount &rhs);
-  size_t use_count() const;
-
- private:
-  ReferenceCounter *counter_;
-  void ImportCounter(const SharedCount &other);
-  void Release();
-  void AddUse();
+  virtual void Do();
 };
 
 }
 
-#endif /* PIOUS_SHARED_COUNT_HPP */
+#endif /* PIOUS_PROCESS_HPP */

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 04/10/16.
+ * Created by The Pious Authors on 09/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,32 +21,47 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SHARED_COUNT_HPP
-#define PIOUS_SHARED_COUNT_HPP
+#include "port_spec.hpp"
 
-#include "reference_counter.hpp"
-namespace emcee {
+#include <api/pious_device.h>
 
-/*! \brief  Implements a reference counter to be shared by value.
- */
-class SharedCount {
- public:
-  SharedCount();
-  SharedCount(const SharedCount &other);
-  SharedCount(ReferenceCounter *counter);
+namespace pious {
 
-  ~SharedCount();
+pious::PortSpec::PortSpec()
+  : id_(0), io_type_(Pious_IoTypeNone), name_() { }
 
-  SharedCount& operator=(const SharedCount &rhs);
-  size_t use_count() const;
+pious::PortSpec::PortSpec(emcee::Memory &memory)
+  : id_(0), io_type_(Pious_IoTypeNone), name_(memory) { }
 
- private:
-  ReferenceCounter *counter_;
-  void ImportCounter(const SharedCount &other);
-  void Release();
-  void AddUse();
-};
+pious::PortSpec::PortSpec(emcee::Memory&, const PortSpec &other)
+  : id_(0), io_type_(other.io_type_), name_(other.name_) { }
 
+unsigned int pious::PortSpec::id() const {
+  return id_;
 }
 
-#endif /* PIOUS_SHARED_COUNT_HPP */
+void pious::PortSpec::SetId(unsigned int id_) {
+  PortSpec::id_ = id_;
+}
+
+Pious_IoType pious::PortSpec::io_type() const {
+  return io_type_;
+}
+
+void pious::PortSpec::SetIoType(Pious_IoType io_type_) {
+  PortSpec::io_type_ = io_type_;
+}
+
+const emcee::String &pious::PortSpec::name() const {
+  return name_;
+}
+
+void pious::PortSpec::SetName(const emcee::String &name_) {
+  PortSpec::name_ = name_;
+}
+
+const char *PortSpec::name_cstr() const {
+  return name_.c_str();
+}
+
+}

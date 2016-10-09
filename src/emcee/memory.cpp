@@ -22,7 +22,7 @@
  */
 
 #include <cstdlib>
-#include "emcee/memory.hpp"
+#include <emcee/memory.hpp>
 
 
 void *emcee::DefaultMemory::Allocate(size_t size) {

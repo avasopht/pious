@@ -21,8 +21,8 @@
  * SOFTWARE.
  */
 
-#include "emcee/reference_counter.hpp"
-#include "emcee/deleter.hpp"
+#include "reference_counter.hpp"
+#include "deleter.hpp"
 
 namespace emcee {
 

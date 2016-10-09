@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 04/10/16.
+ * Created by The Pious Authors on 07/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,32 +21,19 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SHARED_COUNT_HPP
-#define PIOUS_SHARED_COUNT_HPP
+#ifndef PIOUS_CONNECTION_HPP
+#define PIOUS_CONNECTION_HPP
 
-#include "reference_counter.hpp"
-namespace emcee {
+#include <cstdint>
 
-/*! \brief  Implements a reference counter to be shared by value.
- */
-class SharedCount {
- public:
-  SharedCount();
-  SharedCount(const SharedCount &other);
-  SharedCount(ReferenceCounter *counter);
+namespace pious {
 
-  ~SharedCount();
-
-  SharedCount& operator=(const SharedCount &rhs);
-  size_t use_count() const;
-
- private:
-  ReferenceCounter *counter_;
-  void ImportCounter(const SharedCount &other);
-  void Release();
-  void AddUse();
+/*! Stores details for a connection between ports in a device specification. */
+struct ConnectionSpec {
+  PortSpec *source;
+  PortSpec *dest;
 };
 
 }
 
-#endif /* PIOUS_SHARED_COUNT_HPP */
+#endif /* PIOUS_CONNECTION_HPP */

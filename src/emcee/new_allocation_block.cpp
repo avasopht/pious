@@ -21,11 +21,7 @@
  * SOFTWARE.
  */
 
-#include "emcee/new_allocation_block.hpp"
-#include "emcee/util.hpp"
-#include "emcee/memory.hpp"
-
-#include <new>
+#include "new_allocation_block.hpp"
 
 namespace emcee {
 

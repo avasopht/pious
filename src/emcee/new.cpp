@@ -21,8 +21,8 @@
  * SOFTWARE.
  */
 
-#include "emcee/new.hpp"
-#include "emcee/memory.hpp"
+#include "new.hpp"
+#include "memory.hpp"
 
 namespace emcee {
 

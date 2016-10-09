@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 04/10/16.
+ * Created by The Pious Authors on 07/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,32 +21,51 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SHARED_COUNT_HPP
-#define PIOUS_SHARED_COUNT_HPP
+#ifndef PIOUS_SPEC_REFERENCE_HPP
+#define PIOUS_SPEC_REFERENCE_HPP
 
-#include "reference_counter.hpp"
+#include <emcee/string.hpp>
+#include <emcee/memory_dependent.hpp>
+
 namespace emcee {
+class Memory;
+}
 
-/*! \brief  Implements a reference counter to be shared by value.
- */
-class SharedCount {
+namespace pious {
+
+class ReferenceSpec : public virtual emcee::MemoryDependent {
  public:
-  SharedCount();
-  SharedCount(const SharedCount &other);
-  SharedCount(ReferenceCounter *counter);
+  ReferenceSpec();
+  ReferenceSpec(emcee::Memory &memory);
+  ReferenceSpec(emcee::Memory &memory, const ReferenceSpec &other);
 
-  ~SharedCount();
+  void SetId(uint32_t id);
+  uint32_t id() const;
 
-  SharedCount& operator=(const SharedCount &rhs);
-  size_t use_count() const;
+  void SetImportDeviceId(uint32_t id);
+  uint32_t import_device_id() const;
+
+  void SetLabel(const char *label);
+  void SetLabel(const emcee::String &label);
+  const char* label_cstr() const;
+  emcee::String label() const;
+
+  void SetPolyDevice(bool b);
+  bool is_poly_device() const;
+
+  emcee::Memory* memory();
 
  private:
-  ReferenceCounter *counter_;
-  void ImportCounter(const SharedCount &other);
-  void Release();
-  void AddUse();
+  /*! Unique id of reference */
+  uint32_t id_;
+  /*! Id of DeviceSpec this reference refers to. */
+  uint32_t import_device_id_;
+  /*! Label for this reference. */
+  emcee::String label_;
+  /*! Whether device is instantiated by polyphonic voice banks. */
+  bool is_poly_device_;
 };
 
 }
 
-#endif /* PIOUS_SHARED_COUNT_HPP */
+#endif /* PIOUS_SPEC_REFERENCE_HPP */

@@ -24,8 +24,8 @@
 #ifndef PIOUS_STRING_HPP
 #define PIOUS_STRING_HPP
 
-#include "emcee/memory_dependent.hpp"
-#include "emcee/shared_ptr.hpp"
+#include "memory_dependent.hpp"
+#include "shared_ptr.hpp"
 
 namespace emcee {
 
@@ -35,7 +35,9 @@ class String : public virtual MemoryDependent {
  public:
   // Note: default copy and assignment operators are fine.
 
+  String();
   String(Memory &memory);
+  String(Memory &memory, const String &other);
   String(Memory &memory, const char *str);
   String(Memory &memory, const char *str, size_t begin);
   String(Memory &memory, const char *str, size_t begin, size_t end);

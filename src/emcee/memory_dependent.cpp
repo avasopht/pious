@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-#include "emcee/memory_dependent.hpp"
+#include "memory_dependent.hpp"
 
 namespace emcee {
 

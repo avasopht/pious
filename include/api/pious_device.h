@@ -125,14 +125,14 @@ struct Pious_UnitPlugin {
  *
  *  Future types may include signal and hold signal arrays.
  */
-enum Pious_UnitIoType {
-  Pious_UnitIoTypeNone,
-  Pious_UnitIoTypeSignalIn,
-  Pious_UnitIoTypeSignalOut,
-  Pious_UnitIoTypeHoldSignalIn,
-  Pious_UnitIoTypeHoldSignalOut,
-  Pious_UnitIoTypeDataIn,
-  Pious_UnitIoTypeDataOut
+enum Pious_IoType {
+  Pious_IoTypeNone,
+  Pious_IoTypeSignalIn,
+  Pious_IoTypeSignalOut,
+  Pious_IoTypeHoldSignalIn,
+  Pious_IoTypeHoldSignalOut,
+  Pious_IoTypeDataIn,
+  Pious_IoTypeDataOut
 };
 
 
@@ -155,36 +155,36 @@ typedef void (*TPious_SetPluginDelay)(struct Pious_Scope *scope, float plugin_de
 /*!
  *  \brief  Reads signal for given signal handle into dest. Returns number of samples read.
  */
-typedef uint32_t (*TPious_ReadSignal)(struct Pious_Scope *scope, Pious_Handle signal_handle,
+typedef uint32_t (*TPious_ReadSignal)(struct Pious_Scope *scope, struct Pious_Handle port_handle,
                                       float *dest, uint32_t max_samples);
 
 /*! \brief  Reads signal hold events, returning number of events read. */
-typedef uint32_t (*TPious_ReadSignalEvents)(struct Pious_Scope *scope, Pious_Handle handle,
-                                            Pious_HoldSignalEvent *dest, uint32_t max_event_count);
+typedef uint32_t (*TPious_ReadSignalEvents)(struct Pious_Scope *scope, struct Pious_Handle port_handle,
+                                            struct Pious_HoldSignalEvent *dest, uint32_t max_event_count);
 
 /*! \brief Writes signal hold events. */
-typedef bool (*TPious_WriteSignalEvents)(struct Pious_Scope *scope, Pious_Handle handle,
-                                         const Pious_HoldSignalEvent *events, uint32_t event_count);
+typedef bool (*TPious_WriteSignalEvents)(struct Pious_Scope *scope, struct Pious_Handle port_handle,
+                                         const struct Pious_HoldSignalEvent *events, uint32_t event_count);
 
 /*! \brief Reads data packets. */
-typedef uint32_t (*TPious_ReadPackets)(struct Pious_Scope *scope, Pious_Handle handle,
-                                           Pious_DataPacket *dest, uint32_t max_packet_count);
+typedef uint32_t (*TPious_ReadPackets)(struct Pious_Scope *scope, struct Pious_Handle port_handle,
+                                           struct Pious_DataPacket *dest, uint32_t max_packet_count);
 
 /*! \brief Writes data packets. */
-typedef bool (*TPious_WritePackets)(struct Pious_Scope *scope, Pious_Handle handle,
-                                            const Pious_DataPacket *packets, uint32_t packet_count);
+typedef bool (*TPious_WritePackets)(struct Pious_Scope *scope, struct Pious_Handle port_handle,
+                                            const struct Pious_DataPacket *packets, uint32_t packet_count);
 
 /*!
  *  \brief  Writes signal to buffer indicated by handle.
  */
-typedef bool (*TPious_WriteSignal)(struct Pious_Scope *scope, Pious_Handle signal_handle,
+typedef bool (*TPious_WriteSignal)(struct Pious_Scope *scope, Pious_Handle port_handle,
                                    const float *source, uint32_t sample_count);
 
 /*! \brief  Returns handle given by object uri */
 typedef struct Pious_Handle (*TPious_GetHandle)(struct Pious_Scope *scope, const char *object_uri);
 
 /*! \brief  Returns whether handle is valid. */
-typedef bool (*TPious_IsValidHandle)(struct Pious_Scope *scope, Pious_Handle handle);
+typedef bool (*TPious_IsValidHandle)(struct Pious_Scope *scope, struct Pious_Handle handle);
 
 /*!
  *  \brief  Provides a scoped API for units and modules to call during initialization and render.

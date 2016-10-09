@@ -24,10 +24,10 @@
 #ifndef PIOUS_SHARED_PTR_HPP
 #define PIOUS_SHARED_PTR_HPP
 
-#include "emcee/memory.hpp"
-#include "emcee/deleter.hpp"
-#include "emcee/reference_counter.hpp"
-#include "emcee/shared_count.hpp"
+#include "memory.hpp"
+#include "deleter.hpp"
+#include "reference_counter.hpp"
+#include "shared_count.hpp"
 #include "unique_ptr.hpp"
 
 namespace emcee {
@@ -41,6 +41,7 @@ class SharedPtr : public virtual MemoryDependent {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
 
+  SharedPtr() : memory_(nullptr), ptr_(nullptr) {}
 
   SharedPtr(Memory &memory) : memory_(&memory), ptr_(nullptr) {}
 
@@ -156,6 +157,8 @@ template<typename T>
 class SharedPtr <T[]> : public virtual MemoryDependent {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
+
+  SharedPtr() : memory_(nullptr), ptr_(nullptr) {}
 
   SharedPtr(Memory &mem) : memory_(&mem), ptr_(nullptr) {}
 

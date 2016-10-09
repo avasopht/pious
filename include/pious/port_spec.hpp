@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 04/10/16.
+ * Created by The Pious Authors on 07/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,32 +21,40 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SHARED_COUNT_HPP
-#define PIOUS_SHARED_COUNT_HPP
+#ifndef PIOUS_SPEC_PORT_HPP
+#define PIOUS_SPEC_PORT_HPP
 
-#include "reference_counter.hpp"
+#include <emcee/string.hpp>
+
+#include <api/pious_device.h>
+
 namespace emcee {
+class Memory;
+}
 
-/*! \brief  Implements a reference counter to be shared by value.
- */
-class SharedCount {
+namespace pious {
+
+/*! Stores details of a port for a Device Specification. */
+class PortSpec {
  public:
-  SharedCount();
-  SharedCount(const SharedCount &other);
-  SharedCount(ReferenceCounter *counter);
+  PortSpec();
+  PortSpec(emcee::Memory &memory);
+  PortSpec(emcee::Memory &memory, const PortSpec &other);
 
-  ~SharedCount();
-
-  SharedCount& operator=(const SharedCount &rhs);
-  size_t use_count() const;
+  uint32_t id() const;
+  void SetId(uint32_t id_);
+  Pious_IoType io_type() const;
+  void SetIoType(Pious_IoType io_type_);
+  const emcee::String &name() const;
+  const char* name_cstr() const;
+  void SetName(const emcee::String &name_);
 
  private:
-  ReferenceCounter *counter_;
-  void ImportCounter(const SharedCount &other);
-  void Release();
-  void AddUse();
+  uint32_t id_;
+  Pious_IoType io_type_;
+  emcee::String name_;
 };
 
 }
 
-#endif /* PIOUS_SHARED_COUNT_HPP */
+#endif /* PIOUS_SPEC_PORT_HPP */

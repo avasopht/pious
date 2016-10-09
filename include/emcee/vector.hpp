@@ -24,8 +24,8 @@
 #ifndef PIOUS_VECTOR_H
 #define PIOUS_VECTOR_H
 
-#include "emcee/memory.hpp"
-#include "emcee/memory_setter.hpp"
+#include "memory.hpp"
+#include "memory_setter.hpp"
 #include "shared_ptr.hpp"
 
 #include <boost/type_traits/has_trivial_constructor.hpp>
@@ -250,12 +250,23 @@ class Vector : public virtual MemoryDependent {
    */
   void InitAt(boost::false_type, size_t idx, const T &new_val) {
     // Has non-trivial constructor.
-    if(boost::is_base_of<MemoryDependent, T>::value) {
-      new (&array_[idx]) T(*memory_, new_val);
-    } else {
-      new (&array_[idx]) T(new_val);
-    }
+
+    boost::is_base_of<MemoryDependent, T> is_memory_dependent;
+    NonTrivialNew(is_memory_dependent, idx, new_val);
+
     MemorySetter::Inject(array_[idx], memory_);
+  }
+
+  void NonTrivialNew(boost::true_type, size_t idx, const T &new_val) {
+    // Is memory dependent
+
+    new (&array_[idx]) T(*memory_, new_val);
+  }
+
+  void NonTrivialNew(boost::false_type, size_t idx, const T &new_val) {
+    // Is not memory dependent
+
+    new (&array_[idx]) T(new_val);
   }
 
   /*

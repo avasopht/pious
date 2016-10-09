@@ -21,8 +21,8 @@
  * SOFTWARE.
  */
 
-#include <emcee/new.hpp>
-#include "emcee/shared_count.hpp"
+#include "new.hpp"
+#include "shared_count.hpp"
 
 namespace emcee {
 

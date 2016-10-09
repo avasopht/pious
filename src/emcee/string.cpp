@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-#include "emcee/string.hpp"
+#include "string.hpp"
 
 #include <cstring>
 
@@ -151,6 +151,16 @@ String String::ToLower() const {
 
   return lower;
 }
+String::String()
+  : memory_(nullptr),
+    string_(),
+    size_(0)
+{
+
+}
+
+String::String(Memory&, const String &other)
+  : memory_(other.memory_), string_(other.string_), size_(other.size_) { }
 
 bool operator==(const String &lhs, const String &rhs) {
   return !(lhs != rhs);

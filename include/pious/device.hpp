@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 04/10/16.
+ * Created by The Pious Authors on 09/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,32 +21,39 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SHARED_COUNT_HPP
-#define PIOUS_SHARED_COUNT_HPP
+#ifndef PIOUS_DEVICE_HPP
+#define PIOUS_DEVICE_HPP
 
-#include "reference_counter.hpp"
-namespace emcee {
+#include <emcee/vector.hpp>
+#include <emcee/shared_ptr.hpp>
+#include <emcee/memory_dependent.hpp>
 
-/*! \brief  Implements a reference counter to be shared by value.
- */
-class SharedCount {
+#include <cstddef>
+
+namespace pious {
+
+class DeviceSpec;
+class Port;
+class Scope;
+
+class Device : public virtual emcee::MemoryDependent {
  public:
-  SharedCount();
-  SharedCount(const SharedCount &other);
-  SharedCount(ReferenceCounter *counter);
+  Device(emcee::Memory &memory);
+  Device(emcee::Memory &memory, const Device &other);
 
-  ~SharedCount();
+  DeviceSpec* device_spec();
 
-  SharedCount& operator=(const SharedCount &rhs);
-  size_t use_count() const;
+  void Process(Scope *scope);
+
+  Port* PortAt(size_t idx);
+  size_t port_count() const;
+
 
  private:
-  ReferenceCounter *counter_;
-  void ImportCounter(const SharedCount &other);
-  void Release();
-  void AddUse();
+  DeviceSpec *device_spec_;
+  emcee::Vector<emcee::SharedPtr<Port>> ports_;
 };
 
 }
 
-#endif /* PIOUS_SHARED_COUNT_HPP */
+#endif /* PIOUS_DEVICE_HPP */

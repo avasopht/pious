@@ -53,3 +53,20 @@ TEST(Vector, CopyAndAssignment) {
   ASSERT_EQ(11, with_default[1]);
   ASSERT_EQ(11, with_default[2]);
 }
+
+TEST(Vector, Erase) {
+  emcee::DefaultMemory mem;
+  emcee::Vector<int> vec(mem);
+  vec.Reserve(128);
+  for(int i = 0; i < static_cast<int>(vec.size()); ++i) {
+    vec.PushBack(i);
+  }
+
+  for(int i = 0; i < static_cast<int>(vec.size()); i += 2) {
+    vec.EraseAt(i);
+  }
+
+  for(size_t i = 0; i < vec.size(); ++i) {
+    ASSERT_EQ(1, vec[i] % 2) << "all elements should be odd";
+  }
+}

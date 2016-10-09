@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 04/10/16.
+ * Created by The Pious Authors on 09/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,32 +21,27 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SHARED_COUNT_HPP
-#define PIOUS_SHARED_COUNT_HPP
+#ifndef PIOUS_SCOPE_HPP
+#define PIOUS_SCOPE_HPP
 
-#include "reference_counter.hpp"
-namespace emcee {
+namespace pious {
 
-/*! \brief  Implements a reference counter to be shared by value.
- */
-class SharedCount {
+class Scope {
  public:
-  SharedCount();
-  SharedCount(const SharedCount &other);
-  SharedCount(ReferenceCounter *counter);
+  virtual ~Scope() {}
 
-  ~SharedCount();
-
-  SharedCount& operator=(const SharedCount &rhs);
-  size_t use_count() const;
-
- private:
-  ReferenceCounter *counter_;
-  void ImportCounter(const SharedCount &other);
-  void Release();
-  void AddUse();
+  virtual void SetPluginDelay(float delay_in_samples) = 0;
+  virtual uint32_t ReadSignal(Port *port, float *dest, uint32_t max_samples) = 0;
+  virtual bool WriteSignal(Port *port, const float *signal, uint32_t frame_count) = 0;
+  virtual uint32_t ReadSignalEvents(Port *port, Pious_HoldSignalEvent *events, uint32_t max_events) = 0;
+  virtual bool WriteSignalEvents(Port *port, const Pious_HoldSignalEvent *events, uint32_t event_count) = 0;
+  virtual uint32_t ReadPackets(Port *port, Pious_DataPacket *dest, uint32_t max_packet_count) = 0;
+  virtual bool WritePackets(Port *port, const Pious_DataPacket *packets, uint32_t packet_count) = 0;
+  virtual Pious_Handle GetHandle(const char *object_uri) = 0;
+  virtual bool IsValidHandle(const Pious_Handle *handle) = 0;
+  virtual Port* GetPort(const Pious_Handle *handle) = 0;
 };
 
 }
 
-#endif /* PIOUS_SHARED_COUNT_HPP */
+#endif /* PIOUS_SCOPE_HPP */

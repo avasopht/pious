@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-#include "emcee/util.hpp"
+#include "util.hpp"
 #include <cassert>
 
 namespace emcee {
