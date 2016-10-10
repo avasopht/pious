@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 07/10/16.
+ * Created by The Pious Authors on 10/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,111 +22,99 @@
  */
 
 #include "device_spec.hpp"
+
+#include "add_device.hpp"
+#include "add_connection.hpp"
 #include "port_spec.hpp"
 #include "reference_spec.hpp"
 #include "connection_spec.hpp"
 
 namespace pious {
 
-DeviceSpecBuilder::DeviceSpecBuilder(emcee::Memory &memory)
-  : memory_(&memory),
-    devices_(memory),
-    ports_(memory),
-    connections_(memory),
-    name_(memory)
-{
-  plugin_.Init = nullptr;
-  plugin_.Render = nullptr;
+DeviceSpec::DeviceSpec(emcee::Memory &memory)
+  : memory_(&memory), id_(memory), devices_(memory), ports_(memory), connections_(memory) { }
 
+void DeviceSpec::AddPort(Pious_IoType io_type, const char *id, uint32_t iid) {
+  PortSpec port(*memory_);
+  port.SetIoType(io_type);
+  port.SetSid(id);
+  port.SetIid(iid);
+  ports_.PushBack(port);
 }
 
-void DeviceSpecBuilder::SetDeviceName(const char *name) {
-  name_ = emcee::String(*memory_, name);
+void DeviceSpec::AddPort(Pious_IoType io_type, const char *id) {
+  PortSpec port(*memory_);
+  port.SetIoType(io_type);
+  port.SetSid(id);
+  ports_.PushBack(port);
 }
 
-void DeviceSpecBuilder::SetDeviceAt(size_t idx, const ReferenceSpec &ref) {
-  devices_.At(idx) = ref;
+void DeviceSpec::AddPort(Pious_IoType io_type, uint32_t iid) {
+  PortSpec port(*memory_);
+  port.SetIoType(io_type);
+  port.SetIid(iid);
+  ports_.PushBack(port);
 }
 
-size_t DeviceSpecBuilder::device_count() const {
+pious::AddDevice DeviceSpec::AddDevice(const char *id) {
+  ReferenceSpec device(*memory_);
+  device.SetSid(id);
+  devices_.PushBack(device);
+  return pious::AddDevice(&devices_.Back());
+}
+
+pious::AddDevice DeviceSpec::AddDevice(uint32_t iid) {
+  ReferenceSpec device(*memory_);
+  device.SetIid(iid);
+  devices_.PushBack(device);
+  return pious::AddDevice(&devices_.Back());
+}
+
+pious::AddConnection DeviceSpec::AddConnection(const char *sid) {
+  ConnectionSpec connection(*memory_);
+  connection.AddSourceDevice(sid);
+  connections_.PushBack(connection);
+  return pious::AddConnection(&connections_.Back());
+}
+
+pious::AddConnection DeviceSpec::AddConnection(uint32_t iid) {
+  ConnectionSpec connection(*memory_);
+  connection.AddSourceDevice(iid);
+  connections_.PushBack(connection);
+  return pious::AddConnection(&connections_.Back());
+}
+
+size_t DeviceSpec::device_count() const {
   return devices_.size();
 }
-void DeviceSpecBuilder::SetConnectionAt(size_t idx,
-                                        const ConnectionSpec &conn) {
-  connections_.At(idx) = conn;
+
+ReferenceSpec *DeviceSpec::DeviceAt(size_t idx) {
+  if(idx < devices_.size()) {
+    return &devices_.At(idx);
+  }
+
+  return nullptr;
 }
-size_t DeviceSpecBuilder::connection_count() const {
+
+size_t DeviceSpec::connection_count() const {
   return connections_.size();
 }
-void DeviceSpecBuilder::SetPortAt(size_t idx, const PortSpec &spec_port) {
-  ports_.At(idx) = spec_port;
-}
-size_t DeviceSpecBuilder::port_count() const {
-  return ports_.size();
-}
-void DeviceSpecBuilder::SetPlugin(const Pious_UnitPlugin &plugin) {
-  plugin_ = plugin;
-}
-Pious_UnitPlugin DeviceSpecBuilder::plugin() const {
-  return plugin_;
+
+ConnectionSpec *DeviceSpec::ConnectionAt(size_t idx) {
+  if(idx < connections_.size()) {
+    return &connections_.At(idx);
+  }
+
+  return nullptr;
 }
 
-ReferenceSpec *DeviceSpecBuilder::AddDevice() {
-  assert(memory_);
-  ReferenceSpec *reference = emcee::New<ReferenceSpec>(*memory_).Create();
-  return reference;
+void DeviceSpec::SetId(const char *sid, uint32_t iid) {
+  SetId(sid);
+  SetId(iid);
 }
 
-ReferenceSpec *DeviceSpecBuilder::AddDevice(uint32_t id,
-                                            uint32_t import_device_id,
-                                            const emcee::String &label,
-                                            bool is_poly) {
-  ReferenceSpec *reference = emcee::New<ReferenceSpec>(*memory_).Create();
-  reference->SetId(id);
-  reference->SetImportDeviceId(import_device_id);
-  reference->SetLabel(label);
-  reference->SetPolyDevice(is_poly);
-  return reference;
-}
+void DeviceSpec::SetId(const char *sid) { id_.SetSid(sid); }
 
-ReferenceSpec *DeviceSpecBuilder::DeviceAt(size_t idx) {
-  return &devices_.At(idx);
-}
-
-ConnectionSpec *DeviceSpecBuilder::AddConnection() {
-  ConnectionSpec *connection = emcee::New<ConnectionSpec>(*memory_).Create();
-  return connection;
-}
-
-ConnectionSpec *DeviceSpecBuilder::AddConnection(PortSpec *source,
-                                                 PortSpec *dest) {
-  ConnectionSpec *connection = emcee::New<ConnectionSpec>(*memory_).Create();
-  connection->source = source;
-  connection->dest = dest;
-  return connection;
-}
-
-ConnectionSpec *DeviceSpecBuilder::ConnectionAt(size_t idx) {
-  return &connections_.At(idx);
-}
-
-PortSpec *DeviceSpecBuilder::AddPort() {
-  PortSpec *port = emcee::New<PortSpec>(*memory_).Create();
-  return port;
-}
-
-PortSpec *DeviceSpecBuilder::AddPort(uint32_t id,
-                                     Pious_IoType io_type,
-                                     const emcee::String &name) {
-  PortSpec *port = emcee::New<PortSpec>(*memory_).Create();
-  port->SetId(id);
-  port->SetIoType(io_type);
-  port->SetName(name);
-  return port;
-}
-
-PortSpec *DeviceSpecBuilder::PortAt(size_t idx) {
-  return &ports_.At(idx);
-}
+void DeviceSpec::SetId(uint32_t iid) { id_.SetIid(iid); }
 
 }

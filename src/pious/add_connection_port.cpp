@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 09/10/16.
+ * Created by The Pious Authors on 10/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,20 +21,26 @@
  * SOFTWARE.
  */
 
-#include "device.hpp"
+#include "add_connection_port.hpp"
+#include "connection_spec.hpp"
+#include "add_connection_port_dest.hpp"
+
+#include <cassert>
 
 namespace pious {
 
-Device::Device(emcee::Memory &memory)
-  : device_spec_(nullptr), ports_(memory) { }
+AddConnectionPort::AddConnectionPort(ConnectionSpec *connection)
+    : connection_(connection){ }
 
-Device::Device(emcee::Memory&, const Device &other)
-  : device_spec_(other.device_spec_), ports_(other.ports_) { }
+AddConnectionPortDest AddConnectionPort::Dest(const char *sid) {
+  assert(connection_);
+  connection_->AddDestDevice(sid);
+  return AddConnectionPortDest(connection_);
+}
 
-DeviceSpec *Device::device_spec() { return device_spec_; }
-
-Port *Device::PortAt(size_t idx) { return ports_.At(idx).get(); }
-
-size_t Device::port_count() const { return ports_.size(); }
-
+AddConnectionPortDest AddConnectionPort::Dest(uint32_t iid) {
+  assert(connection_);
+  connection_->AddDestDevice(iid);
+  return AddConnectionPortDest(connection_);
+}
 }

@@ -77,21 +77,6 @@ class Vector : public virtual MemoryDependent {
       capacity_(0)
   { }
 
-  /*! \brief  Copy constructs a Vector. This constructor fulfils the
-   * `MemoryDependent` contract.
-   *
-   * \param memory
-   * \param rhs
-   * \sa emcee::MemoryDependent
-   */
-  Vector(Memory &memory, const Vector &rhs)
-      : memory_(&memory),
-        array_(nullptr),
-        capacity_(0),
-        size_(0) {
-    InitWithCopy(rhs);
-  }
-
   /*! \brief  Copy constructs a vector.
    *
    * This vector contains a copy of the elements, so if the elements of `rhs`
@@ -198,6 +183,9 @@ class Vector : public virtual MemoryDependent {
     return *this;
   }
 
+  const T& Back() const { return At(size() - 1); }
+  T& Back() { return At(size() - 1); }
+
   const T &At(size_t idx) const {
     assert(idx < size_);
     return array_[idx];
@@ -227,6 +215,7 @@ class Vector : public virtual MemoryDependent {
    * Only call in constructor as it does not destroy existing elements.
    */
   void InitWithCopy(const Vector &rhs) {
+    assert(rhs.memory_);
     memory_ = rhs.memory_;
     capacity_ = CalcReserveSize(rhs.size());
     array_ = AllocateArray(capacity_);
@@ -251,22 +240,9 @@ class Vector : public virtual MemoryDependent {
   void InitAt(boost::false_type, size_t idx, const T &new_val) {
     // Has non-trivial constructor.
 
-    boost::is_base_of<MemoryDependent, T> is_memory_dependent;
-    NonTrivialNew(is_memory_dependent, idx, new_val);
+    new (&array_[idx]) T(new_val);
 
     MemorySetter::Inject(array_[idx], memory_);
-  }
-
-  void NonTrivialNew(boost::true_type, size_t idx, const T &new_val) {
-    // Is memory dependent
-
-    new (&array_[idx]) T(*memory_, new_val);
-  }
-
-  void NonTrivialNew(boost::false_type, size_t idx, const T &new_val) {
-    // Is not memory dependent
-
-    new (&array_[idx]) T(new_val);
   }
 
   /*

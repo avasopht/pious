@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 09/10/16.
+ * Created by The Pious Authors on 10/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,47 +21,35 @@
  * SOFTWARE.
  */
 
-#include "port_spec.hpp"
+#ifndef PIOUS_ID_HPP
+#define PIOUS_ID_HPP
 
-#include <api/pious_device.h>
+#include <emcee/string.hpp>
+#include <cstdint>
 
 namespace pious {
 
-pious::PortSpec::PortSpec()
-  : id_(0), io_type_(Pious_IoTypeNone), name_() { }
+class Id {
+ public:
+  Id();
+  Id(emcee::Memory &memory);
+  Id(emcee::String sid, uint32_t iid);
+  Id(emcee::String sid);
+  Id(uint32_t iid);
 
-pious::PortSpec::PortSpec(emcee::Memory &memory)
-  : id_(0), io_type_(Pious_IoTypeNone), name_(memory) { }
+  void SetSid(const char *sid);
+  void SetSid(const emcee::String &sid);
+  void SetIid(uint32_t iid);
 
-pious::PortSpec::PortSpec(emcee::Memory&, const PortSpec &other)
-  : id_(0), io_type_(other.io_type_), name_(other.name_) { }
+  const char* sid_cstr() const;
+  emcee::String sid() const;
+  uint32_t iid() const;
 
-unsigned int pious::PortSpec::id() const {
-  return id_;
-}
-
-void pious::PortSpec::SetId(unsigned int id_) {
-  PortSpec::id_ = id_;
-}
-
-Pious_IoType pious::PortSpec::io_type() const {
-  return io_type_;
-}
-
-void pious::PortSpec::SetIoType(Pious_IoType io_type_) {
-  PortSpec::io_type_ = io_type_;
-}
-
-const emcee::String &pious::PortSpec::name() const {
-  return name_;
-}
-
-void pious::PortSpec::SetName(const emcee::String &name_) {
-  PortSpec::name_ = name_;
-}
-
-const char *PortSpec::name_cstr() const {
-  return name_.c_str();
-}
+ private:
+  emcee::String sid_;
+  uint32_t iid_;
+};
 
 }
+
+#endif /* PIOUS_ID_HPP */

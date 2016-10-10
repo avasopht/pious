@@ -24,7 +24,10 @@
 #ifndef PIOUS_SPEC_PORT_HPP
 #define PIOUS_SPEC_PORT_HPP
 
+#include "id.hpp"
+
 #include <emcee/string.hpp>
+#include <emcee/memory_dependent.hpp>
 
 #include <api/pious_device.h>
 
@@ -35,24 +38,22 @@ class Memory;
 namespace pious {
 
 /*! Stores details of a port for a Device Specification. */
-class PortSpec {
+class PortSpec : public virtual emcee::MemoryDependent {
  public:
   PortSpec();
   PortSpec(emcee::Memory &memory);
-  PortSpec(emcee::Memory &memory, const PortSpec &other);
 
-  uint32_t id() const;
-  void SetId(uint32_t id_);
+  uint32_t iid() const;
+  void SetIid(uint32_t id);
+  const char *sid_cstr() const;
+  emcee::String sid() const;
+  void SetSid(const char *sid);
   Pious_IoType io_type() const;
   void SetIoType(Pious_IoType io_type_);
-  const emcee::String &name() const;
-  const char* name_cstr() const;
-  void SetName(const emcee::String &name_);
 
  private:
-  uint32_t id_;
+  Id id_;
   Pious_IoType io_type_;
-  emcee::String name_;
 };
 
 }

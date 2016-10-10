@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 09/10/16.
+ * Created by The Pious Authors on 10/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,39 +21,30 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_DEVICE_HPP
-#define PIOUS_DEVICE_HPP
-
-#include <emcee/vector.hpp>
-#include <emcee/shared_ptr.hpp>
-#include <emcee/memory_dependent.hpp>
-
-#include <cstddef>
+#include "connection_spec.hpp"
 
 namespace pious {
 
-class DeviceSpec;
-class Port;
-class Scope;
+ConnectionSpec::ConnectionSpec(emcee::Memory &memory)
+  : source_device_(memory),
+    source_port_(memory),
+    dest_device_(memory),
+    dest_port_(memory) { }
 
-class Device : public virtual emcee::MemoryDependent {
- public:
-  Device(emcee::Memory &memory);
-  Device(emcee::Memory &memory, const Device &other);
+void ConnectionSpec::AddSourceDevice(const char *sid) { source_device_.SetSid(sid); }
 
-  DeviceSpec* device_spec();
+void ConnectionSpec::AddSourceDevice(uint32_t iid) { source_device_.SetIid(iid); }
 
-  void Process(Scope *scope);
+void ConnectionSpec::AddSourcePort(const char *sid) { source_port_.SetSid(sid); }
 
-  Port* PortAt(size_t idx);
-  size_t port_count() const;
+void ConnectionSpec::AddSourcePort(uint32_t iid) { source_port_.SetIid(iid); }
 
+void ConnectionSpec::AddDestDevice(const char *sid) { dest_device_.SetSid(sid); }
 
- private:
-  DeviceSpec *device_spec_;
-  emcee::Vector<emcee::SharedPtr<Port>> ports_;
-};
+void ConnectionSpec::AddDestDevice(uint32_t iid) { dest_device_.SetIid(iid); }
+
+void ConnectionSpec::AddDestPort(const char *sid) { dest_port_.SetSid(sid); }
+
+void ConnectionSpec::AddDestPort(uint32_t iid) { dest_port_.SetIid(iid); }
 
 }
-
-#endif /* PIOUS_DEVICE_HPP */

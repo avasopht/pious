@@ -25,9 +25,13 @@ set(EMCEE_INCLUDE_FILES
         )
 
 set(PIOUS_INCLUDE_FILES
+        add_connection.hpp
+        add_connection_port.hpp
+        add_connection_port_dest.hpp
+        add_device.hpp
         connection_spec.hpp
-        device.hpp
         device_spec.hpp
+        id.hpp
         port.hpp
         port_spec.hpp
         process.hpp

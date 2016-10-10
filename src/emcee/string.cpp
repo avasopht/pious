@@ -159,9 +159,6 @@ String::String()
 
 }
 
-String::String(Memory&, const String &other)
-  : memory_(other.memory_), string_(other.string_), size_(other.size_) { }
-
 bool operator==(const String &lhs, const String &rhs) {
   return !(lhs != rhs);
 }

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 09/10/16.
+ * Created by The Pious Authors on 10/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,36 +21,26 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SCOPE_HPP
-#define PIOUS_SCOPE_HPP
+#ifndef PIOUS_ADD_CONNECTION_PORT_HPP
+#define PIOUS_ADD_CONNECTION_PORT_HPP
 
-#include <api/pious_device.h>
 #include <cstdint>
 
-struct Pious_HoldSignalEvent;
-struct Pious_DataPacket;
-
 namespace pious {
+class ConnectionSpec;
+class AddConnectionPortDest;
 
-class Port;
 
-
-class Scope {
+class AddConnectionPort {
  public:
-  virtual ~Scope() {}
+  AddConnectionPort(ConnectionSpec *connection);
+  AddConnectionPortDest Dest(const char *sid);
+  AddConnectionPortDest Dest(uint32_t iid);
 
-  virtual void SetPluginDelay(float delay_in_samples) = 0;
-  virtual uint32_t ReadSignal(Port *port, float *dest, uint32_t max_samples) = 0;
-  virtual bool WriteSignal(Port *port, const float *signal, uint32_t frame_count) = 0;
-  virtual uint32_t ReadSignalEvents(Port *port, Pious_HoldSignalEvent *events, uint32_t max_events) = 0;
-  virtual bool WriteSignalEvents(Port *port, const Pious_HoldSignalEvent *events, uint32_t event_count) = 0;
-  virtual uint32_t ReadPackets(Port *port, Pious_DataPacket *dest, uint32_t max_packet_count) = 0;
-  virtual bool WritePackets(Port *port, const Pious_DataPacket *packets, uint32_t packet_count) = 0;
-  virtual Pious_Handle GetHandle(const char *object_uri) = 0;
-  virtual bool IsValidHandle(const Pious_Handle *handle) = 0;
-  virtual Port* GetPort(const Pious_Handle *handle) = 0;
+ private:
+  ConnectionSpec *connection_;
 };
 
 }
 
-#endif /* PIOUS_SCOPE_HPP */
+#endif /* PIOUS_ADD_CONNECTION_PORT_HPP */

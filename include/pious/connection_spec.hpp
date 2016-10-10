@@ -24,16 +24,37 @@
 #ifndef PIOUS_CONNECTION_HPP
 #define PIOUS_CONNECTION_HPP
 
+#include "id.hpp"
 #include <cstdint>
+
+namespace emcee {
+class Memory;
+}
 
 namespace pious {
 
 /*! Stores details for a connection between ports in a device specification. */
-struct ConnectionSpec {
-  PortSpec *source;
-  PortSpec *dest;
+class ConnectionSpec {
+ public:
+  ConnectionSpec(emcee::Memory &memory);
+
+  void AddSourceDevice(const char *sid);
+  void AddSourceDevice(uint32_t iid);
+  void AddSourcePort(const char *sid);
+  void AddSourcePort(uint32_t iid);
+  void AddDestDevice(const char *sid);
+  void AddDestDevice(uint32_t iid);
+  void AddDestPort(const char *sid);
+  void AddDestPort(uint32_t iid);
+
+ private:
+  Id source_device_;
+  Id source_port_;
+  Id dest_device_;
+  Id dest_port_;
 };
 
 }
 
 #endif /* PIOUS_CONNECTION_HPP */
+

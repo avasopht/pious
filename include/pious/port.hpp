@@ -24,13 +24,22 @@
 #ifndef PIOUS_PORT_HPP
 #define PIOUS_PORT_HPP
 
+#include <api/pious_device.h>
+
 namespace pious {
+
+class Connection;
+class DspDevice;
+class PortSpec;
 
 class Port {
  public:
   virtual ~Port() {}
 
-  virtual Connection* connection();
+  virtual DspDevice* device() = 0;
+  virtual Pious_IoType io_type() const = 0;
+  virtual PortSpec *port_spec() const = 0;
+  virtual void Connect(Port *port) = 0;
 };
 
 }

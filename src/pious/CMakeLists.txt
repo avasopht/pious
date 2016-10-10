@@ -8,9 +8,14 @@ set(INCLUDE_FILES
 
 
 set(SOURCE_FILES
-        device.cpp
+        add_connection.cpp
+        add_connection_port.cpp
+        add_connection_port_dest.cpp
+        add_device.cpp
+        connection_spec.cpp
         device_spec.cpp
-        port_spec.cpp
-        reference_spec.cpp)
+        id.cpp
+        reference_spec.cpp
+        )
 
 add_library(pious STATIC ${SOURCE_FILES} ${INCLUDE_FILES} ${INCLUDE_DIR}/api/pious_device.h)
