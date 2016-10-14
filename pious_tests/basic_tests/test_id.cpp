@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 10/10/16.
+ * Created by The Pious Authors on 11/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,43 +21,25 @@
  * SOFTWARE.
  */
 
-#include "id.hpp"
+#include <gtest/gtest.h>
 
-namespace pious {
+#include <pious/id.hpp>
+#include <emcee/memory.hpp>
+#include <emcee/string.hpp>
 
-Id::Id() : iid_(0) { }
+TEST(Id, Compare) {
+  emcee::DefaultMemory mem;
+  pious::Id first(mem);
+  pious::Id second(mem);
 
-Id::Id(emcee::Memory &memory) : sid_(memory), iid_(0) { }
+  first.SetSid("pig");
+  second.SetSid("pig");
+  ASSERT_TRUE(first.Compare(second) == 0) << "Id's with same name should be equal.";
 
-Id::Id(emcee::String sid, uint32_t iid) : sid_(sid), iid_(iid) { }
+  first.SetIid(10);
+  second.SetIid(11);
+  ASSERT_TRUE(first.Compare(second) < 0) << "First's iid is lower, should be evaluated as less than the second.";
 
-Id::Id(emcee::String sid) : sid_(sid), iid_(0) { }
-
-Id::Id(uint32_t iid) : iid_(iid) { }
-
-Id& Id::SetSid(const char *sid) {
-  assert(sid_.memory());
-  sid_ = emcee::String(*sid_.memory(), sid);
-  return *this;
-}
-
-Id& Id::SetSid(const emcee::String &sid) { sid_ = sid; return *this; }
-
-Id& Id::SetIid(uint32_t iid) { iid_ = iid; return *this; }
-
-const char *Id::sid_cstr() const { return sid_.c_str(); }
-
-emcee::String Id::sid() const { return sid_; }
-
-uint32_t Id::iid() const { return iid_; }
-
-int Id::Compare(const Id &rhs) const {
-  int string_compare = sid().Compare(rhs.sid());
-  bool strings_equal = string_compare == 0;
-  if(strings_equal) {
-    return iid() - rhs.iid();
-  }
-  return string_compare;
-}
-
+  second.SetSid("pif");
+  ASSERT_TRUE(first.Compare(second) > 0) << "String id comparison takes precedence.";
 }

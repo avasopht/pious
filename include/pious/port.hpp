@@ -29,17 +29,21 @@
 namespace pious {
 
 class Connection;
-class DspDevice;
+class Device;
+class Id;
 class PortSpec;
 
 class Port {
  public:
   virtual ~Port() {}
 
-  virtual DspDevice* device() = 0;
+  virtual Device* device() = 0;
   virtual Pious_IoType io_type() const = 0;
   virtual PortSpec *port_spec() const = 0;
+  virtual Id id() const = 0;
   virtual void Connect(Port *port) = 0;
+  virtual Port* connected_port() = 0;
+  virtual bool is_connected() const = 0;
 };
 
 }

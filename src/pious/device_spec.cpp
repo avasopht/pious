@@ -32,7 +32,10 @@
 namespace pious {
 
 DeviceSpec::DeviceSpec(emcee::Memory &memory)
-  : memory_(&memory), id_(memory), devices_(memory), ports_(memory), connections_(memory) { }
+  : memory_(&memory), plugin_(), id_(memory), devices_(memory), ports_(memory), connections_(memory) {
+  plugin_.Init = nullptr;
+  plugin_.Render = nullptr;
+}
 
 void DeviceSpec::AddPort(Pious_IoType io_type, const char *id, uint32_t iid) {
   PortSpec port(*memory_);
@@ -116,5 +119,9 @@ void DeviceSpec::SetId(const char *sid, uint32_t iid) {
 void DeviceSpec::SetId(const char *sid) { id_.SetSid(sid); }
 
 void DeviceSpec::SetId(uint32_t iid) { id_.SetIid(iid); }
+
+Pious_UnitPlugin DeviceSpec::plugin() const { return plugin_; }
+
+void DeviceSpec::LoadPlugin(const Pious_UnitPlugin &plugin) { plugin_ = plugin; }
 
 }

@@ -37,13 +37,15 @@ class Id {
   Id(emcee::String sid);
   Id(uint32_t iid);
 
-  void SetSid(const char *sid);
-  void SetSid(const emcee::String &sid);
-  void SetIid(uint32_t iid);
+  Id& SetSid(const char *sid);
+  Id& SetSid(const emcee::String &sid);
+  Id& SetIid(uint32_t iid);
 
   const char* sid_cstr() const;
   emcee::String sid() const;
   uint32_t iid() const;
+
+  int Compare(const Id &rhs) const;
 
  private:
   emcee::String sid_;

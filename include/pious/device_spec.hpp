@@ -70,8 +70,12 @@ class DeviceSpec {
   size_t connection_count() const;
   ConnectionSpec* ConnectionAt(size_t idx);
 
+  void LoadPlugin(const Pious_UnitPlugin &plugin);
+  Pious_UnitPlugin plugin() const;
+
  private:
   emcee::Memory *memory_;
+  Pious_UnitPlugin plugin_;
   Id id_;
   emcee::Vector<ReferenceSpec> devices_;
   emcee::Vector<PortSpec> ports_;

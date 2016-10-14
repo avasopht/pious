@@ -5,6 +5,7 @@ include_directories(${Boost_INCLUDE_DIR})
 add_executable(runBasicPiousTests
         count_calls.hpp
         class_method_notifier.hpp
+        test_id.cpp
         test_main.cpp
         test_new.cpp
         test_unique_ptr.cpp
