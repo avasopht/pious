@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 04/10/16.
+ * Created by The Pious Authors on 19/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,33 +21,40 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SHARED_COUNT_HPP
-#define PIOUS_SHARED_COUNT_HPP
+#ifndef PIOUS_WEAK_COUNT_HPP_H
+#define PIOUS_WEAK_COUNT_HPP_H
 
-#include "reference_counter.hpp"
+#include <cstddef>
+
 namespace emcee {
 
-/*! \brief  Implements a reference counter to be shared by value.
- */
-class SharedCount {
+class ReferenceCounter;
+class SharedCount;
+
+class WeakCount {
  public:
-  SharedCount();
-  SharedCount(const SharedCount &other);
-  SharedCount(ReferenceCounter *counter);
+  WeakCount();
+  WeakCount(const WeakCount &rhs);
+  WeakCount(ReferenceCounter *counter);
+  WeakCount(const SharedCount &shared_count);
 
-  ~SharedCount();
+  ~WeakCount();
 
-  SharedCount& operator=(const SharedCount &rhs);
+  WeakCount& operator=(const WeakCount& rhs);
+  WeakCount& operator=(const SharedCount& shared_count);
+
   size_t use_count() const;
   ReferenceCounter* counter() const;
 
  private:
   ReferenceCounter *counter_;
-  void ImportCounter(const SharedCount &other);
+
   void Release();
   void AddUse();
+  void ImportCounter(const SharedCount &count);
+  void ImportCounter(const WeakCount &count);
 };
 
 }
 
-#endif /* PIOUS_SHARED_COUNT_HPP */
+#endif //PIOUS_WEAK_COUNT_HPP_H

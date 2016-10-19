@@ -77,6 +77,7 @@ size_t SharedCount::use_count() const {
 
   return 0;
 }
+ReferenceCounter *SharedCount::counter() const { return counter_; }
 
 }
 

@@ -22,6 +22,7 @@ set(EMCEE_INCLUDE_FILES
         unique_ptr.hpp
         util.hpp
         vector.hpp
+        weak_count.hpp
         )
 
 set(PIOUS_INCLUDE_FILES

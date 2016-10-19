@@ -14,7 +14,8 @@ set(SOURCE_FILES
         reference_counter.cpp
         shared_count.cpp
         string.cpp
-        util.cpp)
+        util.cpp
+        weak_count.cpp)
 
 
 add_library(emcee STATIC ${SOURCE_FILES} ${INCLUDE_FILES})

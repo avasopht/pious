@@ -29,6 +29,13 @@ namespace emcee {
 
 class Deleter;
 
+/*! \brief ReferenceCounter manages the lifetime of a shared resource.
+ *
+ * ReferenceCounter tracks two types of references - shared and weak. The
+ * resource is deleted when all shared references have been released. The
+ * ReferenceCounter instance can be deleted when there are no shared or
+ * weak references (`is_unused()` will return true in this case).
+ */
 class ReferenceCounter {
  public:
   ReferenceCounter();
@@ -39,6 +46,7 @@ class ReferenceCounter {
   /*! Increments use count. */
   void AddUse();
 
+  /*! Increments weak use count. */
   void WeakAddUse();
 
   /*! Releases a reference. The deleter will be invokved when use count is 0. */
