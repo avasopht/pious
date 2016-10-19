@@ -55,7 +55,7 @@ void SharedCount::Release() {
 
     counter_->Release();
 
-    if(counter_->is_unused()) {
+    if(!counter_->is_referenced()) {
       emcee::Delete(counter_);
     }
 

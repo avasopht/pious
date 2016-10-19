@@ -32,14 +32,7 @@ WeakCount::WeakCount() : counter_(nullptr) { }
 
 
 WeakCount::WeakCount(const WeakCount &rhs) : counter_(nullptr) {
-  counter_ = rhs.counter_;
   ImportCounter(rhs);
-}
-
-
-WeakCount::WeakCount(ReferenceCounter *counter) {
-  counter_ = counter;
-  AddUse();
 }
 
 
@@ -86,7 +79,7 @@ void WeakCount::Release() {
   if(counter_) {
     counter_->WeakRelease();
 
-    if(counter_->is_unused()) {
+    if(!counter_->is_referenced()) {
       emcee::Delete(counter_);
     }
 

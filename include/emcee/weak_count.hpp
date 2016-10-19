@@ -35,7 +35,6 @@ class WeakCount {
  public:
   WeakCount();
   WeakCount(const WeakCount &rhs);
-  WeakCount(ReferenceCounter *counter);
   WeakCount(const SharedCount &shared_count);
 
   ~WeakCount();
@@ -46,13 +45,14 @@ class WeakCount {
   size_t use_count() const;
   ReferenceCounter* counter() const;
 
+  void ImportCounter(const SharedCount &count);
+  void ImportCounter(const WeakCount &count);
+
  private:
   ReferenceCounter *counter_;
 
   void Release();
   void AddUse();
-  void ImportCounter(const SharedCount &count);
-  void ImportCounter(const WeakCount &count);
 };
 
 }

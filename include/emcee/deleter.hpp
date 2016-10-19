@@ -70,9 +70,10 @@ class TypedDeleter : public Deleter, MemoryDependent, MemorySetter {
     mem_ = &mem;
   }
 
-  void Watch(T *ptr) {
+  TypedDeleter& Watch(T *ptr) {
     assert(mem_);
     ptr_ = ptr;
+    return *this;
   }
 
   void Delete() override {

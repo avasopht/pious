@@ -59,14 +59,16 @@ class ReferenceCounter {
    */
   void SetDeleter(Deleter *deleter);
 
+  ReferenceCounter& WithDeleter(Deleter *deleter) { SetDeleter(deleter); return *this; }
+
   /*! Invokes deleter. */
   void Dispose();
 
   /*! Returns shared use count. */
   size_t use_count() const { return shared_count_ ; }
 
-  /*! Returns whether this reference counter is being used at all. */
-  bool is_unused() const { return weak_count_ == 0; }
+  /*! Returns whether this reference counter has any shared or weak references. */
+  bool is_referenced() const { return weak_count_ > 0; }
 
  private:
   Deleter *deleter_;
