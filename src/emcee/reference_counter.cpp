@@ -30,23 +30,24 @@ ReferenceCounter::ReferenceCounter(Deleter *deleter) {
   SetDeleter(deleter);
 }
 
-ReferenceCounter::ReferenceCounter() : deleter_(nullptr), count_(0) { }
+ReferenceCounter::ReferenceCounter() : deleter_(nullptr), shared_count_(0), weak_count_(0) { }
 
 void ReferenceCounter::AddUse() {
   // If count is 0, there should be no object.
-  assert(count_ > 0);
+  assert(shared_count_ > 0);
   // If there is no deleter, there is nothing to reference count.
   assert(deleter_);
 
-  ++count_;
+  ++shared_count_;
 }
 
 void ReferenceCounter::Release() {
-  assert(count_ > 0);
+  assert(shared_count_ > 0);
 
-  --count_;
-  if(count_ == 0) {
+  --shared_count_;
+  if(shared_count_ == 0) {
     Dispose();
+    WeakRelease();
   }
 
 }
@@ -63,7 +64,18 @@ void ReferenceCounter::SetDeleter(Deleter *deleter) {
   Dispose();
 
   deleter_ = deleter;
-  count_ = 1;
+  if(deleter) {
+    shared_count_ = 1;
+    weak_count_ = 1;
+  }
+}
+void ReferenceCounter::WeakAddUse() {
+  assert(weak_count_ > 0);
+  ++weak_count_;
+}
+void ReferenceCounter::WeakRelease() {
+  assert(weak_count_ > 0);
+  --weak_count_;
 }
 
 }

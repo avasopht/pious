@@ -52,9 +52,10 @@ SharedCount::~SharedCount() {
 }
 void SharedCount::Release() {
   if(counter_) {
+
     counter_->Release();
 
-    if(counter_->use_count() == 0) {
+    if(counter_->is_unused()) {
       emcee::Delete(counter_);
     }
 

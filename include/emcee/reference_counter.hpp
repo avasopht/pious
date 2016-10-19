@@ -39,8 +39,11 @@ class ReferenceCounter {
   /*! Increments use count. */
   void AddUse();
 
+  void WeakAddUse();
+
   /*! Releases a reference. The deleter will be invokved when use count is 0. */
   void Release();
+  void WeakRelease();
 
   /*! \brief  Assigns deleter instance with a use count of 1.
    *
@@ -51,11 +54,16 @@ class ReferenceCounter {
   /*! Invokes deleter. */
   void Dispose();
 
-  size_t use_count() const { return count_ ; }
+  /*! Returns shared use count. */
+  size_t use_count() const { return shared_count_ ; }
+
+  /*! Returns whether this reference counter is being used at all. */
+  bool is_unused() const { return weak_count_ == 0; }
 
  private:
   Deleter *deleter_;
-  size_t count_;
+  size_t shared_count_;
+  size_t weak_count_; // weak_count + (shared_count_ != 0)
 
   ReferenceCounter(const ReferenceCounter &) = delete;
   ReferenceCounter& operator=(const ReferenceCounter &) = delete;
