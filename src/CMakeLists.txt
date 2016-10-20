@@ -10,6 +10,7 @@ set(EMCEE_INCLUDE_FILES
         array.hpp
         deleter.hpp
         destructor.hpp
+        emcee.hpp
         memory.hpp
         memory_dependent.hpp
         memory_setter.hpp
@@ -23,6 +24,7 @@ set(EMCEE_INCLUDE_FILES
         util.hpp
         vector.hpp
         weak_count.hpp
+        weak_ptr.hpp
         )
 
 set(PIOUS_INCLUDE_FILES

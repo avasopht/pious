@@ -12,7 +12,8 @@ add_executable(runBasicPiousTests
         test_shared_ptr.cpp
         test_string.cpp
         test_vector.cpp
-        test_weak_count.cpp)
+        test_weak_count.cpp
+        test_weak_ptr.cpp)
 
 target_link_libraries(runBasicPiousTests gtest)
 target_link_libraries(runBasicPiousTests gmock gmock_main)

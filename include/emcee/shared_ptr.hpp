@@ -32,6 +32,9 @@
 
 namespace emcee {
 
+template<typename T>
+class WeakPtr;
+
 /*! \brief Implements a reference countered smart pointer.
  *
  * This class respects Memory injection on its object creation methods.
@@ -40,6 +43,7 @@ template<typename T>
 class SharedPtr : public virtual MemoryDependent {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
+  template<typename Y> friend class WeakPtr;
 
   SharedPtr() : memory_(nullptr), ptr_(nullptr) {}
 
@@ -52,7 +56,7 @@ class SharedPtr : public virtual MemoryDependent {
     Reset(p);
   }
 
-  SharedPtr(const SharedPtr &other) {
+  SharedPtr(const SharedPtr &other) : memory_(other.memory_) {
     Reset(other);
   }
 
@@ -80,8 +84,11 @@ class SharedPtr : public virtual MemoryDependent {
     return *this;
   }
 
+  Memory* memory() const { return memory_; }
+
   void Reset() {
     count_ = SharedCount();
+    ptr_ = nullptr;
   }
 
   template<typename Y> void Reset(Y *p) {
@@ -157,6 +164,7 @@ template<typename T>
 class SharedPtr <T[]> : public virtual MemoryDependent {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
+  template<typename Y> friend class WeakPtr;
 
   SharedPtr() : memory_(nullptr), ptr_(nullptr) {}
 
@@ -199,6 +207,8 @@ class SharedPtr <T[]> : public virtual MemoryDependent {
   void Reset() {
     count_ = SharedCount();
   }
+
+  Memory* memory() const { return memory_; }
 
   template<typename Y> void Reset(Y *p) {
     if(!memory_)
