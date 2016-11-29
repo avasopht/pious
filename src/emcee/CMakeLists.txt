@@ -56,7 +56,7 @@ install(TARGETS emcee
         INCLUDES DESTINATION "${include_install_dir}")
 
 install(
-        DIRECTORY "Source/emcee"
+        DIRECTORY ${EMCEE_INCLUDE_DIR}
         DESTINATION "${include_install_dir}"
         FILES_MATCHING PATTERN "*.hpp"
 )
