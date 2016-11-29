@@ -27,8 +27,7 @@ add_library(emcee STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
 target_compile_definitions(emcee PUBLIC "EMCEE_DEBUG=$<CONFIG:Debug>")
 generate_export_header(emcee)
 target_include_directories(emcee PUBLIC
-        "$<BUILD_INTERFACE:${EMCEE_INCLUDE_DIR}>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>")
+        "$<BUILD_INTERFACE:${EMCEE_INCLUDE_DIR}>")
 target_link_libraries(emcee)
 set(config_install_dir "lib/cmake/${PROJECT_NAME}")
 set(include_install_dir "include")
