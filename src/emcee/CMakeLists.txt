@@ -6,8 +6,7 @@ include(GenerateExportHeader)
 include_directories(${INCLUDE_DIR}/emcee)
 
 set(INCLUDE_FILES
-        ${EMCEE_INCLUDE_FILES}
-        ${PIOUS_INCLUDE_FILES})
+        ${EMCEE_INCLUDE_FILES})
 
 set(SOURCE_FILES
         memory.cpp
@@ -65,10 +64,10 @@ install(
         DESTINATION "${config_install_dir}"
 )
 
-install(
-        FILES ${INCLUDE_FILES}
-        DESTINATION "${include_install_dir}"
-)
+#install(
+#        FILES ${INCLUDE_FILES}
+#        DESTINATION "${include_install_dir}"
+#)
 
 install(
         FILES "${project_config}" "${version_config}"
