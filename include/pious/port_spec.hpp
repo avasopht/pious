@@ -41,7 +41,7 @@ namespace pious {
 class PortSpec : public virtual emcee::MemoryDependent {
  public:
   PortSpec();
-  PortSpec(emcee::Memory &memory);
+  PortSpec(emcee::Memory *memory);
 
   uint32_t iid() const;
   void SetIid(uint32_t id);
