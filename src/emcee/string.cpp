@@ -27,26 +27,29 @@
 
 namespace emcee {
 
-String::String(Memory &memory) : memory_(&memory), string_(memory), size_(0) { }
+String::String(Memory *memory) : memory_(memory), string_(memory), size_(0) {}
 
-String::String(Memory &memory, const char *str)
-  : memory_(&memory),
+
+String::String(Memory *memory, const char *str)
+    : memory_(memory),
     string_(memory),
     size_(0)
 {
   ConstructString(str, 0, strlen(str));
 }
 
-String::String(Memory &memory, const char *str, size_t begin)
-  : memory_(&memory),
+
+String::String(Memory *memory, const char *str, size_t begin)
+    : memory_(memory),
     string_(memory),
     size_(0)
 {
   ConstructString(str, begin, strlen(str));
 }
 
-String::String(Memory &memory, const char *str, size_t begin, size_t end)
-  : memory_(&memory),
+
+String::String(Memory *memory, const char *str, size_t begin, size_t end)
+    : memory_(memory),
     string_(memory),
     size_(0)
 {
@@ -55,7 +58,7 @@ String::String(Memory &memory, const char *str, size_t begin, size_t end)
 
 String::String(const String &str, size_t begin)
   : memory_(str.memory_),
-    string_(*str.memory_),
+    string_(str.memory_),
     size_(0)
 {
   ConstructString(str.c_str(), begin, str.length());
@@ -63,7 +66,7 @@ String::String(const String &str, size_t begin)
 
 String::String(const String &str, size_t begin, size_t end)
   : memory_(str.memory_),
-    string_(*str.memory_),
+    string_(str.memory_),
     size_(0)
 {
   ConstructString(str.c_str(), begin, end);
@@ -111,7 +114,7 @@ void String::ConstructString(const char *cstr, size_t begin, size_t end) {
 
 String::String(const String &first, const String &second)
   : memory_(first.memory_),
-    string_(*first.memory_),
+    string_(first.memory_),
     size_(0)
 {
   size_ = first.length() + second.length();
@@ -176,11 +179,11 @@ bool operator!=(const String &lhs, const String &rhs) {
 }
 
 bool operator!=(const char *lhs, const String &rhs) {
-  return String(*rhs.memory(), lhs).Compare(rhs) != 0;
+  return String(rhs.memory(), lhs).Compare(rhs) != 0;
 }
 
 bool operator!=(const String &lhs, const char *rhs) {
-  return lhs.Compare(String(*lhs.memory(), rhs)) != 0;
+  return lhs.Compare(String(lhs.memory(), rhs)) != 0;
 }
 
 bool operator<(const String &lhs, const String &rhs) {
@@ -188,11 +191,11 @@ bool operator<(const String &lhs, const String &rhs) {
 }
 
 bool operator<(const char *lhs, const String &rhs) {
-  return String(*rhs.memory(), lhs).Compare(rhs) < 0;
+  return String(rhs.memory(), lhs).Compare(rhs) < 0;
 }
 
 bool operator<(const String &lhs, const char *rhs) {
-  return lhs.Compare(String(*lhs.memory(), rhs)) < 0;
+  return lhs.Compare(String(lhs.memory(), rhs)) < 0;
 }
 
 bool operator<=(const String &lhs, const String &rhs) {
@@ -212,11 +215,11 @@ bool operator>(const String &lhs, const String &rhs) {
 }
 
 bool operator>(const char *lhs, const String &rhs) {
-  return String(*rhs.memory(), lhs).Compare(rhs) > 0;
+  return String(rhs.memory(), lhs).Compare(rhs) > 0;
 }
 
 bool operator>(const String &lhs, const char *rhs) {
-  return lhs.Compare(String(*lhs.memory(), rhs)) > 0;
+  return lhs.Compare(String(lhs.memory(), rhs)) > 0;
 }
 
 bool operator>=(const String &lhs, const String &rhs) {

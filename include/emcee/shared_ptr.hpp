@@ -47,11 +47,11 @@ class SharedPtr : public virtual MemoryDependent {
 
   SharedPtr() : memory_(nullptr), ptr_(nullptr) {}
 
-  SharedPtr(Memory &memory) : memory_(&memory), ptr_(nullptr) {}
+  SharedPtr(Memory *memory) : memory_(memory), ptr_(nullptr) {}
 
-
-  template<typename Y> SharedPtr(Memory &memory, Y *p)
-      : memory_(&memory),
+  template<typename Y>
+  SharedPtr(Memory *memory, Y *p)
+      : memory_(memory),
         ptr_(nullptr) {
     Reset(p);
   }
@@ -70,7 +70,7 @@ class SharedPtr : public virtual MemoryDependent {
     if(!memory_)
       return *this;
 
-    T* ptr = emcee::New<T>(*memory_).Create();
+    T *ptr = emcee::New<T>(memory_).Create();
     Reset(ptr);
     return *this;
   }
@@ -79,7 +79,7 @@ class SharedPtr : public virtual MemoryDependent {
     if(!memory_)
       return *this;
 
-    T* ptr = emcee::New<T>(*memory_).Create(other);
+    T *ptr = emcee::New<T>(memory_).Create(other);
     Reset(ptr);
     return *this;
   }
@@ -99,10 +99,10 @@ class SharedPtr : public virtual MemoryDependent {
       Reset();
     } else {
       ptr_ = p;
-      DefaultDeleterType *deleter = emcee::New<DefaultDeleterType>(*memory_).Create();
+      DefaultDeleterType *deleter = emcee::New<DefaultDeleterType>(memory_).Create();
       deleter->Watch(ptr_);
 
-      ReferenceCounter *counter = emcee::New<ReferenceCounter>(*memory_).Create();
+      ReferenceCounter *counter = emcee::New<ReferenceCounter>(memory_).Create();
       counter->SetDeleter(deleter);
       count_ = SharedCount(counter);
     }
@@ -168,10 +168,11 @@ class SharedPtr <T[]> : public virtual MemoryDependent {
 
   SharedPtr() : memory_(nullptr), ptr_(nullptr) {}
 
-  SharedPtr(Memory &mem) : memory_(&mem), ptr_(nullptr) {}
+  SharedPtr(Memory *mem) : memory_(mem), ptr_(nullptr) {}
 
-  template<typename Y> SharedPtr(Memory &memory, Y *p)
-      : memory_(&memory),
+  template<typename Y>
+  SharedPtr(Memory *memory, Y *p)
+      : memory_(memory),
         ptr_(nullptr) {
     Reset(p);
   }
@@ -190,7 +191,7 @@ class SharedPtr <T[]> : public virtual MemoryDependent {
     if(!memory_)
       return *this;
 
-    T* ptr = emcee::New<T[]>(*memory_, count).Create();
+    T *ptr = emcee::New<T[]>(memory_, count).Create();
     Reset(ptr);
     return *this;
   }
@@ -199,7 +200,7 @@ class SharedPtr <T[]> : public virtual MemoryDependent {
     if(!memory_)
       return *this;
 
-    T* ptr = emcee::New<T[]>(*memory_, count).Create(other);
+    T *ptr = emcee::New<T[]>(memory_, count).Create(other);
     Reset(ptr);
     return *this;
   }
@@ -218,10 +219,10 @@ class SharedPtr <T[]> : public virtual MemoryDependent {
       Reset();
     } else {
       ptr_ = p;
-      DefaultDeleterType *deleter = emcee::New<DefaultDeleterType>(*memory_).Create();
+      DefaultDeleterType *deleter = emcee::New<DefaultDeleterType>(memory_).Create();
       deleter->Watch(ptr_);
 
-      ReferenceCounter *counter = emcee::New<ReferenceCounter>(*memory_).Create();
+      ReferenceCounter *counter = emcee::New<ReferenceCounter>(memory_).Create();
       counter->SetDeleter(deleter);
       count_ = SharedCount(counter);
     }

@@ -36,7 +36,7 @@ namespace pious {
 /*! Stores details for a connection between ports in a device specification. */
 class ConnectionSpec {
  public:
-  ConnectionSpec(emcee::Memory &memory);
+  ConnectionSpec(emcee::Memory *memory);
 
   void AddSourceDevice(const char *sid);
   void AddSourceDevice(uint32_t iid);

@@ -32,7 +32,7 @@ namespace pious {
 class Id {
  public:
   Id();
-  Id(emcee::Memory &memory);
+  Id(emcee::Memory *memory);
   Id(emcee::String sid, uint32_t iid);
   Id(emcee::String sid);
   Id(uint32_t iid);

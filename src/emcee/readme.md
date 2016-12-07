@@ -1,7 +1,7 @@
-Emcee: a locally scoped general purpose C++ library
-===================================================
+Emcee: a locally scoped C++ memory management library
+=====================================================
 
-Emcee is a general purpose library for C++ for environments where the following
+Emcee is a memory management library for C++ for environments where the following
 are prohibited:
 
 1. No access to `malloc`, `calloc`, `free`, `new` and `delete`.

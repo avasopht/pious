@@ -50,7 +50,7 @@ class ReferenceSpec;
  */
 class DeviceSpec {
  public:
-  DeviceSpec(emcee::Memory &memory);
+  DeviceSpec(emcee::Memory *memory);
 
   void SetId(const char *sid, uint32_t iid);
   void SetId(const char *sid);

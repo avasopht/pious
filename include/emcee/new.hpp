@@ -92,7 +92,7 @@ struct ObjectBlock {
 template<typename T>
 class New {
  public:
-  New(Memory &memory) : memory_(memory), arena_(0) {}
+  New(Memory *memory) : memory_(memory), arena_(0) {}
 
   /*! Allocates and constructs a default instance of T. */
   T* Create() {
@@ -109,7 +109,7 @@ class New {
 
 
  private:
-  Memory &memory_;
+  Memory *memory_;
   size_t arena_;
 };
 
@@ -119,7 +119,7 @@ class New<T[]> {
 
   typedef TypedDestructor<T[]> DestructorType;
 
-  New(Memory &memory, size_t count) : memory_(memory), count_(count), arena_(0) {};
+  New(Memory *memory, size_t count) : memory_(memory), count_(count), arena_(0) {};
 
   New& WithArena(size_t arena) { arena_ = arena; return *this; }
 
@@ -150,7 +150,7 @@ class New<T[]> {
   size_t count() const { return count_; }
 
  private:
-  Memory &memory_;
+  Memory *memory_;
   size_t count_;
   size_t arena_;
 
@@ -186,7 +186,7 @@ class New<T[]> {
   NewAllocationBlock* NewBlock() {
     NewAllocationBlock* block =
         static_cast<NewAllocationBlock*>(
-            memory_.Allocate(sizeof(NewAllocationBlock)));
+            memory_->Allocate(sizeof(NewAllocationBlock)));
     new(block)NewAllocationBlock(memory_);
     block->WithCount(count());
     return block;
@@ -194,7 +194,7 @@ class New<T[]> {
 
   ObjectBlock* AllocateObject() {
     size_t object_alloc_size = sizeof(T) * count_ + sizeof(size_t);
-    void *allocation = memory_.Allocate(object_alloc_size);
+    void *allocation = memory_->Allocate(object_alloc_size);
     ObjectBlock *object_block = static_cast<ObjectBlock*>(allocation);
     T *ptr = static_cast<T*>(object_block->data_ptr());
 
@@ -202,7 +202,7 @@ class New<T[]> {
   }
 
   Destructor* NewDestructor(void *vdata) {
-    void *destructor_ptr = memory_.Allocate(sizeof(DestructorType));
+    void *destructor_ptr = memory_->Allocate(sizeof(DestructorType));
     T *data = static_cast<T*>(vdata);
     DestructorType *destructor = new(destructor_ptr)DestructorType(data, count());
     return destructor;

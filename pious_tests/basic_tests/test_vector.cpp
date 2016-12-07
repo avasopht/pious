@@ -24,14 +24,13 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <emcee/vector.hpp>
-#include <emcee/memory.hpp>
 
 TEST(Vector, CopyAndAssignment) {
   emcee::DefaultMemory mem;
-  emcee::Vector<int> first(mem);
+  emcee::Vector<int> first(&mem);
   first.PushBack(1337);
   ASSERT_EQ(1337, first[0]);
-  emcee::Vector<int> second(mem);
+  emcee::Vector<int> second(&mem);
   ASSERT_EQ(0, second.size());
   second = first;
   ASSERT_EQ(1337, second[0]);
@@ -47,7 +46,7 @@ TEST(Vector, CopyAndAssignment) {
   ASSERT_EQ(1337, first[0]);
   ASSERT_EQ(0, second[0]);
 
-  emcee::Vector<int> with_default(mem, 3, 11);
+  emcee::Vector<int> with_default(&mem, 3, 11);
   ASSERT_EQ(3, with_default.size());
   ASSERT_EQ(11, with_default[0]);
   ASSERT_EQ(11, with_default[1]);
@@ -56,13 +55,13 @@ TEST(Vector, CopyAndAssignment) {
 
 TEST(Vector, Erase) {
   emcee::DefaultMemory mem;
-  emcee::Vector<int> vec(mem);
+  emcee::Vector<int> vec(&mem);
   vec.Reserve(128);
   for(int i = 0; i < static_cast<int>(vec.size()); ++i) {
     vec.PushBack(i);
   }
 
-  for(int i = 0; i < static_cast<int>(vec.size()); i += 2) {
+  for(size_t i = 0; i < static_cast<int>(vec.size()); i += 2) {
     vec.EraseAt(i);
   }
 

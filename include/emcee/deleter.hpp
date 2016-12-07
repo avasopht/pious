@@ -54,13 +54,13 @@ class TypedDeleter : public Deleter, MemoryDependent, MemorySetter {
     ptr_ = nullptr;
   }
 
-  TypedDeleter(Memory &mem) : mem_(&mem), ptr_(nullptr) {}
+  TypedDeleter(Memory *mem) : mem_(mem), ptr_(nullptr) {}
 
-  TypedDeleter(Memory &mem, T* ptr) : mem_(&mem), ptr_(ptr) { assert(mem_); }
+  TypedDeleter(Memory *mem, T *ptr) : mem_(mem), ptr_(ptr) { assert(mem_); }
 
   TypedDeleter(const TypedDeleter &rhs) : mem_(rhs.mem_), ptr_(rhs.ptr_)  { }
 
-  TypedDeleter(Memory&, const TypedDeleter &other) : mem_(other.mem_), ptr_(other.ptr_) {}
+  TypedDeleter(Memory *, const TypedDeleter &other) : mem_(other.mem_), ptr_(other.ptr_) {}
 
   virtual void SetMemory(Memory *ptr) override {
     Init(*ptr);

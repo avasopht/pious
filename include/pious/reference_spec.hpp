@@ -38,7 +38,7 @@ namespace pious {
 class ReferenceSpec : public virtual emcee::MemoryDependent {
  public:
   ReferenceSpec();
-  ReferenceSpec(emcee::Memory &memory);
+  ReferenceSpec(emcee::Memory *memory);
 
   void SetSid(const char *sid);
   void SetIid(uint32_t iid);

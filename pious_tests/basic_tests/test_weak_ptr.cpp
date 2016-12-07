@@ -30,7 +30,7 @@ TEST(WeakPtr,FromShared) {
   typedef emcee::SharedPtr<Type> SharedType;
   typedef emcee::WeakPtr<Type> WeakType;
 
-  SharedType shared(mem);
+  SharedType shared(&mem);
   shared.Create();
   (*shared) = 10;
 
@@ -47,7 +47,7 @@ TEST(WeakPtr,FromSharedArray) {
   typedef emcee::SharedPtr<Type[]> SharedType;
   typedef emcee::WeakPtr<Type[]> WeakType;
 
-  SharedType shared(mem);
+  SharedType shared(&mem);
   shared.Create(10);
   for(size_t i = 0; i < 10; ++i) {
     shared[i] = (int) i;

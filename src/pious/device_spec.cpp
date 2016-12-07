@@ -31,8 +31,8 @@
 
 namespace pious {
 
-DeviceSpec::DeviceSpec(emcee::Memory &memory)
-  : memory_(&memory), plugin_(), id_(memory), devices_(memory), ports_(memory), connections_(memory) {
+DeviceSpec::DeviceSpec(emcee::Memory *memory)
+    : memory_(memory), plugin_(), id_(memory), devices_(memory), ports_(memory), connections_(memory) {
   plugin_.Init = nullptr;
   plugin_.Render = nullptr;
 }
@@ -60,28 +60,28 @@ void DeviceSpec::AddPort(Pious_IoType io_type, uint32_t iid) {
 }
 
 pious::AddDevice DeviceSpec::AddDevice(const char *id) {
-  ReferenceSpec device(*memory_);
+  ReferenceSpec device(memory_);
   device.SetSid(id);
   devices_.PushBack(device);
   return pious::AddDevice(&devices_.Back());
 }
 
 pious::AddDevice DeviceSpec::AddDevice(uint32_t iid) {
-  ReferenceSpec device(*memory_);
+  ReferenceSpec device(memory_);
   device.SetIid(iid);
   devices_.PushBack(device);
   return pious::AddDevice(&devices_.Back());
 }
 
 pious::AddConnection DeviceSpec::AddConnection(const char *sid) {
-  ConnectionSpec connection(*memory_);
+  ConnectionSpec connection(memory_);
   connection.AddSourceDevice(sid);
   connections_.PushBack(connection);
   return pious::AddConnection(&connections_.Back());
 }
 
 pious::AddConnection DeviceSpec::AddConnection(uint32_t iid) {
-  ConnectionSpec connection(*memory_);
+  ConnectionSpec connection(memory_);
   connection.AddSourceDevice(iid);
   connections_.PushBack(connection);
   return pious::AddConnection(&connections_.Back());

@@ -24,13 +24,11 @@
 #include <gtest/gtest.h>
 
 #include <pious/id.hpp>
-#include <emcee/memory.hpp>
-#include <emcee/string.hpp>
 
 TEST(Id, Compare) {
   emcee::DefaultMemory mem;
-  pious::Id first(mem);
-  pious::Id second(mem);
+  pious::Id first(&mem);
+  pious::Id second(&mem);
 
   first.SetSid("pig");
   second.SetSid("pig");

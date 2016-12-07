@@ -49,18 +49,19 @@ class UniquePtr : public virtual MemoryDependent {
     const_cast<UniquePtr*>(&other)->deleter_ = nullptr;
   }
 
-  UniquePtr(Memory &memory) : memory_(&memory), pointer_(nullptr){}
+  UniquePtr(Memory *memory) : memory_(memory), pointer_(nullptr) {}
 
   UniquePtr() : memory_(nullptr), pointer_(nullptr) {}
-  UniquePtr(Memory& os, T *ptr) : memory_(&os), pointer_(ptr) {
-    deleter_ = emcee::New<DeleterType>(*memory_).Create(DeleterType(*memory_, ptr));
+
+  UniquePtr(Memory *mem, T *ptr) : memory_(mem), pointer_(ptr) {
+    deleter_ = emcee::New<DeleterType>(memory_).Create(DeleterType(memory_, ptr));
   }
 
   T* New() {
     if(!memory_)
       return nullptr;
 
-    T *ptr = emcee::New<T>(*memory_).Create();
+    T *ptr = emcee::New<T>(memory_).Create();
     assert(ptr);
     return ptr;
   }
@@ -87,7 +88,7 @@ class UniquePtr : public virtual MemoryDependent {
     assert(memory_);
     Destroy();
     pointer_ = ptr;
-    deleter_ = emcee::New<DeleterType>(*memory_).Create(DeleterType(*memory_, pointer_));
+    deleter_ = emcee::New<DeleterType>(memory_).Create(DeleterType(memory_, pointer_));
   }
 
   void Destroy() {

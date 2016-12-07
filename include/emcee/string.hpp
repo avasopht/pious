@@ -36,10 +36,10 @@ class String : public virtual MemoryDependent {
   // Note: default copy and assignment operators are fine.
 
   String();
-  String(Memory &memory);
-  String(Memory &memory, const char *str);
-  String(Memory &memory, const char *str, size_t begin);
-  String(Memory &memory, const char *str, size_t begin, size_t end);
+  String(Memory *memory);
+  String(Memory *memory, const char *str);
+  String(Memory *memory, const char *str, size_t begin);
+  String(Memory *memory, const char *str, size_t begin, size_t end);
   String(const String &str, size_t begin);
   String(const String &str, size_t begin, size_t end);
   String(const String &first, const String &second);

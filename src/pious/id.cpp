@@ -27,7 +27,8 @@ namespace pious {
 
 Id::Id() : iid_(0) { }
 
-Id::Id(emcee::Memory &memory) : sid_(memory), iid_(0) { }
+
+Id::Id(emcee::Memory *memory) : sid_(memory), iid_(0) {}
 
 Id::Id(emcee::String sid, uint32_t iid) : sid_(sid), iid_(iid) { }
 
@@ -37,7 +38,7 @@ Id::Id(uint32_t iid) : iid_(iid) { }
 
 Id& Id::SetSid(const char *sid) {
   assert(sid_.memory());
-  sid_ = emcee::String(*sid_.memory(), sid);
+  sid_ = emcee::String(sid_.memory(), sid);
   return *this;
 }
 

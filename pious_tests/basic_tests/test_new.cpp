@@ -23,16 +23,15 @@
 
 #include <gtest/gtest.h>
 #include <emcee/new.hpp>
-#include <emcee/memory.hpp>
 #include "count_calls.hpp"
 
 
 TEST(New, BasicTypesCompilesAndRuns) {
   emcee::DefaultMemory mem;
-  int *first = emcee::New<int>(mem).Create();
+  int *first = emcee::New<int>(&mem).Create();
   emcee::Delete(first);
 
-  int *array = emcee::New<int[]>(mem,10).Create();
+  int *array = emcee::New<int[]>(&mem, 10).Create();
   emcee::Delete(array);
 }
 
@@ -46,7 +45,7 @@ TEST(New, CallCount) {
   {
     CountCalls::ClearCount();
     emcee::DefaultMemory memory;
-    CountCalls *ptr = emcee::New<CountCalls[]>(memory, 5).Create();
+    CountCalls *ptr = emcee::New<CountCalls[]>(&memory, 5).Create();
     emcee::Delete(ptr);
     ASSERT_EQ(5, CountCalls::constructor_calls());
     ASSERT_EQ(5, CountCalls::destructor_calls());
@@ -55,8 +54,8 @@ TEST(New, CallCount) {
   {
     CountCalls::ClearCount();
     emcee::DefaultMemory memory;
-    CountCalls *def = emcee::New<CountCalls>(memory).Create();
-    CountCalls *array = emcee::New<CountCalls[]>(memory, 5).Create(*def);
+    CountCalls *def = emcee::New<CountCalls>(&memory).Create();
+    CountCalls *array = emcee::New<CountCalls[]>(&memory, 5).Create(*def);
     emcee::Delete(def);
     emcee::Delete(array);
 

@@ -39,7 +39,7 @@ class Memory;
 class NewAllocationBlock {
  public:
 
-  NewAllocationBlock(Memory &memory);
+  NewAllocationBlock(Memory *memory);
 
   NewAllocationBlock& WithDestructor(Destructor *d) { destructor_ = d; return *this; }
   NewAllocationBlock& WithData(void *data) { data_ = data; return *this; }

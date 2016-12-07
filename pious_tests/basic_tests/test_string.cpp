@@ -28,7 +28,7 @@
 
 TEST(String, BasicTest) {
   emcee::DefaultMemory mem;
-  emcee::String bleach(mem, "Bleach");
+  emcee::String bleach(&mem, "Bleach");
   ASSERT_EQ(6, bleach.length());
   ASSERT_EQ('B', bleach[0]);
   ASSERT_EQ('l', bleach[1]);

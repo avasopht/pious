@@ -58,9 +58,9 @@ class Vector : public virtual MemoryDependent {
    * \param n number of elements
    * \param val default value for elements
    */
-  Vector(Memory &memory, size_t n, const T &val = T())
-      : memory_(&memory), array_(nullptr), capacity_(0), size_(n) {
-    assert(&memory);
+  Vector(Memory *memory, size_t n, const T &val = T())
+      : memory_(memory), array_(nullptr), capacity_(0), size_(n) {
+    assert(memory);
 
     capacity_ = CalcReserveSize(n);
     array_ = AllocateArray(capacity_);
@@ -70,8 +70,8 @@ class Vector : public virtual MemoryDependent {
   }
 
   /*! \brief Constructs an empty Vector of size 0. */
-  Vector(Memory &memory) :
-      memory_(&memory),
+  Vector(Memory *memory) :
+      memory_(memory),
       array_(nullptr),
       size_(0),
       capacity_(0)
@@ -122,7 +122,7 @@ class Vector : public virtual MemoryDependent {
       Reserve(CalcReserveSize(size()+1));
     }
 
-    memset(&array_[size_], 0, sizeof(T));
+    memset((void *) &array_[size_], 0, sizeof(T));
     InitAt(size_, t);
     ++size_;
   }

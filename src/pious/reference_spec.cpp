@@ -29,7 +29,8 @@ ReferenceSpec::ReferenceSpec() : is_poly_device_(false) {
 
 }
 
-ReferenceSpec::ReferenceSpec(emcee::Memory &memory)
+
+ReferenceSpec::ReferenceSpec(emcee::Memory *memory)
   : id_(memory), import_device_id_(memory), is_poly_device_(false) { }
 
 void ReferenceSpec::SetSid(const char *sid) { id_.SetSid(sid); }
