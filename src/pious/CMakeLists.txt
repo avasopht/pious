@@ -15,14 +15,13 @@ set(SOURCE_FILES
         connection_spec.cpp
         device_spec.cpp
         id.cpp
-        pious_main.cpp
         reference_spec.cpp
         )
 
 add_library(pious STATIC ${SOURCE_FILES} ${INCLUDE_FILES} ${INCLUDE_DIR}/api/pious_device.h)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-find_package(JACK REQUIRED)
+find_package(JACK)
 
 if(JACK_FOUND)
     include_directories(${JACK_INCLUDE_DIRS})
