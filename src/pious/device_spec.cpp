@@ -38,7 +38,7 @@ DeviceSpec::DeviceSpec(emcee::Memory *memory)
 }
 
 void DeviceSpec::AddPort(Pious_IoType io_type, const char *id, uint32_t iid) {
-  PortSpec port(*memory_);
+  PortSpec port(memory_);
   port.SetIoType(io_type);
   port.SetSid(id);
   port.SetIid(iid);
@@ -46,14 +46,14 @@ void DeviceSpec::AddPort(Pious_IoType io_type, const char *id, uint32_t iid) {
 }
 
 void DeviceSpec::AddPort(Pious_IoType io_type, const char *id) {
-  PortSpec port(*memory_);
+  PortSpec port(memory_);
   port.SetIoType(io_type);
   port.SetSid(id);
   ports_.PushBack(port);
 }
 
 void DeviceSpec::AddPort(Pious_IoType io_type, uint32_t iid) {
-  PortSpec port(*memory_);
+  PortSpec port(memory_);
   port.SetIoType(io_type);
   port.SetIid(iid);
   ports_.PushBack(port);
