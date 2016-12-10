@@ -143,8 +143,6 @@ int String::Compare(const String &rhs) const {
     if(diff != 0)
       return diff;
   }
-
-  return 0;
 }
 String String::ToLower() const {
   String lower(*this);

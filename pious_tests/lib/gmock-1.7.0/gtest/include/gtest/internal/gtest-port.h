@@ -1715,9 +1715,19 @@ inline int IsATTY(int /* fd */) { return 0; }
 #  else
 inline int IsATTY(int fd) { return _isatty(fd); }
 #  endif  // GTEST_OS_WINDOWS_MOBILE
+
+
+// avasopht: Required to create debug build on mingw (_stricmp not available when __NO_INLINE__ defined).
+#  if defined __NO_INLINE__
+inline int StrCaseCmp(const char* s1, const char* s2) {
+    return strcasecmp(s1, s2);
+}
+#  else // !__NO_INLINE__
 inline int StrCaseCmp(const char* s1, const char* s2) {
   return _stricmp(s1, s2);
 }
+#  endif // __NO_INLINE__
+
 inline char* StrDup(const char* src) { return _strdup(src); }
 # endif  // __BORLANDC__
 

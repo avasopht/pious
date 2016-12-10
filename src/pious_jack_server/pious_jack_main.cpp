@@ -240,8 +240,10 @@ main (int argc, char *argv[])
     sleep (1);
 #endif
   }
+  /*
   printf("This should never be called\n");
 
   jack_client_close (client);
   exit (0);
+   */
 }

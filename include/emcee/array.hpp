@@ -58,7 +58,7 @@ class Array {
 
   void Construct(Memory &memory, T &obj) {
     boost::is_base_of<MemoryDependent,T> is_memory_dependent;
-    Construct(obj, is_memory_dependent);
+    Construct(memory, obj, is_memory_dependent);
   }
 
   void Construct(Memory &memory, T &obj, boost::true_type) {
