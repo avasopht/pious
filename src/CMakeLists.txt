@@ -57,3 +57,4 @@ endif()
 
 add_subdirectory(pious)
 add_subdirectory(emcee)
+add_subdirectory(pious_jack_server)

@@ -36,7 +36,7 @@ WeakCount::WeakCount(const WeakCount &rhs) : counter_(nullptr) {
 }
 
 
-WeakCount::WeakCount(const SharedCount &shared_count) {
+WeakCount::WeakCount(const SharedCount &shared_count) : counter_(nullptr){
   ImportCounter(shared_count);
 }
 
