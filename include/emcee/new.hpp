@@ -68,7 +68,8 @@ struct ObjectBlock {
    * \return Returns null if data was not created by New.
    */
   static ObjectBlock* FromDataPtr(void *data) {
-    ObjectBlock *block = emcee::Offset<ObjectBlock>(data).Calc(-sizeof(size_t));
+    ptrdiff_t word_size = (ptrdiff_t)sizeof(size_t);
+    ObjectBlock *block = emcee::Offset<ObjectBlock>(data).Calc(-word_size);
     if(!block->allocation_block)
       return nullptr;
 
@@ -169,7 +170,6 @@ class New<T[]> {
   }
 
   void Construct(void *ptr, boost::false_type /*not memory dependent */) {
-    boost::has_trivial_constructor<T> has_trivial_constructor;
     new(ptr)T();
   }
 
@@ -196,7 +196,6 @@ class New<T[]> {
     size_t object_alloc_size = sizeof(T) * count_ + sizeof(size_t);
     void *allocation = memory_->Allocate(object_alloc_size);
     ObjectBlock *object_block = static_cast<ObjectBlock*>(allocation);
-    T *ptr = static_cast<T*>(object_block->data_ptr());
 
     return object_block;
   }

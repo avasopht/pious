@@ -147,7 +147,9 @@ int String::Compare(const String &rhs) const {
 String String::ToLower() const {
   String lower(*this);
   for(size_t i = 0; i < lower.size_; ++i) {
-    lower.string_[i] = static_cast<char>(tolower(lower.string_[i]));
+    char c = lower.string_[i];
+    c = c >= 'A' && c <= 'Z' ? (char)(c + 32) : c;
+    lower.string_[i] = c; // static_cast<char>(tolower(lower.string_[i]));
   }
 
   return lower;

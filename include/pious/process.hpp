@@ -30,7 +30,7 @@ class Process {
  public:
   virtual ~Process() {}
 
-  virtual void Do();
+  virtual void Do() {}
 };
 
 }

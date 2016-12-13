@@ -27,7 +27,6 @@
 #include <cstddef>
 #include <new>
 #include <cassert>
-#include <cstdio>
 
 namespace emcee {
 

@@ -24,8 +24,9 @@
 #ifndef PIOUS_SHARED_COUNT_HPP
 #define PIOUS_SHARED_COUNT_HPP
 
-#include "reference_counter.hpp"
 namespace emcee {
+
+class ReferenceCounter;
 
 /*! \brief  Implements a reference counter to be shared by value.
  */

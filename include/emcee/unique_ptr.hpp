@@ -40,7 +40,7 @@ class Deleter;
  *  pious::UniquePtr is a smart pointer that retains sole ownership of an object through a pointer,
  *  destroying that object when the unique pointer goes out of scope or is assigned to a new pointer.
  */
-template <typename T, typename DeleterType = TypedDeleter<T>>
+template <typename T, typename DeleterType = TypedDeleter<T> >
 class UniquePtr : public virtual MemoryDependent {
  public:
 

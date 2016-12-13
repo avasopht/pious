@@ -23,6 +23,7 @@
 
 #include "new.hpp"
 #include "shared_count.hpp"
+#include "reference_counter.hpp"
 
 namespace emcee {
 

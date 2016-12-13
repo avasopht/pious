@@ -28,6 +28,7 @@
 #include <emcee/memory.hpp>
 #include <emcee/new.hpp>
 #include <emcee/deleter.hpp>
+#include <emcee/reference_counter.hpp>
 
 TEST(WeakCount,Basic) {
   class Tracker {

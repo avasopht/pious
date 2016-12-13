@@ -38,7 +38,7 @@
 #ifndef PIOUS_PIOUS_DEVICE_H
 #define PIOUS_PIOUS_DEVICE_H
 
-#include <inttypes.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
