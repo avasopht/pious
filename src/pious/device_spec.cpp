@@ -25,6 +25,7 @@
 
 #include "add_device.hpp"
 #include "add_connection.hpp"
+#include "id.hpp"
 #include "port_spec.hpp"
 #include "reference_spec.hpp"
 #include "connection_spec.hpp"
@@ -73,16 +74,16 @@ pious::AddDevice DeviceSpec::AddDevice(uint32_t iid) {
   return pious::AddDevice(&devices_.Back());
 }
 
-pious::AddConnection DeviceSpec::AddConnection(const char *sid) {
+pious::AddConnection DeviceSpec::AddConnection(const char *device_sid) {
   ConnectionSpec connection(memory_);
-  connection.AddSourceDevice(sid);
+  connection.AddSourceDevice(device_sid);
   connections_.PushBack(connection);
   return pious::AddConnection(&connections_.Back());
 }
 
-pious::AddConnection DeviceSpec::AddConnection(uint32_t iid) {
+pious::AddConnection DeviceSpec::AddConnection(uint32_t device_iid) {
   ConnectionSpec connection(memory_);
-  connection.AddSourceDevice(iid);
+  connection.AddSourceDevice(device_iid);
   connections_.PushBack(connection);
   return pious::AddConnection(&connections_.Back());
 }
@@ -116,9 +117,9 @@ void DeviceSpec::SetId(const char *sid, uint32_t iid) {
   SetId(iid);
 }
 
-void DeviceSpec::SetId(const char *sid) { id_.SetSid(sid); }
+void DeviceSpec::SetId(const char *sid) { id_->SetSid(sid); }
 
-void DeviceSpec::SetId(uint32_t iid) { id_.SetIid(iid); }
+void DeviceSpec::SetId(uint32_t iid) { id_->SetIid(iid); }
 
 Pious_UnitPlugin DeviceSpec::plugin() const { return plugin_; }
 

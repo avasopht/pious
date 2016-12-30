@@ -31,36 +31,14 @@ namespace emcee {
 class Memory {
  public:
   virtual ~Memory() {}
-
-  /*! \brief Sets pointer to data used in a unique way by the implementation.
-   *    \sa Data()
-   *
-   *  Implementations do not have to accept the pointer.
-   */
-  virtual void SetData(void *ptr) = 0;
-  /*! \brief Returns pointer to data object associated with memory instance.
-   *
-   *    Use `data` to point to a singleton object to manage an application.
-   */
-  virtual void* Data() = 0;
   virtual void* Allocate(size_t size) = 0;
-  virtual void* Allocate(size_t size, int arena) = 0;
   virtual void Free(void *ptr) = 0;
-  virtual int GetArenaCount() const = 0;
 };
 
 class DefaultMemory : public Memory {
  public:
-  DefaultMemory() : data_(nullptr){}
-
-  virtual void SetData(void *ptr) override;
-  virtual void* Data() override;
   virtual void* Allocate(size_t size) override;
-  virtual void* Allocate(size_t size, int arena) override;
-  virtual int GetArenaCount() const override;
   virtual void Free(void *ptr) override;
- private:
-  void *data_;
 };
 
 }

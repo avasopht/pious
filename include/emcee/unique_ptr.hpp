@@ -122,6 +122,9 @@ class UniquePtr : public virtual MemoryDependent {
   const T* get() const { return pointer_; }
   T* get() { return pointer_; }
 
+  const T* operator->() const { return get(); }
+  T* operator->() { return get(); }
+
   const T& operator*() const { return *get(); }
   T& operator*() { return *get(); }
 

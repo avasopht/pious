@@ -106,11 +106,11 @@ struct Pious_DataPacket {
  *  Initializes the plugin and returns a new pointer to its data to be used by
  *  the Pious_UnitPluginRender method.
  */
-typedef void* (*TPious_UnitPluginInit)(struct Pious_UnitScope *scope);
+typedef void* (*TPious_UnitPluginInit)(struct Pious_Scope *scope);
 /*!
  *  \brief    Renders output
  */
-typedef void (*TPious_UnitPluginRender)(struct Pious_UnitScope *scope, void *data, uint32_t frames);
+typedef void (*TPious_UnitPluginRender)(struct Pious_Scope *scope, void *data, uint32_t frames);
 
 struct Pious_UnitPlugin {
   TPious_UnitPluginInit Init;

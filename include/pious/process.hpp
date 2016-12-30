@@ -28,10 +28,12 @@ namespace pious {
 
 class Process {
  public:
-  virtual ~Process() {}
+  virtual ~Process() = 0;
 
-  virtual void Do() {}
+  virtual void Do() = 0;
 };
+
+Process::~Process() {}
 
 }
 

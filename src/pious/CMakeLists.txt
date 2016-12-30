@@ -18,4 +18,4 @@ set(SOURCE_FILES
         reference_spec.cpp
         )
 
-add_library(pious STATIC ${SOURCE_FILES} ${INCLUDE_FILES} ${INCLUDE_DIR}/api/pious_device.h)
+add_library(pious STATIC ${SOURCE_FILES} ${INCLUDE_FILES} ${INCLUDE_DIR}/api/pious_device.h ${INCLUDE_DIR}/api/pious_spec.h)

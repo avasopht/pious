@@ -32,16 +32,3 @@ void *emcee::DefaultMemory::Allocate(size_t size) {
 void emcee::DefaultMemory::Free(void *ptr) {
   free(ptr);
 }
-void *emcee::DefaultMemory::Data() {
-  return data_;
-}
-void emcee::DefaultMemory::SetData(void *ptr) {
-  data_ = ptr;
-}
-void *emcee::DefaultMemory::Allocate(size_t size, int arena) {
-  (void) arena;
-  return Allocate(size);
-}
-int emcee::DefaultMemory::GetArenaCount() const {
-  return 1;
-}

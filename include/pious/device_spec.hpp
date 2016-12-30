@@ -24,8 +24,6 @@
 #ifndef PIOUS_DEVICE_SPEC_HPP
 #define PIOUS_DEVICE_SPEC_HPP
 
-#include "id.hpp"
-
 #include <emcee/vector.hpp>
 #include <emcee/shared_ptr.hpp>
 
@@ -37,6 +35,7 @@ class Memory;
 
 namespace pious {
 
+class Id;
 class AddConnection;
 class AddConnectionPort;
 class AddConnectionPortDest;
@@ -65,8 +64,8 @@ class DeviceSpec {
   size_t device_count() const;
   ReferenceSpec* DeviceAt(size_t idx);
 
-  pious::AddConnection AddConnection(const char *sid);
-  pious::AddConnection AddConnection(uint32_t iid);
+  pious::AddConnection AddConnection(const char *device_sid);
+  pious::AddConnection AddConnection(uint32_t device_iid);
   size_t connection_count() const;
   ConnectionSpec* ConnectionAt(size_t idx);
 
@@ -76,7 +75,7 @@ class DeviceSpec {
  private:
   emcee::Memory *memory_;
   Pious_UnitPlugin plugin_;
-  Id id_;
+  emcee::UniquePtr<Id> id_;
   emcee::Vector<ReferenceSpec> devices_;
   emcee::Vector<PortSpec> ports_;
   emcee::Vector<ConnectionSpec> connections_;
