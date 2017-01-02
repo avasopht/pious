@@ -11,11 +11,13 @@ set(EMCEE_INCLUDE_FILES
         deleter.hpp
         destructor.hpp
         emcee.hpp
+        masked_cell_vector.hpp
         memory.hpp
         memory_dependent.hpp
         memory_setter.hpp
         new.hpp
         new_allocation_block.hpp
+        pow2.hpp
         reference_counter.hpp
         shared_count.hpp
         shared_ptr.hpp

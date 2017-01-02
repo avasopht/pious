@@ -7,6 +7,7 @@ add_executable(runBasicPiousTests
         class_method_notifier.hpp
         test_id.cpp
         test_main.cpp
+        test_masked_cell_vector.cpp
         test_new.cpp
         test_unique_ptr.cpp
         test_shared_ptr.cpp

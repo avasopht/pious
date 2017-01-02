@@ -104,7 +104,10 @@ class Vector : public virtual MemoryDependent {
     }
   }
 
-  /*! \brief Calculates ideal minimum capacity to hold `min_size` elements. */
+  /*! \brief Calculates ideal minimum capacity to hold `min_size` elements.
+   *
+   *  Minimum capacity is 1.
+   */
   static size_t CalcReserveSize(size_t min_size) {
     size_t size = 1;
     while(size < min_size)
@@ -142,6 +145,18 @@ class Vector : public virtual MemoryDependent {
     array_[size_ - 1].~T();
     memset(&array_[size() - 1], 0, sizeof(T));
     --size_;
+  }
+
+  void Resize(size_t new_size) {
+    Resize(new_size, T());
+  }
+
+  void Resize(size_t new_size, const T& value) {
+    while(new_size < size())
+      EraseAt(size()-1);
+
+    while(new_size > size())
+      PushBack(value);
   }
 
   /*! \brief Requests a change in capacity. */

@@ -13,6 +13,7 @@ set(SOURCE_FILES
         memory_dependent.cpp
         new.cpp
         new_allocation_block.cpp
+        pow2.cpp
         reference_counter.cpp
         shared_count.cpp
         string.cpp
