@@ -49,7 +49,7 @@ class Memory;
  *
  */
 template<typename T>
-class Vector : public virtual MemoryDependent {
+class Vector : public virtual MemoryDependent, public virtual MemorySetter {
  public:
 
   /*! \brief  Constructs a vector with n elements set to a default value.
@@ -94,6 +94,17 @@ class Vector : public virtual MemoryDependent {
     InitWithCopy(rhs);
   }
 
+  void Clear() {
+    while (size() > 0) {
+      EraseAt(size()-1);
+    }
+  }
+
+  void SetMemory(Memory * memory) override {
+    Clear();
+    memory_ = memory;
+  }
+
   /*! \brief  Calls destructor on array elements. */
   ~Vector() {
     DestroyArray();
@@ -110,8 +121,9 @@ class Vector : public virtual MemoryDependent {
    */
   static size_t CalcReserveSize(size_t min_size) {
     size_t size = 1;
-    while(size < min_size)
+    while(size < min_size) {
       size *= 2;
+    }
 
     return size;
   }
@@ -137,11 +149,14 @@ class Vector : public virtual MemoryDependent {
    * \param index
    */
   void EraseAt(size_t index) {
+    assert(array_);
     assert(index < size_);
+
     for (size_t i = index; i < size_ - 1; ++i) {
       array_[i] = array_[i + 1];
     }
 
+    // Last element will no longer be needed.
     array_[size_ - 1].~T();
     memset(&array_[size() - 1], 0, sizeof(T));
     --size_;
@@ -152,11 +167,12 @@ class Vector : public virtual MemoryDependent {
   }
 
   void Resize(size_t new_size, const T& value) {
-    while(new_size < size())
-      EraseAt(size()-1);
-
-    while(new_size > size())
+    while(new_size < size()) {
+      EraseAt(size() - 1);
+    }
+    while(new_size > size()) {
       PushBack(value);
+    }
   }
 
   /*! \brief Requests a change in capacity. */
@@ -164,6 +180,7 @@ class Vector : public virtual MemoryDependent {
     if(new_capacity <= capacity())
       return;
 
+    assert(memory_);
     size_t old_capacity = capacity_;
     T *old_array = array_;
     capacity_ = CalcReserveSize(new_capacity);
@@ -186,27 +203,30 @@ class Vector : public virtual MemoryDependent {
    * \return
    */
   Vector& operator=(const Vector& rhs) {
-    if(this == &rhs)
+    if(this == &rhs) {
       return *this;
-
+    }
     Vector tmp(rhs);
     std::swap(memory_,tmp.memory_);
     std::swap(array_, tmp.array_);
     std::swap(capacity_, tmp.capacity_);
     std::swap(size_, tmp.size_);
-
     return *this;
   }
 
+  const T& Front() const { return At(0); }
+  T& Front() { return At(0); }
   const T& Back() const { return At(size() - 1); }
   T& Back() { return At(size() - 1); }
 
   const T &At(size_t idx) const {
+    assert(array_);
     assert(idx < size_);
     return array_[idx];
   };
 
   T &At(size_t idx) {
+    assert(array_);
     assert(idx < size_);
     return array_[idx];
   }
@@ -218,6 +238,8 @@ class Vector : public virtual MemoryDependent {
   size_t size() const { return size_; }
   /*! Returns capacity of the Vector. */
   size_t capacity() const { return capacity_; }
+
+
  private:
   Memory *memory_;
   T* array_;
@@ -230,13 +252,16 @@ class Vector : public virtual MemoryDependent {
    * Only call in constructor as it does not destroy existing elements.
    */
   void InitWithCopy(const Vector &rhs) {
-    assert(rhs.memory_);
-    memory_ = rhs.memory_;
-    capacity_ = CalcReserveSize(rhs.size());
-    array_ = AllocateArray(capacity_);
-    size_ = rhs.size_;
-    for(size_t i = 0; i < rhs.size(); ++i) {
-      (*this)[i] = rhs[i];
+    assert(!array_);
+    assert(size_ == 0);
+    if(rhs.memory_) {
+      memory_ = rhs.memory_;
+      capacity_ = CalcReserveSize(rhs.size());
+      array_ = AllocateArray(capacity_);
+      size_ = rhs.size_;
+      for(size_t i = 0; i < rhs.size(); ++i) {
+        (*this)[i] = rhs[i];
+      }
     }
   }
 
@@ -244,27 +269,28 @@ class Vector : public virtual MemoryDependent {
    * Initializes element at given index with provided value.
    */
   void InitAt(size_t idx, const T &new_val) {
-    boost::has_trivial_default_constructor<T> type;
-    InitAt(type, idx, new_val);
+    boost::has_trivial_default_constructor<T> has_trivial_constructor;
+    if(has_trivial_constructor) {
+      InitAtTrivial(idx, new_val);
+    } else {
+      InitAtNonTrivial(idx, new_val);
+    }
   }
 
   /*
    * Initializes non-trivial element at given index with provided value,
    * injecting Memory reference into compatible classes.
    */
-  void InitAt(boost::false_type, size_t idx, const T &new_val) {
-    // Has non-trivial constructor.
-
-    new (&array_[idx]) T(new_val);
-
+  void InitAtNonTrivial(size_t idx, const T &new_val) {
+    boost::is_base_of<MemoryDependentWithCopy,T> is_memory_dependent;
+    MemoryDependentWithCopy::ConstructAt(&array_[idx], memory_, new_val);
     MemorySetter::Inject(array_[idx], memory_);
   }
 
   /*
    * Initializes trivial element at given index with provided value.
    */
-  void InitAt(boost::true_type, size_t idx, const T &new_val) {
-    // Has trivial constructor.
+  void InitAtTrivial(size_t idx, const T &new_val) {
     array_[idx] = T(new_val);
   }
 
@@ -280,22 +306,19 @@ class Vector : public virtual MemoryDependent {
    */
   static void DestroyArray(T *p, size_t num_elements) {
     boost::has_trivial_destructor<T> has_trivial_destructor;
-    DestroyArray(p, num_elements, has_trivial_destructor);
+    if(!has_trivial_destructor) {
+      DestroyArrayNonTrivial(p, num_elements);
+    }
   }
 
   /*
    * Calls destructor for non-trivial elements in the array.
    */
-  static void DestroyArray(T *p, size_t size, boost::true_type) {
+  static void DestroyArrayNonTrivial(T *p, size_t size) {
     for(size_t i = 0; i < size; ++i) {
       p[i].~T();
     }
   }
-
-  /*
-   * Do nothing for trivial arrays that don't need destructor called.
-   */
-  static void DestroyArray(T*, size_t, boost::false_type) {}
 
   T* AllocateArray(size_t size) {
     assert(memory_);
@@ -303,10 +326,6 @@ class Vector : public virtual MemoryDependent {
     void *ptr = memory_->Allocate(sizeof(T) * size);
     T *array = static_cast<T*>(ptr);
     return array;
-  }
-
-  void Destroy(boost::true_type) {
-    // Has trivial destructor (do nothing).
   }
 };
 

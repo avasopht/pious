@@ -12,6 +12,7 @@ add_executable(runBasicPiousTests
         test_unique_ptr.cpp
         test_shared_ptr.cpp
         test_string.cpp
+        test_var_rms.cpp
         test_vector.cpp
         test_weak_count.cpp
         test_weak_ptr.cpp)
@@ -20,3 +21,4 @@ target_link_libraries(runBasicPiousTests gtest)
 target_link_libraries(runBasicPiousTests gmock gmock_main)
 target_link_libraries(runBasicPiousTests pious)
 target_link_libraries(runBasicPiousTests emcee)
+target_link_libraries(runBasicPiousTests pious_dsp_lib)

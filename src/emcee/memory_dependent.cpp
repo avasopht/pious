@@ -23,8 +23,11 @@
 
 #include "memory_dependent.hpp"
 
+
 namespace emcee {
 
 MemoryDependent::~MemoryDependent() {}
+MemoryDependentWithCopy::~MemoryDependentWithCopy() {}
 
-}
+
+} /* namespace emcee */

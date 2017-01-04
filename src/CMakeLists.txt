@@ -44,10 +44,16 @@ set(PIOUS_INCLUDE_FILES
         scope.hpp
         )
 
+set(PIOUS_DSP_LIB_INCLUDE_FILES
+        var_rms.hpp
+        )
+
 set(EMCEE_INCLUDE_DIR "${INCLUDE_DIR}/emcee")
 set(PIOUS_INCLUDE_DIR "${INCLUDE_DIR}/pious")
+set(PIOUS_DSP_LIB_INCLUDE_DIR "${INCLUDE_DIR}/pious_dsp_lib")
 Prepend(EMCEE_INCLUDE_FILES "${INCLUDE_DIR}/emcee" ${EMCEE_INCLUDE_FILES})
 Prepend(PIOUS_INCLUDE_FILES "${INCLUDE_DIR}/pious" ${PIOUS_INCLUDE_FILES})
+Prepend(PIOUS_DSP_LIB_INCLUDE_FILES "${INCLUDE_DIR}/pious_dsp_lib" ${PIOUS_DSP_LIB_INCLUDE_FILES})
 
 
 find_package(Boost 1.55 REQUIRED)
@@ -59,4 +65,5 @@ endif()
 
 add_subdirectory(pious)
 add_subdirectory(emcee)
+add_subdirectory(pious_dsp_lib)
 add_subdirectory(pious_jack_server)

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 02/01/2017.
+ * Created by The Pious Authors on 03/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,27 +22,37 @@
  */
 
 #include <gtest/gtest.h>
+#include <pious_dsp_lib/var_rms.hpp>
+#include <memory.hpp>
 
-#include <emcee/masked_cell_vector.hpp>
+static float RoundFloat(float precision, float value) {
+  float normalized = value / precision;
+  float sign = value > 0 ? 1.f : -1.f;
+  int64_t as_int = (int64_t)(normalized + 0.5f * sign);
+  float rounded = as_int * precision;
+  return rounded;
+}
 
-TEST(MaskedCellVector,Basic) {
+TEST(VarRms, Basic) {
   emcee::DefaultMemory mem;
-  emcee::MaskedCellVector<int> vec(&mem);
-  vec.SetSize(2, 8);
-  vec[0] = 1;
-  ASSERT_EQ(1, vec[0]);
-  ASSERT_EQ(1, vec[1]);
-  vec[2] = 2;
-  ASSERT_EQ(2, vec[2]);
-  ASSERT_EQ(2, vec[3]);
-  vec[4] = 3;
-  ASSERT_EQ(3, vec[4]);
-  ASSERT_EQ(3, vec[5]);
-  vec[6] = 4;
-  ASSERT_EQ(4, vec[6]);
-  ASSERT_EQ(4, vec[7]);
-  vec[8] = 5;
-  ASSERT_EQ(5, vec[8]);
-  ASSERT_EQ(5, vec[0]);
-  ASSERT_EQ(5, vec[1]);
+  pious::VarRms rms(&mem);
+  rms.SetCapacity(8);
+  rms.Write(7);
+  rms.Write(9);
+  rms.Write(12);
+  rms.Write(3);
+  rms.Write(6);
+  rms.Write(4);
+  rms.Write(8);
+  rms.Write(2);
+
+  float precision = 0.001f;
+  ASSERT_FLOAT_EQ(2.000, RoundFloat(precision, rms.CalcRms(1)));
+  ASSERT_FLOAT_EQ(5.831, RoundFloat(precision, rms.CalcRms(2)));
+  ASSERT_FLOAT_EQ(5.292, RoundFloat(precision, rms.CalcRms(3)));
+  ASSERT_FLOAT_EQ(5.477, RoundFloat(precision, rms.CalcRms(4)));
+  ASSERT_FLOAT_EQ(5.079, RoundFloat(precision, rms.CalcRms(5)));
+  ASSERT_FLOAT_EQ(6.745, RoundFloat(precision, rms.CalcRms(6)));
+  ASSERT_FLOAT_EQ(7.111, RoundFloat(precision, rms.CalcRms(7)));
+  ASSERT_FLOAT_EQ(7.098, RoundFloat(precision, rms.CalcRms(8)));
 }

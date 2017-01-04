@@ -26,6 +26,8 @@
 
 #include "vector.hpp"
 #include "pow2.hpp"
+#include "memory_setter.hpp"
+#include "memory_dependent.hpp"
 
 namespace emcee {
 
@@ -45,23 +47,48 @@ class Memory;
  *  when you want to create circular buffers.
  */
 template<typename T>
-class MaskedCellVector {
+class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDependentWithCopy {
  public:
+  MaskedCellVector() :
+    vector_(nullptr),
+    idx_mask_(0),
+    cell_size_(0),
+    cell_mask_(0),
+    cell_shift_(0) {}
+
+  MaskedCellVector(Memory *memory) :
+    vector_(memory),
+    idx_mask_(0),
+    cell_size_(0),
+    cell_mask_(0),
+    cell_shift_(0) {}
+
+  MaskedCellVector(Memory *memory, const MaskedCellVector &rhs) :
+      vector_(memory),
+      idx_mask_(rhs.idx_mask_),
+      cell_size_(rhs.cell_size_),
+      cell_mask_(rhs.cell_mask_),
+      cell_shift_(rhs.cell_shift_) {}
+
+  void SetMemory(Memory *ptr) override {
+    (void) ptr;
+  }
+
   /*!
-   *
-   * @param memory
    * @param cell_size   size of cells (must be a power of 2).
    * @param size        size of the vector (must be a power of 2).
    */
-  MaskedCellVector(Memory *memory, size_t cell_size, size_t size) :
-      vector_(memory),
-      idx_mask_((size / cell_size) - 1),
-      cell_size_(cell_size),
-      cell_mask_(cell_size - 1),
-      cell_shift_(Log2(cell_size)) {
+  void SetSize(size_t cell_size, size_t size) {
+
     assert(IsPow2(cell_size));
     assert(IsPow2(size));
     assert(cell_shift_ >= 0);
+
+    idx_mask_ = size / cell_size - 1;
+    cell_size_ = cell_size;
+    cell_mask_ = cell_size - 1;
+    cell_shift_ = Log2(cell_size);
+
     size_t vector_size = size / cell_size;
     vector_.Resize(vector_size);
   }
@@ -88,6 +115,7 @@ class MaskedCellVector {
   const T& operator[](size_t idx) const { return At(idx); }
   T& operator[](size_t idx) { return At(idx); }
 
+  size_t cell_size() const { return cell_size_; }
   size_t size() const { return vector_.size() * cell_size_; }
 
  private:
