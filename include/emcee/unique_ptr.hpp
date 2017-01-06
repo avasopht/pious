@@ -80,7 +80,7 @@ class UniquePtr : public virtual MemoryDependent {
   }
 
   T& operator[](size_t idx) const {
-    assert(emcee::TypeCount<T>::count() > idx);
+    assert(pointer_);
     return pointer_[idx];
   }
 

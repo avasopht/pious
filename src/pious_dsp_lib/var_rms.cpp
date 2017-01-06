@@ -22,7 +22,6 @@
  */
 
 #include "var_rms.hpp"
-#include <emcee/masked_cell_vector.hpp>
 
 namespace pious {
 
@@ -58,13 +57,13 @@ size_t VarRms::capacity() const {
 
 VarRms::VarRms(emcee::Memory *memory)
   : buffers_(memory),
-    pos_(0U-1)
+    pos_(SIZE_MAX)
 { }
 
 void VarRms::SetCapacity(size_t min_capacity) {
   buffers_.Clear();
 
-  pos_ = size_t(0) - 1;
+  pos_ = SIZE_MAX;
   size_t capacity = (size_t) ToPow2(min_capacity);
   int levels = Log2(capacity);
   // buffers_.Resize((size_t)levels);
@@ -119,6 +118,11 @@ VarRms::VarRms()
   : buffers_(nullptr),
     pos_(0) { }
 
-
+void VarRms::Clear() {
+  for(size_t i = 0; i < buffers_.size(); ++i) {
+    buffers_.At(i).Clear();
+  }
+  pos_ = SIZE_MAX;
+}
 
 } // namespace

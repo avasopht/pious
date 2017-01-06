@@ -114,6 +114,12 @@ class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDepen
     return vector_[CalcIndex(idx)];
   }
 
+  void Clear() {
+    for(size_t i = 0; i < vector_.size(); ++i) {
+      vector_[i] = T();
+    }
+  }
+
   const T& operator[](size_t idx) const { return At(idx); }
   T& operator[](size_t idx) { return At(idx); }
 

@@ -70,13 +70,9 @@ struct ObjectBlock {
   static ObjectBlock* FromDataPtr(void *data) {
     ptrdiff_t word_size = (ptrdiff_t)sizeof(size_t);
     ObjectBlock *block = emcee::Offset<ObjectBlock>(data).Calc(-word_size);
-    if(!block->allocation_block)
-      return nullptr;
-
-    if(block->allocation_block->data() != data)
-      return nullptr;
-
-    return block;
+    if(block->allocation_block && block->allocation_block->data() == data)
+      return block;
+    return nullptr;
   }
 };
 

@@ -50,6 +50,7 @@ class VarRms : public virtual emcee::MemoryDependent {
   void Write(float sample);
 
   void SetCapacity(size_t min_capacity);
+  void Clear();
 
   size_t capacity() const;
 

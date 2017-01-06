@@ -40,19 +40,6 @@ void* NextAligned(void *ptr);
 //! \sa class Offset
 void* CalcOffset(void *ptr, ptrdiff_t offset);
 
-
-/*! \brief Gets the element count of a typename. */
-template<typename T> class TypeCount {
-  public: static const size_t kCount = 1;
-  /*! Returns 1 for types that are not arrays. */
-  public: static size_t count() { return 1; }
-};
-
-template<typename T, size_t N> class TypeCount <T[N]> {
-  public: static const size_t kCount = N;
-  public: static size_t count() { return N; }
-};
-
 /*! \brief Returns a type T pointer to an address at an offset from a pointer
  *
  * Using this class can make it cleaner to
