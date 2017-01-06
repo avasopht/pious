@@ -25,18 +25,10 @@
 #include <pious_dsp_lib/var_rms.hpp>
 #include <memory.hpp>
 
-static float RoundFloat(float precision, float value) {
-  float normalized = value / precision;
-  float sign = value > 0 ? 1.f : -1.f;
-  int64_t as_int = (int64_t)(normalized + 0.5f * sign);
-  float rounded = as_int * precision;
-  return rounded;
-}
-
 TEST(VarRms, Basic) {
   emcee::DefaultMemory mem;
   pious::VarRms rms(&mem);
-  rms.SetCapacity(8);
+  rms.SetCapacity(65536);
   rms.Write(7);
   rms.Write(9);
   rms.Write(12);
@@ -47,12 +39,12 @@ TEST(VarRms, Basic) {
   rms.Write(2);
 
   float precision = 0.001f;
-  ASSERT_FLOAT_EQ(2.000, RoundFloat(precision, rms.CalcRms(1)));
-  ASSERT_FLOAT_EQ(5.831, RoundFloat(precision, rms.CalcRms(2)));
-  ASSERT_FLOAT_EQ(5.292, RoundFloat(precision, rms.CalcRms(3)));
-  ASSERT_FLOAT_EQ(5.477, RoundFloat(precision, rms.CalcRms(4)));
-  ASSERT_FLOAT_EQ(5.079, RoundFloat(precision, rms.CalcRms(5)));
-  ASSERT_FLOAT_EQ(6.745, RoundFloat(precision, rms.CalcRms(6)));
-  ASSERT_FLOAT_EQ(7.111, RoundFloat(precision, rms.CalcRms(7)));
-  ASSERT_FLOAT_EQ(7.098, RoundFloat(precision, rms.CalcRms(8)));
+  ASSERT_NEAR(2.000,  rms.CalcRms(1), precision);
+  ASSERT_NEAR(5.831,  rms.CalcRms(2), precision);
+  ASSERT_NEAR(5.292,  rms.CalcRms(3), precision);
+  ASSERT_NEAR(5.477,  rms.CalcRms(4), precision);
+  ASSERT_NEAR(5.079,  rms.CalcRms(5), precision);
+  ASSERT_NEAR(6.745,  rms.CalcRms(6), precision);
+  ASSERT_NEAR(7.111,  rms.CalcRms(7), precision);
+  ASSERT_NEAR(7.098,  rms.CalcRms(8), precision);
 }

@@ -64,14 +64,16 @@ class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDepen
     cell_shift_(0) {}
 
   MaskedCellVector(Memory *memory, const MaskedCellVector &rhs) :
-      vector_(memory),
+      vector_(rhs.vector_),
       idx_mask_(rhs.idx_mask_),
       cell_size_(rhs.cell_size_),
       cell_mask_(rhs.cell_mask_),
-      cell_shift_(rhs.cell_shift_) {}
+      cell_shift_(rhs.cell_shift_) {
+    vector_.SetMemory(memory);
+  }
 
   void SetMemory(Memory *ptr) override {
-    (void) ptr;
+    vector_.SetMemory(ptr);
   }
 
   /*!

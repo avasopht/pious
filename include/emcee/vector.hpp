@@ -43,7 +43,7 @@ class Memory;
 /*! \brief  The Vector class provides a growable array of objects.
  *
  *  Vector will inject a Memory reference to classes implementing
- *  `MemoryDependent` or `MemorySetter`.
+ *  `MemoryDependent`, `MemoryDependentWithCopy` or `MemorySetter`.
  *
  *  When a Vector is resized, pointers to its old members are invalid.
  *
@@ -58,12 +58,13 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
    * \param n number of elements
    * \param val default value for elements
    */
-  Vector(Memory *memory, size_t n, const T &val = T())
+  template<typename Y>
+  Vector(Memory *memory, size_t n, const Y &val = T())
       : memory_(memory), array_(nullptr), capacity_(0), size_(n) {
     assert(memory);
 
     capacity_ = CalcReserveSize(n);
-    array_ = AllocateArray(capacity_);
+    array_ = AllocateArray(memory_, capacity_);
     for(size_t i = 0; i < n; ++i) {
       InitAt(i, val);
     }
@@ -101,8 +102,23 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
   }
 
   void SetMemory(Memory * memory) override {
-    Clear();
-    memory_ = memory;
+    if(memory == memory_)
+      return;
+
+    if(array_ && memory_) {
+      T *old_array = array_;
+      Memory *old_memory = memory_;
+      memory_ = memory;
+      array_ = AllocateArray(memory_, capacity_);
+      for(size_t i = 0; i < size_; ++i) {
+        InitAt(i, old_array[i]);
+      }
+      DestroyArray(old_array, size_);
+      old_memory->Free(old_array);
+    } else {
+      memory_ = memory;
+    }
+
   }
 
   /*! \brief  Calls destructor on array elements. */
@@ -166,7 +182,8 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
     Resize(new_size, T());
   }
 
-  void Resize(size_t new_size, const T& value) {
+  template<typename Y>
+  void Resize(size_t new_size, const Y& value) {
     while(new_size < size()) {
       EraseAt(size() - 1);
     }
@@ -184,7 +201,7 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
     size_t old_capacity = capacity_;
     T *old_array = array_;
     capacity_ = CalcReserveSize(new_capacity);
-    array_ = AllocateArray(capacity_);
+    array_ = AllocateArray(memory_, capacity_);
     for(size_t i = 0; i < size(); ++i) {
       InitAt(i, old_array[i]);
     }
@@ -206,6 +223,7 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
     if(this == &rhs) {
       return *this;
     }
+    // tmp will cleanup array_, leaving us with a copy constructed array.
     Vector tmp(rhs);
     std::swap(memory_,tmp.memory_);
     std::swap(array_, tmp.array_);
@@ -257,7 +275,7 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
     if(rhs.memory_) {
       memory_ = rhs.memory_;
       capacity_ = CalcReserveSize(rhs.size());
-      array_ = AllocateArray(capacity_);
+      array_ = AllocateArray(memory_, capacity_);
       size_ = rhs.size_;
       for(size_t i = 0; i < rhs.size(); ++i) {
         (*this)[i] = rhs[i];
@@ -268,7 +286,8 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
   /*
    * Initializes element at given index with provided value.
    */
-  void InitAt(size_t idx, const T &new_val) {
+  template<typename Y>
+  void InitAt(size_t idx, const Y &new_val) {
     boost::has_trivial_default_constructor<T> has_trivial_constructor;
     if(has_trivial_constructor) {
       InitAtTrivial(idx, new_val);
@@ -281,16 +300,20 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
    * Initializes non-trivial element at given index with provided value,
    * injecting Memory reference into compatible classes.
    */
-  void InitAtNonTrivial(size_t idx, const T &new_val) {
+  template<typename Y>
+  void InitAtNonTrivial(size_t idx, const Y &new_val) {
     boost::is_base_of<MemoryDependentWithCopy,T> is_memory_dependent;
-    MemoryDependentWithCopy::ConstructAt(&array_[idx], memory_, new_val);
-    MemorySetter::Inject(array_[idx], memory_);
+    bool memory_injected =
+        MemoryDependentWithCopy::ConstructAt(&array_[idx], memory_, new_val);
+    if(!memory_injected)
+      MemorySetter::Inject(array_[idx], memory_);
   }
 
   /*
    * Initializes trivial element at given index with provided value.
    */
-  void InitAtTrivial(size_t idx, const T &new_val) {
+  template<typename Y>
+  void InitAtTrivial(size_t idx, const Y &new_val) {
     array_[idx] = T(new_val);
   }
 
@@ -320,10 +343,10 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
     }
   }
 
-  T* AllocateArray(size_t size) {
-    assert(memory_);
+  T* AllocateArray(Memory *memory, size_t size) {
+    assert(memory);
 
-    void *ptr = memory_->Allocate(sizeof(T) * size);
+    void *ptr = memory->Allocate(sizeof(T) * size);
     T *array = static_cast<T*>(ptr);
     return array;
   }

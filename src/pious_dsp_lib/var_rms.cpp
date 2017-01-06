@@ -67,11 +67,12 @@ void VarRms::SetCapacity(size_t min_capacity) {
   pos_ = size_t(0) - 1;
   size_t capacity = (size_t) ToPow2(min_capacity);
   int levels = Log2(capacity);
-  buffers_.Resize((size_t)levels);
+  // buffers_.Resize((size_t)levels);
 
   for(int cur_level = 0; cur_level < levels; ++cur_level) {
+    buffers_.PushBack(BufferVector());
     size_t cell_size = 1U << cur_level;
-    BufferVector &cur_buffer = buffers_[cur_level];
+    BufferVector &cur_buffer = buffers_.Back();
     cur_buffer.SetSize(cell_size, capacity);
   }
 }
