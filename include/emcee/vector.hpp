@@ -45,11 +45,25 @@ class Memory;
  *  Vector will inject a Memory reference to classes implementing
  *  `MemoryDependent`, `MemoryDependentWithCopy` or `MemorySetter`.
  *
- *  When a Vector is resized, pointers to its old members are invalid.
+ *  When a Vector has a change in capacity, pointers to its old members are
+ *  invalid.
+ *
+ *  When setting Vector Memory:
+ *  If the Memory pointer is set after elements are created, a new array is
+ *  allocated and elements are copied with the new memory pointer being
+ *  injected.
+ *
+ *  When inserting Memory when inserting and adding elements:
+ *  When an element is added to the Vector via PushBack, PushFront or Insert,
+ *  the Memory pointer is injected during construction for compatible types.
+ *
+ *  When assigned to another vector:
+ *  If a Vector has no memory pointer it will adopt the memory pointer to the
+ *  Vector it is being assigned to.
  *
  */
 template<typename T>
-class Vector : public virtual MemoryDependent, public virtual MemorySetter {
+class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySetter {
  public:
 
   /*! \brief  Constructs a vector with n elements set to a default value.
@@ -77,6 +91,15 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
       size_(0),
       capacity_(0)
   { }
+
+
+  Vector(Memory *memory, const Vector &rhs) :
+      memory_(memory_),
+      array_(nullptr),
+      size_(0),
+      capacity_(0) {
+    InitWithCopy(rhs);
+  }
 
   /*! \brief  Copy constructs a vector.
    *
@@ -106,6 +129,7 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
       return;
 
     if(array_ && memory_) {
+      // Create new array with new memory, copying old elements (and injecting memory pointer).
       T *old_array = array_;
       Memory *old_memory = memory_;
       memory_ = memory;
@@ -148,13 +172,14 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
    *
    *    Vector may be resized if the capacity has been reached.
    */
-  void PushBack(const T &t) {
+  template<typename Y>
+  void PushBack(const Y &y) {
     if(size() == capacity()) {
       Reserve(CalcReserveSize(size()+1));
     }
 
     memset((void *) &array_[size_], 0, sizeof(T));
-    InitAt(size_, t);
+    InitAt(size_, y);
     ++size_;
   }
 
@@ -194,19 +219,23 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
 
   /*! \brief Requests a change in capacity. */
   void Reserve(size_t new_capacity) {
+    if(new_capacity == 0)
+      return;
     if(new_capacity <= capacity())
       return;
-
     assert(memory_);
-    size_t old_capacity = capacity_;
-    T *old_array = array_;
+
+    size_t old_size = size_;
     capacity_ = CalcReserveSize(new_capacity);
+    T *old_array = array_;
     array_ = AllocateArray(memory_, capacity_);
-    for(size_t i = 0; i < size(); ++i) {
-      InitAt(i, old_array[i]);
+    if(old_array) {
+      for(size_t i = 0; i < size(); ++i) {
+        InitAt(i, old_array[i]);
+      }
+      DestroyArray(old_array, old_size);
+      memory_->Free(old_array);
     }
-    DestroyArray(old_array, old_capacity);
-    memory_->Free(old_array);
   }
 
   /*! \brief  Assigns content of this Vector to the elements in `rhs`.
@@ -223,12 +252,15 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
     if(this == &rhs) {
       return *this;
     }
-    // tmp will cleanup array_, leaving us with a copy constructed array.
-    Vector tmp(rhs);
-    std::swap(memory_,tmp.memory_);
-    std::swap(array_, tmp.array_);
-    std::swap(capacity_, tmp.capacity_);
-    std::swap(size_, tmp.size_);
+
+    Clear();
+    if(!memory_) {
+      memory_ = rhs.memory_;
+    }
+    Reserve(rhs.size());
+    for(size_t i = 0; i < rhs.size(); ++i) {
+      PushBack(rhs[i]);
+    }
     return *this;
   }
 
@@ -272,15 +304,13 @@ class Vector : public virtual MemoryDependent, public virtual MemorySetter {
   void InitWithCopy(const Vector &rhs) {
     assert(!array_);
     assert(size_ == 0);
-    if(rhs.memory_) {
-      memory_ = rhs.memory_;
-      capacity_ = CalcReserveSize(rhs.size());
-      array_ = AllocateArray(memory_, capacity_);
-      size_ = rhs.size_;
-      for(size_t i = 0; i < rhs.size(); ++i) {
-        (*this)[i] = rhs[i];
-      }
+    if(rhs.memory_ && !memory_)
+        memory_ = rhs.memory_;
+    Reserve(rhs.size());
+    for(size_t i = 0; i < rhs.size(); ++i) {
+      PushBack(rhs[i]);
     }
+
   }
 
   /*
