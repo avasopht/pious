@@ -55,7 +55,6 @@ class VarRms : public virtual emcee::MemoryDependent {
   size_t capacity() const;
 
  private:
-  typedef emcee::MaskedCellVector<float> BufferVector;
 
   struct SearchCell {
     float value;
@@ -64,7 +63,7 @@ class VarRms : public virtual emcee::MemoryDependent {
 
   /* sample[i-1] is the previous sample to sample[i].
    */
-  emcee::Vector<BufferVector> buffers_;
+  emcee::Vector<emcee::MaskedCellVector<float> > buffers_;
   size_t pos_;
 
 

@@ -36,8 +36,8 @@ void VarRms::Write(float sample) {
 void VarRms::SumMeanSquaredToEndOfCell() {
   // Write to buffers where current position is at the end of the cell.
   for(size_t level = 1; level < buffer_levels() && buffers_[level].IsCellEnd(pos_); ++level) {
-    BufferVector &cur_buffer = buffers_[level];
-    BufferVector &prev_level_buffer = buffers_[level-1];
+    emcee::MaskedCellVector<float> &cur_buffer = buffers_[level];
+    emcee::MaskedCellVector<float> &prev_level_buffer = buffers_[level-1];
     size_t prev_level_cell_size = prev_level_buffer.cell_size();
     float first = prev_level_buffer[pos_];
     float second = prev_level_buffer[pos_ - prev_level_cell_size];
@@ -69,9 +69,9 @@ void VarRms::SetCapacity(size_t min_capacity) {
   // buffers_.Resize((size_t)levels);
 
   for(int cur_level = 0; cur_level < levels; ++cur_level) {
-    buffers_.PushBack(BufferVector());
+    buffers_.PushBack(emcee::MaskedCellVector<float>());
     size_t cell_size = 1U << cur_level;
-    BufferVector &cur_buffer = buffers_.Back();
+    emcee::MaskedCellVector<float> &cur_buffer = buffers_.Back();
     cur_buffer.SetSize(cell_size, capacity);
   }
 }

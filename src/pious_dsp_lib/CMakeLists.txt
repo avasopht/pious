@@ -12,4 +12,3 @@ set(SOURCE_FILES
         )
 
 add_library(pious_dsp_lib STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
-target_link_libraries(pious_dsp_lib emcee)
