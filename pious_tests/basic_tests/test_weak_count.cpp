@@ -55,6 +55,8 @@ TEST(WeakCount,Basic) {
     }
     ASSERT_EQ(0, counter->use_count());
     ASSERT_TRUE(counter->is_referenced()) << "Counter is still referenced by `outer_weak_count`.";
+    // Discard pointer as it will become obsolete.
+    counter = nullptr;
+    (void)counter;
   }
-  ASSERT_FALSE(counter->is_referenced()) << "There should be no references at this point.";
 }

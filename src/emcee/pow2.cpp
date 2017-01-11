@@ -4154,7 +4154,7 @@ uint64_t ToPow2(uint64_t val) {
     uint64_t p = (val >> shift) & 0xffff;
     if(p) {
       int log2 = min_log2[p] + shift;
-      return 1ULL << shift;
+      return 1ULL << log2;
     }
   }
   return UINT64_MAX;

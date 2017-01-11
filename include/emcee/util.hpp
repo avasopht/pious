@@ -28,6 +28,8 @@
 #include <cstdint>
 namespace emcee {
 
+bool NearEq(float first, float second, float error);
+
 /*! Returns an object size that is aligned with memory. */
 size_t CalcPaddedSize(size_t size);
 

@@ -178,7 +178,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
       Reserve(CalcReserveSize(size()+1));
     }
 
-    memset((void *) &array_[size_], 0, sizeof(T));
+    memset((void *) &array_[size_], 0, sizeof(y));
     InitAt(size_, y);
     ++size_;
   }
@@ -209,6 +209,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
 
   template<typename Y>
   void Resize(size_t new_size, const Y& value) {
+    Reserve(new_size);
     while(new_size < size()) {
       EraseAt(size() - 1);
     }

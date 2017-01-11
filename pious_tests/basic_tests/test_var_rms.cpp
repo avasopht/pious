@@ -37,7 +37,6 @@ TEST(VarRms, Basic) {
   rms.Write(4);
   rms.Write(8);
   rms.Write(2);
-
   float precision = 0.001f;
   ASSERT_NEAR(2.000,  rms.CalcRms(1), precision);
   ASSERT_NEAR(5.831,  rms.CalcRms(2), precision);

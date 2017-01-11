@@ -66,7 +66,7 @@ void VarRms::SetCapacity(size_t min_capacity) {
   pos_ = SIZE_MAX;
   size_t capacity = (size_t) ToPow2(min_capacity);
   int levels = Log2(capacity);
-  // buffers_.Resize((size_t)levels);
+  buffers_.Reserve((size_t)levels);
 
   for(int cur_level = 0; cur_level < levels; ++cur_level) {
     buffers_.PushBack(emcee::MaskedCellVector<float>());

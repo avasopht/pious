@@ -23,6 +23,7 @@
 
 #include "util.hpp"
 #include <cassert>
+#include <cmath>
 
 namespace emcee {
 
@@ -49,6 +50,10 @@ void *NextAligned(void *ptr) {
 
 void *CalcOffset(void *ptr, ptrdiff_t offset) {
   return Offset<char>(ptr).Calc(offset);
+}
+
+bool NearEq(float first, float second, float error) {
+  return fabs(first-second) <= error;
 }
 
 }
