@@ -66,7 +66,12 @@ struct Pious_HoldSignalEvent {
 
 struct Pious_SignalBuffer {
   uint64_t size;
-  float *signals;
+  float signals[1]; // variable length
+};
+
+struct Pious_SignalHoldBuffer {
+  uint64_t size;
+  struct Pious_HoldSignalEvent events[1]; // variable length.
 };
 
 struct Pious_Handle {

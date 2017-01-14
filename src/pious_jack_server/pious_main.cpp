@@ -3,8 +3,13 @@
 //
 
 #include <api/pious_device.h>
+#include <api/pious_spec.h>
 #include <emcee/util.hpp>
 #include <algorithm>
+
+void CreateImpulseDevice(Pious_Db *db);
+void CreateHarmonicsDevice(Pious_Db *db);
+void CreateChain(Pious_Db *db);
 
 struct DspImpulse {
   Pious_Handle out;
@@ -129,5 +134,31 @@ void DspHarmonicsRender(Pious_Scope *scope, void *data, uint32_t) {
 }
 
 int main() {
+  Pious_Db *db = PiousDb_Create();
+
+  CreateImpulseDevice(db);
+  CreateHarmonicsDevice(db);
+  CreateChain(db);
   return 0;
+}
+void CreateChain(Pious_Db *db) {
+  Pious_DeviceSpec *chain = PiousDb_CreateDevice(db, "s/com.avasopht.chain/i/1014");
+  PiousSpec_AddDevicePort(chain, Pious_IoTypeSignalOut, "s/out");
+  PiousSpec_AddDevice(chain, "s/com.avasopht.impulse", "s/impulse");
+  PiousSpec_AddDevice(chain, "i/1001", "s/harmonics");
+  PiousSpec_AddConnection(chain, "impulse", "out", "harmonics", "in");
+  PiousSpec_AddConnection(chain, "harmonics", "out", "self", "out");
+}
+void CreateHarmonicsDevice(Pious_Db *db) {
+  Pious_DeviceSpec *harmonics = PiousDb_CreateDevice(db, "s/com.avasopht.harmonics/i/1001");
+  PiousSpec_AddDevicePort(harmonics, Pious_IoTypeSignalIn, "in");
+  PiousSpec_AddDevicePort(harmonics, Pious_IoTypeSignalOut, "out");
+  Pious_UnitPlugin harmonics_dsp { DspHarmonicsInit, DspHarmonicsRender };
+  PiousSpec_LoadDsp(harmonics, &harmonics_dsp);
+}
+void CreateImpulseDevice(Pious_Db *db) {
+  Pious_DeviceSpec *impulse = PiousDb_CreateDevice(db, "s/com.avasopht.impulse/i/1000");
+  PiousSpec_AddDevicePort(impulse, Pious_IoTypeSignalOut,"out");
+  Pious_UnitPlugin impulse_dsp = { ImpulseInit, ImpulseRender };
+  PiousSpec_LoadDsp(impulse, &impulse_dsp);
 }

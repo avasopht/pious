@@ -11,6 +11,7 @@ set(EMCEE_INCLUDE_FILES
         deleter.hpp
         destructor.hpp
         emcee.hpp
+        map.hpp
         masked_cell_vector.hpp
         memory.hpp
         memory_dependent.hpp

@@ -124,6 +124,8 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
     }
   }
 
+  Memory* memory() const { return memory_; }
+
   void SetMemory(Memory * memory) override {
     if(memory == memory_)
       return;
