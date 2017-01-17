@@ -63,8 +63,11 @@ class UniquePtr : public virtual MemoryDependent {
 
     T *ptr = emcee::New<T>(memory_).Create();
     assert(ptr);
+    Reset(ptr);
     return ptr;
   }
+
+  explicit operator bool() const { return pointer_ != nullptr; }
 
   Memory* memory() const { return memory_; }
 

@@ -33,6 +33,8 @@ namespace emcee {
 class Memory;
 }
 
+struct Pious_DeviceSpec{};
+
 namespace pious {
 
 class Id;
@@ -47,7 +49,7 @@ class ReferenceSpec;
 
 /*! \brief  Maintains specifications for a Device.
  */
-class DeviceSpec {
+class DeviceSpec : public Pious_DeviceSpec, public virtual emcee::MemoryDependent {
  public:
   DeviceSpec(emcee::Memory *memory);
 

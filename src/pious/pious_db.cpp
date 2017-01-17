@@ -22,30 +22,144 @@
  */
 
 #include <api/pious_spec.h>
+#include <api/pious_sys.h>
+#include <emcee/memory.hpp>
+#include <emcee/map.hpp>
+#include <emcee/emcee.hpp>
+#include <pious/port_spec.hpp>
+#include <pious/device_spec.hpp>
+#include <pious/reference_spec.hpp>
+#include <pious/connection_spec.hpp>
 
-
-Pious_Db* PiousDb_Create() { return nullptr; }
-Pious_Db* PiousDb_CreateChildDb(struct Pious_Db *db) { (void)db; return nullptr; }
-void PiousDb_RemoveChildDb(struct Pious_Db *db, struct Pious_Db *child) {
-  (void)db;
-  (void)child;
+namespace pious {
+class Db;
 }
-Pious_DeviceSpec* PiousDb_FindDevice(struct Pious_Db *db, const char *id) {
-  (void)db;
-  (void)id;
-  return nullptr;
+
+struct Pious_Db {
+};
+
+namespace pious {
+struct Db : public Pious_Db {
+  Db() : mem(nullptr), parent(nullptr) {}
+
+  Db(Pious_Mem *m) : mem(nullptr), parent(nullptr) {
+    emcee::StructMemory *sm = new(m->Alloc(m->data,sizeof(emcee::StructMemory)))emcee::StructMemory(m);
+    SetMemory(sm);
+  }
+
+  bool IsChild(const Db *child) const {
+    for(size_t i = 0; i < children.size(); ++i) {
+      if(children[i].get() == child)
+        return true;
+    }
+
+    return false;
+  }
+
+  ~Db() {
+    if(!parent && mem) {
+      Pious_Mem *m = mem->mem_struct();
+      mem->~StructMemory();
+      m->Free(m->data, mem);
+    }
+  }
+
+  pious::DeviceSpec* CreateDevice(const char *sid) {
+    pious::DeviceSpec *spec = emcee::New<pious::DeviceSpec>(mem).Create();
+    spec->SetId(sid);
+    devices[emcee::String (mem, sid)] = emcee::SharedPtr<pious::DeviceSpec>(mem, spec);
+    return spec;
+  }
+
+  void SetMemory(emcee::StructMemory *m) {
+    mem = m;
+    devices.SetMemory(m);
+    children.SetMemory(m);
+  }
+
+  static Db* FromStruct(Pious_Db *db) {
+    return static_cast<Db*>(db);
+  }
+
+  emcee::StructMemory *mem;
+  emcee::Map<emcee::String,emcee::SharedPtr<pious::DeviceSpec>> devices;
+  Db *parent;
+  emcee::Vector<emcee::SharedPtr<Db> > children;
+
+  void RemoveChildDb(Db *child) {
+    for(int i = 0; i < children.size(); ++i) {
+      if(children[i].get() == child) {
+        children.EraseAt(i);
+        return;
+      }
+    }
+  }
+
+  void RemoveFromParent() {
+    if(parent) {
+      parent->RemoveChildDb(this);
+    }
+  }
+
+  Db* CreateChildDb() {
+    Db *child = emcee::New<Db>(mem).Create();
+    child->SetMemory(mem);
+    child->parent = this;
+    emcee::SharedPtr<Db> ptr (mem, child);
+    children.PushBack(ptr);
+    return child;
+  }
+};
+
+} // namespace pious
+
+Pious_Db* PiousDb_Create(struct Pious_Mem *mem) {
+  pious::Db *db = new(mem->Alloc(mem->data, sizeof(pious::Db)))pious::Db(mem);
+  return db;
+}
+
+void PiousDb_DestroyDb(struct Pious_Db *s_db) {
+  assert(s_db);
+  pious::Db *db = static_cast<pious::Db*>(s_db);
+  if(db->parent) {
+    db->RemoveFromParent();
+  } else {
+    Pious_Mem *mem_struct = db->mem->mem_struct();
+    db->~Db();
+    mem_struct->Free(mem_struct->data, s_db);
+  }
+}
+
+Pious_Db* PiousDb_CreateChildDb(struct Pious_Db *s_db) {
+  assert(s_db);
+  return static_cast<pious::Db*>(s_db)->CreateChildDb();
+}
+
+
+bool PiousDb_IsChildDb(const struct Pious_Db *db, const struct Pious_Db *child) {
+  return static_cast<const pious::Db*>(db)->IsChild(static_cast<const pious::Db*>(child));
+}
+
+void PiousDb_RemoveChildDb(struct Pious_Db *sdb, struct Pious_Db *schild) {
+  assert(sdb);
+  assert(schild);
+  pious::Db *db = static_cast<pious::Db*>(sdb);
+  pious::Db *child = static_cast<pious::Db*>(schild);
+  db->RemoveChildDb(child);
+}
+Pious_DeviceSpec* PiousDb_FindDevice(struct Pious_Db *sdb, const char *cid) {
+  assert(sdb);
+  pious::Db *db = static_cast<pious::Db*>(sdb);
+  emcee::String sid(db->mem, cid);
+  return db->devices[sid].get();
 }
 size_t PiousDb_GetDeviceCount(const struct Pious_Db *db) {
-  (void)db;
-  return 0;
+  return static_cast<const pious::Db*>(db)->devices.size();
 }
 Pious_DeviceSpec* PiousDb_DeviceAt(struct Pious_Db *db, size_t idx){
-  (void)db;
-  (void)idx;
-  return nullptr;
+  return pious::Db::FromStruct(db)->devices.MappingAt(idx).second.get();
 }
 
 Pious_DeviceSpec* PiousDb_CreateDevice(struct Pious_Db *db, const char *id){
-  (void)db;
-  (void)id;
+  return static_cast<pious::Db*>(db)->CreateDevice(id);
 }

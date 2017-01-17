@@ -66,6 +66,9 @@ template<typename T>
 class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySetter {
  public:
 
+  Vector() :
+      memory_(nullptr), array_(nullptr), size_(0), capacity_(0) {}
+
   /*! \brief  Constructs a vector with n elements set to a default value.
    *
    * \param memory reference to Memory instance

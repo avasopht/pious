@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 17/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,43 +21,26 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_MEMORY_HPP
-#define PIOUS_MEMORY_HPP
+#ifndef PIOUS_PIOUS_SYS_H
+#define PIOUS_PIOUS_SYS_H
+#include <stddef.h>
 
-#include <cstddef> // size_t
-#include <api/pious_sys.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+typedef void *(*TPious_Alloc)(void *alloc_data, size_t size);
+typedef void (*TPious_Free)(void *alloc_data, void *ptr);
 
-
-namespace emcee {
-
-Pious_Mem PiousMem_CreateDefault();
-
-class Memory {
- public:
-  virtual ~Memory() {}
-  virtual void* Allocate(size_t size) = 0;
-  virtual void Free(void *ptr) = 0;
+struct Pious_Mem {
+  TPious_Alloc Alloc;
+  TPious_Free Free;
+  void *data;
 };
 
-class DefaultMemory : public Memory {
- public:
-  virtual void* Allocate(size_t size) override;
-  virtual void Free(void *ptr) override;
-};
 
-class StructMemory : public Memory {
- public:
-
-  StructMemory(Pious_Mem *mem) : mem_(*mem) {}
-  void SetMemory(Pious_Mem *mem) { mem_ = *mem; }
-  void *Allocate(size_t size) override;
-  void Free(void *ptr) override;
-  Pious_Mem *mem_struct() { return &mem_; }
- private:
-  Pious_Mem mem_;
-};
-
+#ifdef __cplusplus
 }
+#endif
 
-#endif /*PIOUS_MEMORY_HPP*/
+#endif /* PIOUS_PIOUS_SYS_H */

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 17/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,43 +21,23 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_MEMORY_HPP
-#define PIOUS_MEMORY_HPP
+#include <gtest/gtest.h>
+#include <api/pious_spec.h>
+#include <emcee/memory.hpp>
 
-#include <cstddef> // size_t
-#include <api/pious_sys.h>
+TEST(PiousDb,Basic) {
+  Pious_Mem mem = emcee::PiousMem_CreateDefault();
+  Pious_Db *db = PiousDb_Create(&mem);
+  ASSERT_TRUE(db);
 
+  {
+    Pious_Db *child_db = PiousDb_CreateChildDb(db);
+    ASSERT_TRUE(db);
+    ASSERT_TRUE(PiousDb_IsChildDb(db, child_db));
+    PiousDb_RemoveChildDb(db, child_db);
+  }
 
-
-namespace emcee {
-
-Pious_Mem PiousMem_CreateDefault();
-
-class Memory {
- public:
-  virtual ~Memory() {}
-  virtual void* Allocate(size_t size) = 0;
-  virtual void Free(void *ptr) = 0;
-};
-
-class DefaultMemory : public Memory {
- public:
-  virtual void* Allocate(size_t size) override;
-  virtual void Free(void *ptr) override;
-};
-
-class StructMemory : public Memory {
- public:
-
-  StructMemory(Pious_Mem *mem) : mem_(*mem) {}
-  void SetMemory(Pious_Mem *mem) { mem_ = *mem; }
-  void *Allocate(size_t size) override;
-  void Free(void *ptr) override;
-  Pious_Mem *mem_struct() { return &mem_; }
- private:
-  Pious_Mem mem_;
-};
-
+  Pious_DeviceSpec *device = PiousDb_CreateDevice(db, "YoMama");
+  ASSERT_TRUE(device);
+  ASSERT_EQ(device, PiousDb_FindDevice(db, "YoMama"));
 }
-
-#endif /*PIOUS_MEMORY_HPP*/

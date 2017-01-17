@@ -29,7 +29,7 @@
 
 namespace pious {
 
-class Id {
+class Id : public virtual emcee::MemoryDependent {
  public:
   Id();
   Id(emcee::Memory *memory);

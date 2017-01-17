@@ -23,12 +23,38 @@
 
 #include <cstdlib>
 #include <emcee/memory.hpp>
+#include <api/pious_sys.h>
 
 
-void *emcee::DefaultMemory::Allocate(size_t size) {
+
+
+namespace emcee {
+
+static void* DefaultAlloc(void*, size_t size) { return malloc(size); }
+static void DefaultFree(void*, void *ptr) { free(ptr); }
+
+Pious_Mem PiousMem_CreateDefault() {
+  Pious_Mem def { DefaultAlloc, DefaultFree};
+  return def;
+}
+
+void *DefaultMemory::Allocate(size_t size) {
   return malloc(size);
 }
 
-void emcee::DefaultMemory::Free(void *ptr) {
+void DefaultMemory::Free(void *ptr) {
   free(ptr);
+}
+
+void *StructMemory::Allocate(size_t size) {
+  if(!mem_.Alloc)
+    return nullptr;
+  return mem_.Alloc(mem_.data, size);
+}
+void StructMemory::Free(void *ptr) {
+  if(mem_.Free)
+    mem_.Free(mem_.data, ptr);
+}
+
+
 }

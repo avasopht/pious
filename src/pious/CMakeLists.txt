@@ -14,6 +14,7 @@ set(SOURCE_FILES
         connection_spec.cpp
         device_spec.cpp
         id.cpp
+        pious_db.cpp
         reference_spec.cpp
         )
 

@@ -66,6 +66,10 @@ class SharedPtr : public virtual MemoryDependent {
     Reset(unique);
   }
 
+  void SetMemory(Memory *m) {
+    memory_ = m;
+  }
+
   SharedPtr& Create() {
     if(!memory_)
       return *this;
@@ -151,6 +155,8 @@ class SharedPtr : public virtual MemoryDependent {
     Reset(unique);
     return *this;
   }
+
+  explicit operator bool() const { return ptr_ != nullptr; }
 
  private:
   Memory *memory_;

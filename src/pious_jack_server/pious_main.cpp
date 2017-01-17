@@ -4,6 +4,7 @@
 
 #include <api/pious_device.h>
 #include <api/pious_spec.h>
+#include <api/pious_sys.h>
 #include <emcee/util.hpp>
 #include <algorithm>
 
@@ -133,8 +134,12 @@ void DspHarmonicsRender(Pious_Scope *scope, void *data, uint32_t) {
   scope->WriteSignal(scope, self->out, out, 64);
 }
 
+static void* Alloc(void*, size_t size) { return malloc(size); }
+static void Free(void*, void *ptr) { free(ptr); }
+
 int main() {
-  Pious_Db *db = PiousDb_Create();
+  Pious_Mem mem { Alloc, Free, 0 };
+  Pious_Db *db = PiousDb_Create(&mem);
 
   CreateImpulseDevice(db);
   CreateHarmonicsDevice(db);

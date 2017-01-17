@@ -31,30 +31,26 @@
 extern "C" {
 #endif
 
-#define PIOUS_MAX_ID_LENGTH 64
 #define PIOUS_MAX_DEVICE_CHILD_COUNT 256
 #define PIOUS_MAX_DEVICE_CONNECTION_COUNT 2048
 #define PIOUS_MAX_DEVICE_PORT_COUNT 2048
-
-/*
- * s/stringId/i/intId
- */
-typedef char Pious_Id[PIOUS_MAX_ID_LENGTH + 1];
 
 struct Pious_Db;
 struct Pious_DeviceSpec;
 struct Pious_ReferenceSpec;
 struct Pious_ConnectionSpec;
-struct Pious_Instance;
+struct Pious_Mem;
 
-Pious_Db* PiousDb_Create();
+Pious_Db* PiousDb_Create(struct Pious_Mem *mem);
 Pious_Db* PiousDb_CreateChildDb(struct Pious_Db *db);
 void PiousDb_RemoveChildDb(struct Pious_Db *db, struct Pious_Db *child);
 Pious_DeviceSpec* PiousDb_FindDevice(struct Pious_Db *db, const char *id);
 size_t PiousDb_GetDeviceCount(const struct Pious_Db *db);
 Pious_DeviceSpec* PiousDb_DeviceAt(struct Pious_Db *db, size_t idx);
-
 Pious_DeviceSpec* PiousDb_CreateDevice(struct Pious_Db *db, const char *id);
+void PiousDb_DestroyDb(struct Pious_Db *db);
+bool PiousDb_IsChildDb(const struct Pious_Db *db, const struct Pious_Db *child);
+
 void PiousSpec_LoadDsp(struct Pious_DeviceSpec *spec, Pious_UnitPlugin *dsp);
 void PiousSpec_SetName(struct Pious_DeviceSpec *spec, const char *name);
 void PiousSpec_ReadDeviceId(const struct Pious_DeviceSpec *spec);

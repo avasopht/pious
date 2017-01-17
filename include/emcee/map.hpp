@@ -34,6 +34,8 @@ class Memory;
 template<typename Key, typename T>
 class Map {
  public:
+  Map() {}
+
   typedef std::pair<Key,T> ValueType;
   Map(Memory *memory) : mappings_(memory) {}
   void SetMemory(Memory *memory) {
@@ -41,7 +43,14 @@ class Map {
   }
   Memory *memory() const { return mappings_.memory(); }
 
+  size_t size() const { return mappings_.size(); }
+
+  ValueType MappingAt(size_t idx) { return mappings_[idx]; }
+
   size_t Erase(const Key &k) {
+    if(!memory())
+      return 0;
+
     size_t erase_count = 0;
     for(int i = 0; i < (int)mappings_.size(); ++i) {
       if(mappings_.At((size_t)i).first == k) {

@@ -34,6 +34,8 @@ namespace pious {
 
 DeviceSpec::DeviceSpec(emcee::Memory *memory)
     : memory_(memory), plugin_(), id_(memory), devices_(memory), ports_(memory), connections_(memory) {
+  if(memory)
+    id_.New();
   plugin_.Init = nullptr;
   plugin_.Render = nullptr;
 }
@@ -93,6 +95,7 @@ size_t DeviceSpec::device_count() const {
 }
 
 ReferenceSpec *DeviceSpec::DeviceAt(size_t idx) {
+  assert(idx < devices_.size());
   if(idx < devices_.size()) {
     return &devices_.At(idx);
   }
@@ -105,6 +108,8 @@ size_t DeviceSpec::connection_count() const {
 }
 
 ConnectionSpec *DeviceSpec::ConnectionAt(size_t idx) {
+  assert(idx < connections_.size());
+
   if(idx < connections_.size()) {
     return &connections_.At(idx);
   }
@@ -117,9 +122,15 @@ void DeviceSpec::SetId(const char *sid, uint32_t iid) {
   SetId(iid);
 }
 
-void DeviceSpec::SetId(const char *sid) { id_->SetSid(sid); }
+void DeviceSpec::SetId(const char *sid) {
+  assert(id_);
+  id_->SetSid(sid);
+}
 
-void DeviceSpec::SetId(uint32_t iid) { id_->SetIid(iid); }
+void DeviceSpec::SetId(uint32_t iid) {
+  assert(id_);
+  id_->SetIid(iid);
+}
 
 Pious_UnitPlugin DeviceSpec::plugin() const { return plugin_; }
 

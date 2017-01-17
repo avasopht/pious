@@ -11,6 +11,7 @@ add_executable(runBasicPiousTests
         test_masked_cell_vector.cpp
         test_new.cpp
         test_unique_ptr.cpp
+        test_pious_db.cpp
         test_shared_ptr.cpp
         test_string.cpp
         test_var_rms.cpp
