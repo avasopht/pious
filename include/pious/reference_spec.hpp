@@ -33,9 +33,11 @@ namespace emcee {
 class Memory;
 }
 
+struct Pious_ConnectionSpec {};
+
 namespace pious {
 
-class ReferenceSpec : public virtual emcee::MemoryDependent {
+class ReferenceSpec : public Pious_ConnectionSpec,  public virtual emcee::MemoryDependent {
  public:
   ReferenceSpec();
   ReferenceSpec(emcee::Memory *memory);

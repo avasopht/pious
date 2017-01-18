@@ -38,8 +38,13 @@ extern "C" {
 struct Pious_Db;
 struct Pious_DeviceSpec;
 struct Pious_ReferenceSpec;
-struct Pious_ConnectionSpec;
 struct Pious_Mem;
+struct Pious_DeviceConnectionIds {
+  char source_device_id [256];
+  char source_device_port[256];
+  char dest_device_id [256];
+  char dest_device_port[256];
+};
 
 Pious_Db* PiousDb_Create(struct Pious_Mem *mem);
 Pious_Db* PiousDb_CreateChildDb(struct Pious_Db *db);
@@ -53,19 +58,23 @@ bool PiousDb_IsChildDb(const struct Pious_Db *db, const struct Pious_Db *child);
 
 void PiousSpec_LoadDsp(struct Pious_DeviceSpec *spec, Pious_UnitPlugin *dsp);
 void PiousSpec_SetName(struct Pious_DeviceSpec *spec, const char *name);
-void PiousSpec_ReadDeviceId(const struct Pious_DeviceSpec *spec);
-void PiousSpec_AddDevicePort(struct Pious_DeviceSpec *spec, Pious_IoType io_type, const char *port_id);
+void PiousSpec_AddDevicePort(struct Pious_DeviceSpec *spec, enum Pious_IoType io_type, const char *port_id);
+size_t PiousSpec_PortCount(const struct Pious_DeviceSpec *spec);
+size_t PiousSpec_GetPortNameLengthAt(const struct Pious_DeviceSpec *spec, size_t index);
+size_t PiousSpec_GetPortNameAt(const struct Pious_DeviceSpec *spec, size_t index, char * out);
+bool PiousSpec_HasPort(const struct Pious_DeviceSpec *spec, const char *port_id);
+enum Pious_IoType PiousSpec_GetPortType(const struct Pious_DeviceSpec *spec, const char *port_id);
 Pious_ReferenceSpec* PiousSpec_AddDevice(struct Pious_DeviceSpec *spec, const char *db_id, const char *spec_id);
 Pious_ReferenceSpec* PiousSpec_FindDevice(struct Pious_DeviceSpec *spec, const char *spec_id);
 Pious_ReferenceSpec* PiousSpec_DeviceAt(struct Pious_DeviceSpec *spec, size_t idx);
-size_t PiousSpec_GetDeviceCount(const struct Pious_DeviceSpec *spec);
-bool PiousSpec_IsPolyphonic(const struct Pious_DeviceSpec *spec);
-void PiousSpec_SetPolyphonic(struct Pious_DeviceSpec *spec);
+size_t PiousSpec_DeviceCount(const struct Pious_DeviceSpec *spec);
+bool PiousSpec_IsPolyphonic(const struct Pious_DeviceSpec *spec, const char *ref_id);
+void PiousSpec_SetPolyphonic(struct Pious_DeviceSpec *spec, const char *ref_id, bool b);
 void PiousSpec_AddConnection(struct Pious_DeviceSpec *spec,
                          const char *first_device, const char *first_port,
                          const char *second_device, const char *second_port);
 size_t PiousSpec_ConnectionCount(const struct Pious_DeviceSpec *spec);
-Pious_ConnectionSpec* PiousSpec_ConnectionAt(struct Pious_DeviceSpec *spec);
+struct Pious_DeviceConnectionIds PiousSpec_GetConnectionAt(const struct Pious_DeviceSpec *spec, size_t idx);
 
 
 #ifdef __cplusplus

@@ -147,22 +147,22 @@ int main() {
   return 0;
 }
 void CreateChain(Pious_Db *db) {
-  Pious_DeviceSpec *chain = PiousDb_CreateDevice(db, "s/com.avasopht.chain/i/1014");
-  PiousSpec_AddDevicePort(chain, Pious_IoTypeSignalOut, "s/out");
-  PiousSpec_AddDevice(chain, "s/com.avasopht.impulse", "s/impulse");
-  PiousSpec_AddDevice(chain, "i/1001", "s/harmonics");
+  Pious_DeviceSpec *chain = PiousDb_CreateDevice(db, "com.avasopht.chain");
+  PiousSpec_AddDevicePort(chain, Pious_IoTypeSignalOut, "out");
+  PiousSpec_AddDevice(chain, "com.avasopht.impulse", "impulse");
+  PiousSpec_AddDevice(chain, "com.avasopht.harmonics", "harmonics");
   PiousSpec_AddConnection(chain, "impulse", "out", "harmonics", "in");
   PiousSpec_AddConnection(chain, "harmonics", "out", "self", "out");
 }
 void CreateHarmonicsDevice(Pious_Db *db) {
-  Pious_DeviceSpec *harmonics = PiousDb_CreateDevice(db, "s/com.avasopht.harmonics/i/1001");
+  Pious_DeviceSpec *harmonics = PiousDb_CreateDevice(db, "com.avasopht.harmonics");
   PiousSpec_AddDevicePort(harmonics, Pious_IoTypeSignalIn, "in");
   PiousSpec_AddDevicePort(harmonics, Pious_IoTypeSignalOut, "out");
   Pious_UnitPlugin harmonics_dsp { DspHarmonicsInit, DspHarmonicsRender };
   PiousSpec_LoadDsp(harmonics, &harmonics_dsp);
 }
 void CreateImpulseDevice(Pious_Db *db) {
-  Pious_DeviceSpec *impulse = PiousDb_CreateDevice(db, "s/com.avasopht.impulse/i/1000");
+  Pious_DeviceSpec *impulse = PiousDb_CreateDevice(db, "com.avasopht.impulse");
   PiousSpec_AddDevicePort(impulse, Pious_IoTypeSignalOut,"out");
   Pious_UnitPlugin impulse_dsp = { ImpulseInit, ImpulseRender };
   PiousSpec_LoadDsp(impulse, &impulse_dsp);

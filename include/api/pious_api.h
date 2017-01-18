@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 20/10/16.
+ * Created by The Pious Authors on 18/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +21,12 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_EMCEE_HPP
-#define PIOUS_EMCEE_HPP
+#ifndef PIOUS_PIOUS_API_H
+#define PIOUS_PIOUS_API_H
 
-#include "array.hpp"
-#include "deleter.hpp"
-#include "destructor.hpp"
-#include "map.hpp"
-#include "masked_cell_vector.hpp"
-#include "memory.hpp"
-#include "memory_dependent.hpp"
-#include "memory_setter.hpp"
-#include "new.hpp"
-#include "pow2.hpp"
-#include "shared_ptr.hpp"
-#include "string.hpp"
-#include "unique_ptr.hpp"
-#include "util.hpp"
-#include "vector.hpp"
-#include "weak_ptr.hpp"
+#include "pious_device.h"
+#include "pious_spec.h"
+#include "pious_sys.h"
+#include "pious_workspace.h"
 
-#endif //PIOUS_EMCEE_HPP
+#endif /* PIOUS_PIOUS_API_H */

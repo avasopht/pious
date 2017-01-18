@@ -38,6 +38,7 @@ TEST(PiousDb,Basic) {
   }
 
   Pious_DeviceSpec *device = PiousDb_CreateDevice(db, "YoMama");
+  ASSERT_EQ(1, PiousDb_GetDeviceCount(db));
   ASSERT_TRUE(device);
   ASSERT_EQ(device, PiousDb_FindDevice(db, "YoMama"));
 }
