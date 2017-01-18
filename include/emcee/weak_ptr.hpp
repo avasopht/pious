@@ -37,6 +37,7 @@ class WeakPtr : public virtual MemoryDependent {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
 
+  WeakPtr() : memory_(nullptr), ptr_(nullptr) {}
 
   WeakPtr(const WeakPtr &other) : memory_(other.memory_), ptr_(nullptr) {
     Reset(other);
@@ -79,6 +80,8 @@ class WeakPtr : public virtual MemoryDependent {
   T* get() const { return count_.use_count() > 0 ? ptr_ : nullptr; }
   T& operator*() const { return *get(); }
   T* operator->() const { return get(); }
+
+  explicit operator bool() const { return ptr_ != nullptr; }
 
   WeakPtr& operator=(const WeakPtr &rhs) {
     Reset(rhs);

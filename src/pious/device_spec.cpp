@@ -40,6 +40,10 @@ DeviceSpec::DeviceSpec(emcee::Memory *memory)
   plugin_.Render = nullptr;
 }
 
+Id* DeviceSpec::id() {
+  return id_.get();
+}
+
 void DeviceSpec::AddPort(Pious_IoType io_type, const char *id, uint32_t iid) {
   PortSpec port(memory_);
   port.SetIoType(io_type);
@@ -135,5 +139,20 @@ void DeviceSpec::SetId(uint32_t iid) {
 Pious_UnitPlugin DeviceSpec::plugin() const { return plugin_; }
 
 void DeviceSpec::LoadPlugin(const Pious_UnitPlugin &plugin) { plugin_ = plugin; }
+PortSpec *DeviceSpec::FindPort(const char *id) {
+  for(size_t i = 0; i < ports_.size(); ++i) {
+    if(ports_[i].sid() == id)
+      return &ports_[i];
+  }
+  return nullptr;
+}
+PortSpec *DeviceSpec::PortAt(size_t idx) { return &ports_.At(idx); }
+size_t DeviceSpec::port_count() const { return ports_.size(); }
+ReferenceSpec *DeviceSpec::FindDevice(const char *id) {
+  for(size_t i = 0; i < devices_.size(); ++i) {
+    if(devices_[i].id().sid() == id)
+      return &devices_[i];
+  }
+}
 
 }

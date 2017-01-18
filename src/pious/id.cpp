@@ -60,5 +60,19 @@ int Id::Compare(const Id &rhs) const {
   }
   return string_compare;
 }
+void Id::SetMemory(emcee::Memory *m) {
+  sid_ = emcee::String(m);
+}
+
+
+bool operator==(const Id &lhs, const Id &rhs) {
+  return lhs.Compare(rhs) == 0;
+}
+bool operator==(const char *lhs, const Id &rhs) {
+  return lhs == rhs.sid();
+}
+bool operator==(const Id &lhs, const char *rhs) {
+  return lhs.sid() == rhs;
+}
 
 }

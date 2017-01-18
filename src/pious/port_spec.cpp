@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 10/10/16.
+ * Created by The Pious Authors on 18/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,44 +21,18 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_ID_HPP
-#define PIOUS_ID_HPP
-
-#include <emcee/string.hpp>
-#include <cstdint>
+#include "port_spec.hpp"
 
 namespace pious {
 
-class Id : public virtual emcee::MemoryDependent {
- public:
-  Id();
-  Id(emcee::Memory *memory);
-  Id(emcee::String sid, uint32_t iid);
-  Id(emcee::String sid);
-  Id(uint32_t iid);
-
-  void SetMemory(emcee::Memory *m);
-
-  Id& SetSid(const char *sid);
-  Id& SetSid(const emcee::String &sid);
-  Id& SetIid(uint32_t iid);
-
-  const char* sid_cstr() const;
-  emcee::String sid() const;
-  uint32_t iid() const;
-
-  int Compare(const Id &rhs) const;
-
- private:
-  emcee::String sid_;
-  uint32_t iid_;
-};
-
-
-bool operator==(const Id &lhs, const Id &rhs);
-bool operator==(const char *lhs, const Id &rhs);
-bool operator==(const Id &lhs, const char *rhs);
-
+PortSpec::PortSpec() : id_(nullptr), io_type_(Pious_IoTypeNone) { }
+PortSpec::PortSpec(emcee::Memory *m) : id_(m), io_type_(Pious_IoTypeNone) { }
+void PortSpec::SetMemory(emcee::Memory *m) { id_.SetMemory(m); }
+uint32_t PortSpec::iid() const { return id_.iid(); }
+void PortSpec::SetIid(uint32_t id) { id_.SetIid(id); }
+const char *PortSpec::sid_cstr() const { return id_.sid_cstr(); }
+emcee::String PortSpec::sid() const { return id_.sid(); }
+void PortSpec::SetSid(const char *sid) { id_.SetSid(sid); }
+Pious_IoType PortSpec::io_type() const { return io_type_;}
+void PortSpec::SetIoType(Pious_IoType io_type) { io_type_ = io_type; }
 }
-
-#endif /* PIOUS_ID_HPP */

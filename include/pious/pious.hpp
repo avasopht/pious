@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 10/10/16.
+ * Created by The Pious Authors on 18/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,44 +21,20 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_ID_HPP
-#define PIOUS_ID_HPP
+#ifndef PIOUS_PIOUS_HPP
+#define PIOUS_PIOUS_HPP
 
-#include <emcee/string.hpp>
-#include <cstdint>
+#include "add_connection.hpp"
+#include "add_connection_port.hpp"
+#include "add_connection_port_dest.hpp"
+#include "add_device.hpp"
+#include "connection_spec.hpp"
+#include "device_spec.hpp"
+#include "id.hpp"
+#include "port.hpp"
+#include "port_spec.hpp"
+#include "process.hpp"
+#include "reference_spec.hpp"
+#include "scope.hpp"
 
-namespace pious {
-
-class Id : public virtual emcee::MemoryDependent {
- public:
-  Id();
-  Id(emcee::Memory *memory);
-  Id(emcee::String sid, uint32_t iid);
-  Id(emcee::String sid);
-  Id(uint32_t iid);
-
-  void SetMemory(emcee::Memory *m);
-
-  Id& SetSid(const char *sid);
-  Id& SetSid(const emcee::String &sid);
-  Id& SetIid(uint32_t iid);
-
-  const char* sid_cstr() const;
-  emcee::String sid() const;
-  uint32_t iid() const;
-
-  int Compare(const Id &rhs) const;
-
- private:
-  emcee::String sid_;
-  uint32_t iid_;
-};
-
-
-bool operator==(const Id &lhs, const Id &rhs);
-bool operator==(const char *lhs, const Id &rhs);
-bool operator==(const Id &lhs, const char *rhs);
-
-}
-
-#endif /* PIOUS_ID_HPP */
+#endif /* PIOUS_PIOUS_HPP */

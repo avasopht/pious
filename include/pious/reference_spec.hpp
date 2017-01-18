@@ -51,6 +51,8 @@ class ReferenceSpec : public Pious_ConnectionSpec,  public virtual emcee::Memory
   void SetPolyDevice(bool b);
   bool is_poly_device() const;
 
+  Id id() const;
+
  private:
   /*! Unique id of reference */
   Id id_;

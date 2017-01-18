@@ -56,15 +56,20 @@ class DeviceSpec : public Pious_DeviceSpec, public virtual emcee::MemoryDependen
   void SetId(const char *sid, uint32_t iid);
   void SetId(const char *sid);
   void SetId(uint32_t iid);
+  Id* id();
 
   void AddPort(Pious_IoType io_type, const char *id, uint32_t iid);
   void AddPort(Pious_IoType io_type, const char *id);
   void AddPort(Pious_IoType io_type, uint32_t iid);
+  PortSpec* FindPort(const char *id);
+  PortSpec* PortAt(size_t idx);
+  size_t port_count() const;
 
   pious::AddDevice AddDevice(const char *id);
   pious::AddDevice AddDevice(uint32_t iid);
   size_t device_count() const;
   ReferenceSpec* DeviceAt(size_t idx);
+  ReferenceSpec* FindDevice(const char *id);
 
   pious::AddConnection AddConnection(const char *device_sid);
   pious::AddConnection AddConnection(uint32_t device_iid);

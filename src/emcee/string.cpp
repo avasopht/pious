@@ -73,6 +73,8 @@ String::String(const String &str, size_t begin, size_t end)
 }
 
 const char *String::c_str() const {
+  if(!string_)
+    return nullptr;
   return string_.get();
 }
 

@@ -46,5 +46,9 @@ void ConnectionSpec::AddDestDevice(uint32_t iid) { dest_device_.SetIid(iid); }
 void ConnectionSpec::AddDestPort(const char *sid) { dest_port_.SetSid(sid); }
 
 void ConnectionSpec::AddDestPort(uint32_t iid) { dest_port_.SetIid(iid); }
+Id ConnectionSpec::source_device() const { return source_device_; }
+Id ConnectionSpec::source_port() const { return source_port_; }
+Id ConnectionSpec::dest_device() const { return dest_device_; }
+Id ConnectionSpec::dest_port() const { return dest_port_; }
 
 }

@@ -40,16 +40,17 @@ namespace pious {
 /*! Stores details of a port for a Device Specification. */
 class PortSpec : public virtual emcee::MemoryDependent {
  public:
-  PortSpec() {};
-  PortSpec(emcee::Memory *memory) {}
+  PortSpec();
+  PortSpec(emcee::Memory *m);
+  void SetMemory(emcee::Memory *m);
 
-  uint32_t iid() const { return 0;  }
-  void SetIid(uint32_t id) {};
-  const char *sid_cstr() const { return 0; }
-  emcee::String sid() const { return emcee::String(0); }
-  void SetSid(const char *sid) {};
-  Pious_IoType io_type() const { return Pious_IoTypeNone;  }
-  void SetIoType(Pious_IoType io_type_) {}
+  uint32_t iid() const;
+  void SetIid(uint32_t id);
+  const char *sid_cstr() const;
+  emcee::String sid() const;
+  void SetSid(const char *sid);
+  Pious_IoType io_type() const;
+  void SetIoType(Pious_IoType io_type);
 
  private:
   Id id_;

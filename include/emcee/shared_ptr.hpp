@@ -264,6 +264,8 @@ class SharedPtr <T[]> : public virtual MemoryDependent {
     return ptr_[idx];
   }
 
+  explicit operator bool() const { return ptr_ != nullptr; }
+
   T* get() const { return ptr_; }
   T& operator*() const { return *get(); }
   T* operator->() const { return get(); }

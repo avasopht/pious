@@ -44,5 +44,6 @@ void ReferenceSpec::SetImportDeviceIid(uint32_t iid) { import_device_id_.SetIid(
 void ReferenceSpec::SetPolyDevice(bool b) { is_poly_device_ = b; }
 
 bool ReferenceSpec::is_poly_device() const { return is_poly_device_; }
+Id ReferenceSpec::id() const { return id_; }
 
 }

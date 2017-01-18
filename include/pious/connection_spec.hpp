@@ -47,6 +47,11 @@ class ConnectionSpec {
   void AddDestPort(const char *sid);
   void AddDestPort(uint32_t iid);
 
+  Id source_device() const;
+  Id source_port() const;
+  Id dest_device() const;
+  Id dest_port() const;
+
  private:
   Id source_device_;
   Id source_port_;

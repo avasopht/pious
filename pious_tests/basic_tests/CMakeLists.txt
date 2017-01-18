@@ -5,16 +5,17 @@ include_directories(${Boost_INCLUDE_DIR})
 add_executable(runBasicPiousTests
         count_calls.hpp
         class_method_notifier.hpp
+        test_device_spec.cpp
         test_id.cpp
         test_main.cpp
         test_map.cpp
         test_masked_cell_vector.cpp
         test_new.cpp
-        test_unique_ptr.cpp
         test_pious_db.cpp
-        test_pious_spec.cpp
+        # test_pious_spec.cpp
         test_shared_ptr.cpp
         test_string.cpp
+        test_unique_ptr.cpp
         test_var_rms.cpp
         test_vector.cpp
         test_weak_count.cpp
