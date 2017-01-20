@@ -41,32 +41,49 @@ class Memory;
 class MemoryDependent {
  public:
   virtual ~MemoryDependent() = 0;
+
+  /*! Calls constructor. Returns whether memory was injected. */
+  template<typename T>
+  static bool ConstructAt(T *t, Memory *memory) {
+    boost::is_base_of<MemoryDependent,T> is_memory_dependent;
+    ConstructAtWithMemory(is_memory_dependent, t, memory);
+    bool memory_was_injected = is_memory_dependent;
+    return memory_was_injected;
+  }
+
+  template<typename T>
+  static void ConstructAtWithMemory(boost::true_type, T *t, Memory *memory) {
+    new(t)T(memory);
+  }
+
+  template<typename T>
+  static void ConstructAtMemory(boost::false_type, T* t, Memory*){
+    new(t)T();
+  }
 };
 
 /*! \brief  Indicates at compile time that a class accepts a Memory pointer
- *  in construction and also supports a copy constructor with
+ *  in construction and also supports a copy constructor with a Memory pointer.
  *
- *  Subclasses should implement `Subclass(Memory&)`. Subclasses may also implement
- *  `Subclass(Memory*, const Subclass&)` for a copy constructor that also
- *  injects a Memory reference.
+ *  Subclasses must implement `Subclass(Memory&)` and
+ *  `Subclass(Memory*, const Subclass&)` for a copy constructor that injects
+ *  a Memory pointer.
  *
  *  Subclass with public virtual inheritance.
  */
 class MemoryDependentWithCopy : public virtual MemoryDependent {
  public:
-  virtual ~MemoryDependentWithCopy() = 0;
 
-  /*! Calls constructor passing constructor object. Returns whether memory was injected. */
+  /*! Calls constructor passing constructor object. Returns whether memory was
+   * injected. */
   template<typename T, typename Y>
   static bool ConstructAt(
       T *t, Memory *memory, const Y &other){
     boost::is_base_of<MemoryDependentWithCopy,T> is_memory_dependent_with_copy;
-    if(is_memory_dependent_with_copy) {
-      ConstructAtWithMemoryAndCopy(is_memory_dependent_with_copy, t, memory, other);
-      return true;
-    }
-    new(t)T(other);
-    return false;
+    ConstructAtWithMemoryAndCopy(
+        is_memory_dependent_with_copy, t, memory, other);
+    bool memory_was_injected = is_memory_dependent_with_copy;
+    return memory_was_injected;
   }
   template<typename T, typename Y>
   static void ConstructAtWithMemoryAndCopy(
@@ -75,7 +92,10 @@ class MemoryDependentWithCopy : public virtual MemoryDependent {
   }
 
   template<typename T, typename Y>
-  static void ConstructAtWithMemoryAndCopy(boost::false_type, T*, Memory*, const Y&) {}
+  static void ConstructAtWithMemoryAndCopy(
+      boost::false_type, T *t, Memory*, const Y &other) {
+    new(t)T(other);
+  }
 
 };
 

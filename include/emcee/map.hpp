@@ -25,6 +25,7 @@
 #define PIOUS_MAP_HPP
 
 #include "vector.hpp"
+// #include "memory_setter.hpp" // included from vector.hpp
 #include <utility>
 
 namespace emcee {
@@ -32,20 +33,23 @@ namespace emcee {
 class Memory;
 
 template<typename Key, typename T>
-class Map {
+class Map : public virtual MemorySetter, public virtual MemoryDependentWithCopy {
  public:
-  Map() {}
-
   typedef std::pair<Key,T> ValueType;
+
+
+  Map() : mappings_(nullptr) {}
+
+  // MemoryDependentWithCopy constructor.
+  Map(Memory *memory, const Map &other) : mappings_(memory, other.mappings_) {}
+  // MemoryDependent constructor.
   Map(Memory *memory) : mappings_(memory) {}
-  void SetMemory(Memory *memory) {
-    mappings_.SetMemory(memory);
-  }
+
   Memory *memory() const { return mappings_.memory(); }
-
   size_t size() const { return mappings_.size(); }
-
   ValueType MappingAt(size_t idx) { return mappings_[idx]; }
+  bool Empty() const { return mappings_.Empty(); }
+  void SetMemory(Memory *memory) { mappings_.SetMemory(memory); }
 
   size_t Erase(const Key &k) {
     if(!memory())

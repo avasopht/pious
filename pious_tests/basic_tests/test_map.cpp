@@ -28,9 +28,16 @@
 TEST(Map,BasicTest) {
   emcee::DefaultMemory mem;
   emcee::Map<int,const char*> map(&mem);
+  ASSERT_EQ(&mem, map.memory());
+  ASSERT_TRUE(map.Empty());
   map[10] = "PRINT \"Hello World\"";
+  ASSERT_FALSE(map.Empty());
   map[20] = "GOSUB 100";
-  map[100] = "PRINT \"Line 100 muthafuckers!\"";
+  ASSERT_EQ(2, map.size());
+  map[100] = "PRINT \"Line 100 my friends.\"";
+  ASSERT_STREQ("PRINT \"Line 100 my friends.\"", map[100]);
+  map[100] = "The quick brown fox";
+  ASSERT_STREQ("The quick brown fox", map[100]);
   map[110] = "RETURN";
   ASSERT_STREQ("RETURN", map[110]);
   ASSERT_TRUE(map.ContainsKey(110));

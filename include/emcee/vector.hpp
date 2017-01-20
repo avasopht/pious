@@ -295,6 +295,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
   /*! Returns capacity of the Vector. */
   size_t capacity() const { return capacity_; }
 
+  bool Empty() const { return size_ == 0; }
 
  private:
   Memory *memory_;
