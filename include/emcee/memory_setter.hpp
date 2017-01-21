@@ -37,13 +37,17 @@ class MemorySetter {
   virtual ~MemorySetter() {}
   virtual void SetMemory(Memory *ptr) = 0;
 
-  /* Injects memory into object if object derives from MemorySetter. */
-  template<typename T> static void Inject(T &ref, Memory *memory) {
+  /*! Injects memory into object if object derives from MemorySetter.
+   *  Returns whether injected.
+   */
+  template<typename T> static bool Inject(T &ref, Memory *memory) {
     boost::is_base_of<MemorySetter,T> can_inject;
     if(can_inject) {
       MemorySetter *setter_ref = reinterpret_cast<MemorySetter*>(&ref);
       setter_ref->SetMemory(memory);
+      return true;
     }
+    return false;
   }
 };
 

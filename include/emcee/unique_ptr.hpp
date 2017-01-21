@@ -57,14 +57,13 @@ class UniquePtr : public virtual MemoryDependent {
     deleter_ = emcee::New<DeleterType>(memory_).Create(DeleterType(memory_, ptr));
   }
 
-  T* New() {
-    if(!memory_)
-      return nullptr;
+  UniquePtr& New() {
+    assert(memory_);
 
     T *ptr = emcee::New<T>(memory_).Create();
     assert(ptr);
     Reset(ptr);
-    return ptr;
+    return *this;
   }
 
   explicit operator bool() const { return pointer_ != nullptr; }

@@ -31,12 +31,13 @@ namespace emcee {
 
 class Memory;
 
-class String : public virtual MemoryDependent {
+class String : public virtual MemoryDependentWithCopy {
  public:
   // Note: default copy and assignment operators are fine.
 
   String();
   String(Memory *memory);
+  String(Memory *memory, const String &other);
   String(Memory *memory, const char *str);
   String(Memory *memory, const char *str, size_t begin);
   String(Memory *memory, const char *str, size_t begin, size_t end);

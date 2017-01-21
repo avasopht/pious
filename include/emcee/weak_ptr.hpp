@@ -33,17 +33,17 @@
 namespace emcee {
 
 template<typename T>
-class WeakPtr : public virtual MemoryDependent {
+class WeakPtr {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
 
-  WeakPtr() : memory_(nullptr), ptr_(nullptr) {}
+  WeakPtr() : ptr_(nullptr) {}
 
-  WeakPtr(const WeakPtr &other) : memory_(other.memory_), ptr_(nullptr) {
+  WeakPtr(const WeakPtr &other) : ptr_(nullptr) {
     Reset(other);
   }
 
-  template<typename Y>WeakPtr(SharedPtr<Y> &shared) : memory_(shared.memory()), ptr_(nullptr) {
+  template<typename Y>WeakPtr(SharedPtr<Y> &shared) : ptr_(nullptr) {
     Reset(shared);
   }
 
@@ -51,11 +51,7 @@ class WeakPtr : public virtual MemoryDependent {
     count_ = WeakCount();
     ptr_ = nullptr;
   }
-
-  Memory* memory() const { return memory_; }
-
   template<typename Y> void Reset(SharedPtr<Y> &other) {
-    memory_ = other.memory();
     ptr_ = other.get();
     count_ = WeakCount(other.count_);
   }
@@ -64,13 +60,11 @@ class WeakPtr : public virtual MemoryDependent {
     if(this == &other || ptr_ == other.ptr_)
       return;
 
-    memory_ = other.memory_;
     ptr_ = other.ptr_;
     count_ = other.count_;
   }
 
   void Swap(WeakPtr &b) {
-    std::swap(memory_, b.memory_);
     std::swap(count_, b.count_);
     T *tmp = ptr_;
     ptr_ = b.ptr_;
@@ -99,23 +93,22 @@ class WeakPtr : public virtual MemoryDependent {
   }
 
  private:
-  Memory *memory_;
   T *ptr_;
   WeakCount count_;
 };
 
 
 template<typename T>
-class WeakPtr<T[]> : public virtual MemoryDependent {
+class WeakPtr<T[]> {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
 
 
-  WeakPtr(const WeakPtr &other) : memory_(other.memory_), ptr_(nullptr) {
+  WeakPtr(const WeakPtr &other) : ptr_(nullptr) {
     Reset(other);
   }
 
-  template<typename Y>WeakPtr(SharedPtr<Y> &shared) : memory_(shared.memory()), ptr_(nullptr) {
+  template<typename Y>WeakPtr(SharedPtr<Y> &shared) : ptr_(nullptr) {
     Reset(shared);
   }
 
@@ -124,10 +117,7 @@ class WeakPtr<T[]> : public virtual MemoryDependent {
     ptr_ = nullptr;
   }
 
-  Memory* memory() const { return memory_; }
-
   template<typename Y> void Reset(SharedPtr<Y> &other) {
-    memory_ = other.memory();
     ptr_ = other.get();
     count_ = WeakCount(other.count_);
   }
@@ -136,13 +126,11 @@ class WeakPtr<T[]> : public virtual MemoryDependent {
     if(this == &other || ptr_ == other.ptr_)
       return;
 
-    memory_ = other.memory_;
     ptr_ = other.ptr_;
     count_ = other.count_;
   }
 
   void Swap(WeakPtr &b) {
-    std::swap(memory_, b.memory_);
     std::swap(count_, b.count_);
     T *tmp = ptr_;
     ptr_ = b.ptr_;
@@ -173,7 +161,6 @@ class WeakPtr<T[]> : public virtual MemoryDependent {
   }
 
  private:
-  Memory *memory_;
   T *ptr_;
   WeakCount count_;
 };

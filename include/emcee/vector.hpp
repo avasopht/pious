@@ -204,7 +204,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
 
     // Last element will no longer be needed.
     array_[size_ - 1].~T();
-    memset(&array_[size() - 1], 0, sizeof(T));
+    memset(&array_[size() - 1], 0, sizeof(array_[0]));
     --size_;
   }
 
@@ -333,13 +333,13 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
     }
   }
 
+
   /*
    * Initializes non-trivial element at given index with provided value,
    * injecting Memory reference into compatible classes.
    */
   template<typename Y>
   void InitAtNonTrivial(size_t idx, const Y &new_val) {
-    boost::is_base_of<MemoryDependentWithCopy,T> is_memory_dependent;
     bool memory_injected =
         MemoryDependentWithCopy::ConstructAt(&array_[idx], memory_, new_val);
     if(!memory_injected)

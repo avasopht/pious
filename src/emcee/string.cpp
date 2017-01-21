@@ -115,10 +115,14 @@ void String::ConstructString(const char *cstr, size_t begin, size_t end) {
 }
 
 String::String(const String &first, const String &second)
-  : memory_(first.memory_),
-    string_(first.memory_),
+  : memory_(nullptr),
+    string_(nullptr),
     size_(0)
 {
+  memory_ = first.memory() ? first.memory() : second.memory();
+  string_.SetMemory(memory_);
+  assert(memory_);
+
   size_ = first.length() + second.length();
   string_.Create(size_ + 1);
   for(size_t i = 0; i < first.length(); ++i) {
@@ -162,6 +166,11 @@ String::String()
     size_(0)
 {
 
+}
+String::String(Memory *memory, const String &other) : memory_(memory), string_(memory_), size_(0) {
+  if(!memory_ && other.memory_) {
+
+  }
 }
 
 bool operator==(const String &lhs, const String &rhs) {

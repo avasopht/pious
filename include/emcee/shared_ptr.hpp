@@ -40,12 +40,16 @@ class WeakPtr;
  * This class respects Memory injection on its object creation methods.
  */
 template<typename T>
-class SharedPtr : public virtual MemoryDependent {
+class SharedPtr : public virtual MemoryDependentWithCopy {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
   template<typename Y> friend class WeakPtr;
 
   SharedPtr() : memory_(nullptr), ptr_(nullptr) {}
+
+  SharedPtr(Memory *memory, const SharedPtr<T> &other) : memory_(memory), ptr_(nullptr) {
+    Reset(other);
+  }
 
   SharedPtr(Memory *memory) : memory_(memory), ptr_(nullptr) {}
 
@@ -167,7 +171,7 @@ class SharedPtr : public virtual MemoryDependent {
 
 
 template<typename T>
-class SharedPtr <T[]> : public virtual MemoryDependent {
+class SharedPtr <T[]> : public virtual MemoryDependentWithCopy {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
   template<typename Y> friend class WeakPtr;
@@ -181,6 +185,10 @@ class SharedPtr <T[]> : public virtual MemoryDependent {
       : memory_(memory),
         ptr_(nullptr) {
     Reset(p);
+  }
+
+  SharedPtr(Memory *memory, const SharedPtr &other) : memory_(memory), ptr_(nullptr) {
+    Reset(other);
   }
 
   SharedPtr(const SharedPtr &other) {
@@ -201,6 +209,8 @@ class SharedPtr <T[]> : public virtual MemoryDependent {
     Reset(ptr);
     return *this;
   }
+
+  void SetMemory(Memory *memory) { memory_ = memory; }
 
   SharedPtr& Create(size_t count, const T &other) {
     if(!memory_)
@@ -242,7 +252,11 @@ class SharedPtr <T[]> : public virtual MemoryDependent {
   template<typename Y> void Reset(const SharedPtr<Y> &other) {
     if(&other == this || other.ptr_ == ptr_) {
       return;
-    } else {
+    }
+
+    // We only want to adopt other's memory ptr if we don't have one or other has
+    // a valid pointer.
+    if(other || !memory_) {
       memory_ = other.memory_;
       ptr_ = other.ptr_;
       count_ = SharedCount(other.count_);
