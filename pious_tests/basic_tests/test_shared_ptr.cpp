@@ -22,7 +22,9 @@
  */
 
 #include <gtest/gtest.h>
-#include <emcee/shared_ptr.hpp>
+#include <emcee/emcee.hpp>
+
+using namespace emcee;
 
 TEST(SharedPtr,BasicTest) {
   emcee::DefaultMemory mem;
@@ -33,7 +35,7 @@ TEST(SharedPtr,BasicTest) {
   ASSERT_EQ(1, first.use_count());
   ASSERT_TRUE(first.unique());
 
-  emcee::SharedPtr<int> second(first);
+  emcee::SharedPtr<int> second = first;
   ASSERT_EQ(2, first.use_count());
 
   first.Reset();
@@ -81,4 +83,36 @@ TEST(SharedPtr, Array) {
 
   smart_array.Swap(second);
   ASSERT_EQ(second[0], array[0]);
+}
+
+TEST(SharedPtr,ManyPtrs) {
+  typedef emcee::SharedPtr<int> IntPtr;
+  emcee::DefaultMemory mem;
+  IntPtr a(&mem), b, c, d, e, f, g;
+  a.Create();
+  (*a) = 10;
+  b = c = d = f = g = a;
+}
+
+TEST(SharedPtr,InVectors) {
+  struct Node : public virtual MemoryDependent {
+    Vector<SharedPtr<Node>> arr;
+    int val;
+    Node(Memory *mem) : arr(mem), val(){}
+  };
+  DefaultMemory mem;
+  {
+    Vector<SharedPtr<Node>> a(&mem);
+    a.Resize(10);
+    for(int i = 0; i < 10; ++i) {
+      a[i].Create();
+      a[i]->val = i;
+    }
+    for(int i = 0; i < 10; ++i) {
+      a[i]->arr.Resize(i);
+      for(int j = 0; j < i; ++j) {
+        a[i]->arr[j] = a[j];
+      }
+    }
+  }
 }

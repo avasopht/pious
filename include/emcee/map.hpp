@@ -32,63 +32,144 @@ namespace emcee {
 
 class Memory;
 
+
 template<typename Key, typename T>
-class Map : public virtual MemorySetter, public virtual MemoryDependentWithCopy {
+class Map : public virtual MemoryDependentWithCopy {
  public:
-  typedef std::pair<Key,T> ValueType;
 
+  struct Node : public virtual MemoryDependent {
+    Vector<SharedPtr<Node>> next;
+    T value;
+    Key key;
+    Node(Memory *memory) : next(memory), value(), key() { }
+    Node& WithLevel(int level) { next.Resize(level); return *this; }
+    Node& WithKey(const Key &new_key) { key = new_key; return *this; }
+  };
 
-  Map() : mappings_(nullptr) {}
+  Map() : head_(), levels_(0), size_(0) {}
 
-  // MemoryDependentWithCopy constructor.
-  Map(Memory *memory, const Map &other) : mappings_(memory, other.mappings_) {}
-  // MemoryDependent constructor.
-  Map(Memory *memory) : mappings_(memory) {}
+  Map(Memory *memory) : head_(memory), levels_(1), size_(0){
+    Init();
+  }
+  Map(Memory *memory, const Map &other) : head_(memory), levels_(1) {
+    if(!head_.memory())
+      head_.SetMemory(other.memory());
+    Init();
+    for(SharedPtr<Node> cur = other.head_->next[0]; cur; cur = cur->next[0]) {
+      (*this)[cur->value] = cur->key;
+    }
+  }
 
-  Memory *memory() const { return mappings_.memory(); }
-  size_t size() const { return mappings_.size(); }
-  ValueType MappingAt(size_t idx) { return mappings_[idx]; }
-  bool Empty() const { return mappings_.Empty(); }
-  void SetMemory(Memory *memory) { mappings_.SetMemory(memory); }
+  void SetMemory(Memory *mem) {
+    if(mem == memory())
+      return;
 
-  size_t Erase(const Key &k) {
+    head_.SetMemory(mem);
+    levels_ = 1;
+    size_ = 0;
+    Init();
+  }
+
+  void Init() {
+    assert(memory());
     if(!memory())
-      return 0;
+      return;
 
-    size_t erase_count = 0;
-    for(int i = 0; i < (int)mappings_.size(); ++i) {
-      if(mappings_.At((size_t)i).first == k) {
-        mappings_.EraseAt(i);
-        --i;
-        ++erase_count;
+    head_.Create();
+    size_ = 0;
+    head_->WithLevel(33);
+  }
+
+  bool Empty() const { return size_ == 0; }
+
+  T& operator[](const Key &key) {
+    SharedPtr<Node> search = Find(key);
+    if(search)
+      return search->value;
+
+    assert(memory());
+
+    int level = 0;
+    for(int r = rand(); (r & 1) == 1; r >>= 1) {
+      ++level;
+      if(level == levels_) {
+        ++levels_;
+        break;
       }
     }
-    return erase_count;
-  }
 
-  T& operator[](const Key &k) {
-    assert(memory());
-    for(size_t i = 0; i < mappings_.size(); ++i) {
-      ValueType &mapping = mappings_.At(i);
-      if(mapping.first == k)
-        return mapping.second;
+    SharedPtr<Node> new_node(memory());
+    new_node.Create()->WithLevel(level+1).WithKey(key);
+    const SharedPtr<Node> *cur = &head_;
+    for(int i = levels_ - 1; i >= 0; --i) {
+      for(; (*cur)->next[i]; cur = &(*cur)->next[i]) {
+        if((*cur)->next[i]->key > key)
+          break;
+      }
+      if(i <= level) {
+        new_node->next[i] = (*cur)->next[i];
+        (*cur)->next[i] = new_node;
+      }
     }
-    mappings_.PushBack(std::pair<Key,T>(k, T()));
-    return mappings_.Back().second;
+    ++size_;
+    return new_node->value;
   }
 
-  bool ContainsKey(const Key &k) {
-    if(!memory())
-      return false;
-    for(size_t i = 0; i < mappings_.size(); ++i) {
-      if(mappings_.At(i).first == k)
-        return true;
+  bool ContainsKey(const Key &key) {
+    SharedPtr<Node> cur = head_;
+    for(int i = levels_ - 1; i >= 0; --i) {
+      for(; cur->next[i]; cur = cur->next[i]) {
+        if(cur->next[i]->key > key)
+          break;
+        if(cur->next[i]->key == key)
+          return true;
+      }
     }
     return false;
   }
 
+  bool Remove(const Key &key) {
+    SharedPtr<Node> cur = head_;
+    bool found = false;
+    for(int i = levels_ -1; i >= 0; --i) {
+      for(; cur->next[i]; cur = cur->next[i]) {
+        if(cur->next[i]->key == key) {
+          found = true;
+          cur->next[i] = cur->next[i]->next[i];
+          break;
+        }
+
+        if(cur->next[i]->key > key)
+          break;
+      }
+    }
+
+    if(found)
+      --size_;
+    return found;
+  }
+
+  size_t size() const { return size_; }
+
+  Memory* memory() const { return head_.memory(); }
+
  private:
-  Vector<ValueType> mappings_;
+  SharedPtr<Node> head_;
+  int levels_;
+  size_t size_;
+
+  SharedPtr<Node> Find(const Key &key) {
+    SharedPtr<Node> cur = head_;
+    for(int i = levels_ - 1; i >= 0; --i) {
+      for(; cur->next[i]; cur = cur->next[i]) {
+        if(cur->next[i]->key > key)
+          break;
+        if(cur->next[i]->key == key)
+          return cur->next[i];
+      }
+    }
+    return SharedPtr<Node>();
+  }
 };
 
 }

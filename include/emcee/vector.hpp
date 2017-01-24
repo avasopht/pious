@@ -183,7 +183,9 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
       Reserve(CalcReserveSize(size()+1));
     }
 
-    memset((void *) &array_[size_], 0, sizeof(y));
+    assert(array_);
+
+    memset((void *) &array_[size_], 0, sizeof(array_[0]));
     InitAt(size_, y);
     ++size_;
   }
@@ -287,8 +289,8 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
     return array_[idx];
   }
 
-  const T &operator[](size_t idx) const { return array_[idx]; };
-  T &operator[](size_t idx) { return array_[idx]; }
+  const T &operator[](size_t idx) const { return At(idx); };
+  T &operator[](size_t idx) { return At(idx); }
 
   /*! Returns number of elements in this Vector. */
   size_t size() const { return size_; }

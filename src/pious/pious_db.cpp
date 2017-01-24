@@ -156,9 +156,6 @@ Pious_DeviceSpec* PiousDb_FindDevice(struct Pious_Db *sdb, const char *cid) {
 size_t PiousDb_GetDeviceCount(const struct Pious_Db *db) {
   return static_cast<const pious::Db*>(db)->devices.size();
 }
-Pious_DeviceSpec* PiousDb_DeviceAt(struct Pious_Db *db, size_t idx){
-  return pious::Db::FromStruct(db)->devices.MappingAt(idx).second.get();
-}
 
 Pious_DeviceSpec* PiousDb_CreateDevice(struct Pious_Db *db, const char *id){
   return static_cast<pious::Db*>(db)->CreateDevice(id);

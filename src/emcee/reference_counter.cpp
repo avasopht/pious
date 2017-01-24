@@ -26,7 +26,7 @@
 
 namespace emcee {
 
-ReferenceCounter::ReferenceCounter(Deleter *deleter) {
+ReferenceCounter::ReferenceCounter(Deleter *deleter) : deleter_(nullptr), shared_count_(0), weak_count_(0) {
   SetDeleter(deleter);
 }
 
