@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 18/01/2017.
+ * Created by The Pious Authors on 25/03/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,11 +21,24 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_PIOUS_API_H
-#define PIOUS_PIOUS_API_H
+#ifndef PIOUS_PIOUS_DEVICE_INSTANCE_H
+#define PIOUS_PIOUS_DEVICE_INSTANCE_H
 
-#include "pious_device.h"
-#include "pious_spec.h"
-#include "pious_sys.h"
+#include <stddef.h>
 
-#endif /* PIOUS_PIOUS_API_H */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct Pious_DeviceInstance;
+
+struct Pious_DeviceInstance * PiousDevInst_Create(struct Pious_Spec * spec);
+struct Pious_PortInstance * PiousDevInst_FindPort(struct Pious_DeviceInstance * p, const char * id);
+struct Pious_PortInstance * PiousDevInst_PortAt(struct Pious_DeviceInstance * p, size_t index);
+size_t PiousDevInst_GetPortCount(const struct Pious_DeviceInstance * p);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* PIOUS_PIOUS_DEVICE_INSTANCE_H */

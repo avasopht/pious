@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 18/01/2017.
+ * Created by The Pious Authors on 29/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,12 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifndef PIOUS_PIOUS_ENVIRONMENT_H
+#define PIOUS_PIOUS_ENVIRONMENT_H
 
-#ifndef PIOUS_PIOUS_API_H
-#define PIOUS_PIOUS_API_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "pious_device.h"
-#include "pious_spec.h"
-#include "pious_sys.h"
+#include <stddef.h>
 
-#endif /* PIOUS_PIOUS_API_H */
+
+struct Pious_Env;
+struct Pious_DeviceInstance;
+struct Pious_ConnectionInstance;
+
+struct Pious_Env * PiousEnv_Create(struct Pious_Db * db);
+size_t PiousEnv_GetDeviceCount(struct Pious_Env * p);
+struct Pious_DeviceInstance * PiousEnv_GetDeviceAt(struct Pious_Env * p, size_t index);
+struct Pious_DeviceInstance * PiousEnv_CreateInstance(struct Pious_Env * p, struct Pious_DeviceSpec * spec);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* PIOUS_PIOUS_ENVIRONMENT_H */

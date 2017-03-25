@@ -46,16 +46,6 @@ struct Pious_DeviceConnectionIds {
   char dest_device_port[256];
 };
 
-Pious_Db* PiousDb_Create(struct Pious_Mem *mem);
-Pious_Db* PiousDb_CreateChildDb(struct Pious_Db *db);
-void PiousDb_RemoveChildDb(struct Pious_Db *db, struct Pious_Db *child);
-Pious_DeviceSpec* PiousDb_FindDevice(struct Pious_Db *db, const char *id);
-size_t PiousDb_GetDeviceCount(const struct Pious_Db *db);
-Pious_DeviceSpec* PiousDb_DeviceAt(struct Pious_Db *db, size_t idx);
-Pious_DeviceSpec* PiousDb_CreateDevice(struct Pious_Db *db, const char *id);
-void PiousDb_DestroyDb(struct Pious_Db *db);
-bool PiousDb_IsChildDb(const struct Pious_Db *db, const struct Pious_Db *child);
-
 void PiousSpec_LoadDsp(struct Pious_DeviceSpec *spec, Pious_UnitPlugin *dsp);
 void PiousSpec_SetName(struct Pious_DeviceSpec *spec, const char *name);
 void PiousSpec_AddDevicePort(struct Pious_DeviceSpec *spec, enum Pious_IoType io_type, const char *port_id);
@@ -64,9 +54,9 @@ size_t PiousSpec_GetPortNameLengthAt(const struct Pious_DeviceSpec *spec, size_t
 size_t PiousSpec_GetPortNameAt(const struct Pious_DeviceSpec *spec, size_t index, char * out);
 bool PiousSpec_HasPort(const struct Pious_DeviceSpec *spec, const char *port_id);
 enum Pious_IoType PiousSpec_GetPortType(const struct Pious_DeviceSpec *spec, const char *port_id);
-Pious_ReferenceSpec* PiousSpec_AddDevice(struct Pious_DeviceSpec *spec, const char *db_id, const char *spec_id);
-Pious_ReferenceSpec* PiousSpec_FindDevice(struct Pious_DeviceSpec *spec, const char *spec_id);
-Pious_ReferenceSpec* PiousSpec_DeviceAt(struct Pious_DeviceSpec *spec, size_t idx);
+struct Pious_ReferenceSpec* PiousSpec_AddDevice(struct Pious_DeviceSpec *spec, const char *db_id, const char *spec_id);
+struct Pious_ReferenceSpec* PiousSpec_FindDevice(struct Pious_DeviceSpec *spec, const char *spec_id);
+struct Pious_ReferenceSpec* PiousSpec_DeviceAt(struct Pious_DeviceSpec *spec, size_t idx);
 size_t PiousSpec_DeviceCount(const struct Pious_DeviceSpec *spec);
 bool PiousSpec_IsPolyphonic(const struct Pious_DeviceSpec *spec, const char *ref_id);
 void PiousSpec_SetPolyphonic(struct Pious_DeviceSpec *spec, const char *ref_id, bool b);

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 18/01/2017.
+ * Created by The Pious Authors on 25/03/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,11 +21,28 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_PIOUS_API_H
-#define PIOUS_PIOUS_API_H
+#ifndef PIOUS_PIOUS_PORT_INSTANCE_H
+#define PIOUS_PIOUS_PORT_INSTANCE_H
 
-#include "pious_device.h"
-#include "pious_spec.h"
-#include "pious_sys.h"
+#ifndef __cplusplus
+extern "C" {
+#endif
 
-#endif /* PIOUS_PIOUS_API_H */
+#include <stddef.h>
+
+struct Pious_PortInstance;
+
+struct Pious_ConnectionInstance * Pious_PortInstanceConnect (
+    struct Pious_PortInstance * p, struct Pious_PortInstance * dest);
+void Pious_PortInstanceRemoveConnection(struct Pious_PortInstance * p, struct Pious_PortInstance * dest);
+/*! Returns true if an id is successfully written to id_out. id_buffer_size is
+ * the size of the buffer including null terminator.
+ */
+int Pious_PortInstanceReadId(const struct Pious_PortInstance * p, char * id_out, size_t id_buffer_size);
+struct Pious_DeviceInstance * Pious_PortInstanceGetDevice( struct Pious_PortInstance * p);
+
+#ifndef __cplusplus
+}
+#endif
+
+#endif /* PIOUS_PIOUS_PORT_INSTANCE_H */

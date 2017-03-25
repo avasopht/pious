@@ -2,6 +2,9 @@ include_directories(${gmock_SOURCE_DIR}/gtest/include ${gmock_SOURCE_DIR}/gtest)
 include_directories(${gmock_SOURCE_DIR}/include ${gmock_SOURCE_DIR})
 include_directories(${Boost_INCLUDE_DIR})
 
+set(PIOUS_SRC_DIR ${SRC_DIR}/pious)
+set(EMCEE_SRC_DIR ${SRC_DIR}/emcee)
+
 add_executable(runBasicPiousTests
         count_calls.hpp
         class_method_notifier.hpp

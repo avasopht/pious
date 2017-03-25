@@ -23,6 +23,7 @@
 
 #include <api/pious_spec.h>
 #include <api/pious_sys.h>
+#include <api/pious_db.h>
 #include <emcee/memory.hpp>
 #include <emcee/map.hpp>
 #include <emcee/emcee.hpp>
@@ -31,12 +32,7 @@
 #include <pious/reference_spec.hpp>
 #include <pious/connection_spec.hpp>
 
-namespace pious {
-class Db;
-}
-
-struct Pious_Db {
-};
+struct Pious_Db { };
 
 namespace pious {
 struct Db : public Pious_Db {
@@ -64,10 +60,10 @@ struct Db : public Pious_Db {
     }
   }
 
-  pious::DeviceSpec* CreateDevice(const char *sid) {
-    pious::DeviceSpec *spec = emcee::New<pious::DeviceSpec>(mem).Create();
+  DeviceSpec* CreateDevice(const char *sid) {
+    DeviceSpec *spec = emcee::New<DeviceSpec>(mem).Create();
     spec->SetId(sid);
-    devices[emcee::String (mem, sid)] = emcee::SharedPtr<pious::DeviceSpec>(mem, spec);
+    devices[emcee::String (mem, sid)] = emcee::SharedPtr<DeviceSpec>(mem, spec);
     return spec;
   }
 
@@ -82,7 +78,7 @@ struct Db : public Pious_Db {
   }
 
   emcee::StructMemory *mem;
-  emcee::Map<emcee::String,emcee::SharedPtr<pious::DeviceSpec>> devices;
+  emcee::Map<emcee::String,emcee::SharedPtr<DeviceSpec>> devices;
   Db *parent;
   emcee::Vector<emcee::SharedPtr<Db> > children;
 

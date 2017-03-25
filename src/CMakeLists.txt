@@ -1,11 +1,3 @@
-FUNCTION(Prepend var prefix)
-    SET(listvar "")
-    FOREACH(f ${ARGN})
-        LIST(APPEND listvar "${prefix}/${f}")
-    ENDFOREACH()
-    SET(${var} "${listvar}" PARENT_SCOPE)
-ENDFUNCTION()
-
 set(EMCEE_INCLUDE_FILES
         array.hpp
         deleter.hpp
