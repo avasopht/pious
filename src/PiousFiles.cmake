@@ -1,0 +1,13 @@
+set(PIOUS_SOURCE_FILES
+        add_connection.cpp
+        add_connection_port.cpp
+        add_connection_port_dest.cpp
+        add_device.cpp
+        connection_spec.cpp
+        device_spec.cpp
+        id.cpp
+        pious_db.cpp
+        pious_device_instance.cpp
+        port_spec.cpp
+        reference_spec.cpp
+        )

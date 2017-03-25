@@ -2,10 +2,22 @@ include_directories(${gmock_SOURCE_DIR}/gtest/include ${gmock_SOURCE_DIR}/gtest)
 include_directories(${gmock_SOURCE_DIR}/include ${gmock_SOURCE_DIR})
 include_directories(${Boost_INCLUDE_DIR})
 
-set(PIOUS_SRC_DIR ${SRC_DIR}/pious)
-set(EMCEE_SRC_DIR ${SRC_DIR}/emcee)
+include_directories(${INCLUDE_DIR}/emcee)
+include_directories(${INCLUDE_DIR}/pious)
+include_directories(${INCLUDE_DIR}/pious_dsp_lib)
+
+include(${SRC_DIR}/PiousFiles.cmake)
+Prepend(PIOUS_SOURCE_FILES "${SRC_DIR}/pious" ${PIOUS_SOURCE_FILES})
+include(${SRC_DIR}/PiousDspLibFiles.cmake)
+Prepend(DSP_LIB_SOURCE_FILES "${SRC_DIR}/pious_dsp_lib" ${DSP_LIB_SOURCE_FILES})
+include(${SRC_DIR}/EmceeFiles.cmake)
+Prepend(EMCEE_SOURCE_FILES "${SRC_DIR}/emcee" ${EMCEE_SOURCE_FILES})
+
 
 add_executable(runBasicPiousTests
+        ${PIOUS_SOURCE_FILES}
+        ${EMCEE_SOURCE_FILES}
+        ${DSP_LIB_SOURCE_FILES}
         count_calls.hpp
         class_method_notifier.hpp
         test_device_spec.cpp
@@ -26,6 +38,6 @@ add_executable(runBasicPiousTests
 
 target_link_libraries(runBasicPiousTests gtest)
 target_link_libraries(runBasicPiousTests gmock gmock_main)
-target_link_libraries(runBasicPiousTests pious)
-target_link_libraries(runBasicPiousTests emcee)
-target_link_libraries(runBasicPiousTests pious_dsp_lib)
+#target_link_libraries(runBasicPiousTests pious)
+#target_link_libraries(runBasicPiousTests emcee)
+#target_link_libraries(runBasicPiousTests pious_dsp_lib)

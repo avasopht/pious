@@ -7,8 +7,7 @@ include_directories(${INCLUDE_DIR}/pious_dsp_lib)
 set(INCLUDE_FILES
         ${PIOUS_DSP_LIB_INCLUDE_FILES})
 
-set(SOURCE_FILES
-        var_rms.cpp
-        )
+include(../PiousDspLibFiles.cmake)
+set(SOURCE_FILES ${DSP_LIB_SOURCE_FILES})
 
 add_library(pious_dsp_lib STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
