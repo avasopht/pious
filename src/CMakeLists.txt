@@ -28,13 +28,17 @@ set(PIOUS_INCLUDE_FILES
         add_connection_port_dest.hpp
         add_device.hpp
         connection_spec.hpp
+        db.hpp
         device_spec.hpp
         id.hpp
+        instance_factory.hpp
         port.hpp
         port_spec.hpp
         process.hpp
         reference_spec.hpp
         scope.hpp
+        spec_finder.hpp
+        spec_to_instance.hpp
         )
 
 set(PIOUS_DSP_LIB_INCLUDE_FILES

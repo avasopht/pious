@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 10/10/16.
+ * Created by The Pious Authors on 06/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,56 @@
  * SOFTWARE.
  */
 
-#include "reference_spec.hpp"
+#ifndef PIOUS_DB_HPP
+#define PIOUS_DB_HPP
+
+#include <emcee/map.hpp>
+
+namespace emcee {
+class String;
+}
 
 namespace pious {
+class DeviceSpec;
+}
 
-ReferenceSpec::ReferenceSpec() : is_poly_device_(false) {
+struct Pious_Db { };
+
+namespace pious {
+class Db : public Pious_Db {
+ public:
+  Db() : mem(nullptr), parent(nullptr) {}
+
+  Db(Pious_Mem * m);
+
+  bool IsChild(const Db * child) const;
+
+  ~Db();
+
+  DeviceSpec * CreateDevice(const char * sid);
+  DeviceSpec * FindDevice(const char * sid);
+
+  void SetMemory(emcee::StructMemory * m);
+
+  static Db * FromStruct(Pious_Db * db);
+
+  void RemoveChildDb(Db * child);
+  void RemoveFromParent();
+  Db * CreateChildDb();
+
+  size_t device_count() const { return devices.size(); }
+  bool HasParent() const { return parent != nullptr; }
+
+  struct Pious_Mem * GetMemStruct();
+
+ private:
+
+  emcee::StructMemory *mem;
+  emcee::Map<emcee::String, emcee::SharedPtr<DeviceSpec>> devices;
+  Db *parent;
+  emcee::Vector<emcee::SharedPtr<Db> > children;
+};
 
 }
 
-
-ReferenceSpec::ReferenceSpec(emcee::Memory *memory)
-  : id_(memory), import_device_id_(memory), is_poly_device_(false) { }
-
-void ReferenceSpec::SetSid(const char *sid) { id_.SetSid(sid); }
-
-void ReferenceSpec::SetIid(uint32_t iid) { id_.SetIid(iid); }
-
-void ReferenceSpec::SetImportDeviceSid(const char *sid) { import_device_id_.SetSid(sid); }
-
-void ReferenceSpec::SetImportDeviceIid(uint32_t iid) { import_device_id_.SetIid(iid); }
-
-void ReferenceSpec::SetPolyDevice(bool b) { is_poly_device_ = b; }
-
-bool ReferenceSpec::is_poly_device() const { return is_poly_device_; }
-Id ReferenceSpec::id() const { return id_; }
-Id ReferenceSpec::import_id() const { return import_device_id_; }
-
-}
+#endif /* PIOUS_DB_HPP */

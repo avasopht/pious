@@ -154,5 +154,8 @@ ReferenceSpec *DeviceSpec::FindDevice(const char *id) {
       return &devices_[i];
   }
 }
+bool DeviceSpec::has_plugin() const {
+  return plugin_.Render;
+}
 
 }

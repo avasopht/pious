@@ -5,6 +5,7 @@
 #include <api/pious_device.h>
 #include <api/pious_spec.h>
 #include <api/pious_sys.h>
+#include <api/db.h>
 #include <emcee/util.hpp>
 #include <algorithm>
 
@@ -153,6 +154,7 @@ void CreateChain(Pious_Db *db) {
   PiousSpec_AddDevice(chain, "com.avasopht.harmonics", "harmonics");
   PiousSpec_AddConnection(chain, "impulse", "out", "harmonics", "in");
   PiousSpec_AddConnection(chain, "harmonics", "out", "self", "out");
+
 }
 void CreateHarmonicsDevice(Pious_Db *db) {
   Pious_DeviceSpec *harmonics = PiousDb_CreateDevice(db, "com.avasopht.harmonics");

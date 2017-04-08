@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 07/10/16.
+ * Created by The Pious Authors on 06/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,48 +21,37 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SPEC_REFERENCE_HPP
-#define PIOUS_SPEC_REFERENCE_HPP
+#ifndef PIOUS_SPEC_TO_INSTANCE_HPP
+#define PIOUS_SPEC_TO_INSTANCE_HPP
 
-#include "id.hpp"
-
-#include <emcee/string.hpp>
-#include <emcee/memory_dependent.hpp>
+#include <pious/spec_to_instance.hpp>
+#include <pious/device_spec.hpp>
+#include <emcee/shared_ptr.hpp>
+#include <emcee/vector.hpp>
+#include <emcee/map.hpp>
 
 namespace emcee {
-class Memory;
+class String;
 }
-
-struct Pious_ConnectionSpec {};
 
 namespace pious {
 
-class ReferenceSpec : public Pious_ConnectionSpec,  public virtual emcee::MemoryDependent {
+class DeviceSpec;
+class SpecFinder;
+class InstanceFactory;
+class DeviceInstance;
+class ConnectionSpec;
+
+class SpecToInstance {
  public:
-  ReferenceSpec();
-  ReferenceSpec(emcee::Memory *memory);
-
-  void SetSid(const char *sid);
-  void SetIid(uint32_t iid);
-
-  void SetImportDeviceSid(const char *sid);
-  void SetImportDeviceIid(uint32_t iid);
-
-  void SetPolyDevice(bool b);
-  bool is_poly_device() const;
-
-  Id id() const;
-  Id import_id() const;
-
- private:
-  /*! Unique id of reference */
-  Id id_;
-  /*! Id of DeviceSpec this reference refers to. */
-  Id import_device_id_;
-  /*! Whether device is instantiated by polyphonic voice banks. */
-  bool is_poly_device_;
+  static void Convert(SpecFinder * spec_finder, InstanceFactory * instance_factory, DeviceSpec * spec);
+  static void CreatePorts(DeviceInstance * instance, DeviceSpec * specs);
+  static void InstantiateChildren(emcee::Map<emcee::String,DeviceInstance*> children, SpecFinder * spec_finder,
+                                                                       InstanceFactory * instance_factory,
+                                                                       DeviceSpec * spec);
+  static void ConnectChildren(emcee::Map<emcee::String,DeviceInstance*>,emcee::Vector<ConnectionSpec*> connections);
 };
 
 }
 
-#endif /* PIOUS_SPEC_REFERENCE_HPP */
+#endif /* PIOUS_SPEC_TO_INSTANCE_HPP */

@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-#include <api/pious_db.h>
+#include <api/db.h>
 
 struct Pious_DeviceInstance {};
 

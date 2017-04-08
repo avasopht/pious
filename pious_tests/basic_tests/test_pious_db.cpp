@@ -23,7 +23,7 @@
 
 #include <gtest/gtest.h>
 #include <api/pious_spec.h>
-#include <api/pious_db.h>
+#include <api/db.h>
 #include <emcee/memory.hpp>
 
 TEST(PiousDb,Basic) {

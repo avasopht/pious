@@ -79,6 +79,8 @@ class DeviceSpec : public Pious_DeviceSpec, public virtual emcee::MemoryDependen
   void LoadPlugin(const Pious_UnitPlugin &plugin);
   Pious_UnitPlugin plugin() const;
 
+  bool has_plugin() const;
+
  private:
   emcee::Memory *memory_;
   Pious_UnitPlugin plugin_;

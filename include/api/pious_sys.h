@@ -29,6 +29,12 @@
 extern "C" {
 #endif
 
+struct Pious_Sys;
+
+struct Pious_Sys * PiousSys_Create(struct Pious_Mem * mem);
+struct Pious_Db * PiousSys_CreateDb(struct Pious_Sys * p);
+struct Pious_Rack * PiousSys_CreateRack(struct Pious_Sys * p, struct Pious_Db * db);
+
 typedef void *(*TPious_Alloc)(void *alloc_data, size_t size);
 typedef void (*TPious_Free)(void *alloc_data, void *ptr);
 

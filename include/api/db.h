@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 10/10/16.
+ * Created by The Pious Authors on 25/03/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,31 @@
  * SOFTWARE.
  */
 
-#include "reference_spec.hpp"
+#ifndef PIOUS_PIOUS_DB_H
+#define PIOUS_PIOUS_DB_H
 
-namespace pious {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-ReferenceSpec::ReferenceSpec() : is_poly_device_(false) {
+#include <stddef.h>
 
+/*! \struct Pious_Db Manages DeviceSpec instances.
+ */
+struct Pious_Db;
+
+struct Pious_Db * PiousDb_Create(struct Pious_Mem * mem);
+struct Pious_Db * PiousDb_CreateChildDb(struct Pious_Db * db);
+void PiousDb_RemoveChildDb(struct Pious_Db * db, struct Pious_Db * child);
+struct Pious_DeviceSpec * PiousDb_FindDevice(struct Pious_Db * db, const char * id);
+size_t PiousDb_GetDeviceCount(const struct Pious_Db * db);
+struct Pious_DeviceSpec * PiousDb_DeviceAt(struct Pious_Db * db, size_t idx);
+struct Pious_DeviceSpec * PiousDb_CreateDevice(struct Pious_Db * db, const char * id);
+void PiousDb_DestroyDb(struct Pious_Db * db);
+bool PiousDb_IsChildDb(const struct Pious_Db * db, const struct Pious_Db * child);
+
+#ifdef __cplusplus
 }
+#endif
 
-
-ReferenceSpec::ReferenceSpec(emcee::Memory *memory)
-  : id_(memory), import_device_id_(memory), is_poly_device_(false) { }
-
-void ReferenceSpec::SetSid(const char *sid) { id_.SetSid(sid); }
-
-void ReferenceSpec::SetIid(uint32_t iid) { id_.SetIid(iid); }
-
-void ReferenceSpec::SetImportDeviceSid(const char *sid) { import_device_id_.SetSid(sid); }
-
-void ReferenceSpec::SetImportDeviceIid(uint32_t iid) { import_device_id_.SetIid(iid); }
-
-void ReferenceSpec::SetPolyDevice(bool b) { is_poly_device_ = b; }
-
-bool ReferenceSpec::is_poly_device() const { return is_poly_device_; }
-Id ReferenceSpec::id() const { return id_; }
-Id ReferenceSpec::import_id() const { return import_device_id_; }
-
-}
+#endif /* PIOUS_PIOUS_DB_H */

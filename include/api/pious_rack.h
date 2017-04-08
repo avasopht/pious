@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 10/10/16.
+ * Created by The Pious Authors on 29/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,31 +20,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifndef PIOUS_RACK_H
+#define PIOUS_RACK_H
 
-#include "reference_spec.hpp"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace pious {
+#include <stddef.h>
 
-ReferenceSpec::ReferenceSpec() : is_poly_device_(false) {
+/*! \struct Pious_Rack Manages loaded devices and connections.
+ */
+struct Pious_Rack;
 
+struct Pious_DeviceInstance;
+struct Pious_ConnectionInstance;
+
+size_t PiousRack_GetDeviceCount(struct Pious_Env * p);
+struct Pious_DeviceInstance * PiousRack_GetDeviceAt(struct Pious_Env * p, size_t index);
+struct Pious_DeviceInstance * PiousRack_CreateInstance(struct Pious_Env * p, struct Pious_DeviceSpec * spec);
+
+
+#ifdef __cplusplus
 }
+#endif
 
-
-ReferenceSpec::ReferenceSpec(emcee::Memory *memory)
-  : id_(memory), import_device_id_(memory), is_poly_device_(false) { }
-
-void ReferenceSpec::SetSid(const char *sid) { id_.SetSid(sid); }
-
-void ReferenceSpec::SetIid(uint32_t iid) { id_.SetIid(iid); }
-
-void ReferenceSpec::SetImportDeviceSid(const char *sid) { import_device_id_.SetSid(sid); }
-
-void ReferenceSpec::SetImportDeviceIid(uint32_t iid) { import_device_id_.SetIid(iid); }
-
-void ReferenceSpec::SetPolyDevice(bool b) { is_poly_device_ = b; }
-
-bool ReferenceSpec::is_poly_device() const { return is_poly_device_; }
-Id ReferenceSpec::id() const { return id_; }
-Id ReferenceSpec::import_id() const { return import_device_id_; }
-
-}
+#endif /* PIOUS_RACK_H */

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 10/10/16.
+ * Created by The Pious Authors on 06/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,37 @@
  * SOFTWARE.
  */
 
-#include "reference_spec.hpp"
+#ifndef PIOUS_SPEC_FINDER_HPP
+#define PIOUS_SPEC_FINDER_HPP
+
+#include <emcee/map.hpp>
+
+namespace emcee {
+class String;
+}
 
 namespace pious {
 
-ReferenceSpec::ReferenceSpec() : is_poly_device_(false) {
+class DeviceSpec;
 
-}
+class SpecFinder {
+ public:
+  virtual ~SpecFinder() = 0;
+  virtual DeviceSpec * FindSpec(const char * sid) = 0;
+};
 
+class CachedSpecFinder : public SpecFinder {
+ public:
+  CachedSpecFinder(emcee::Memory * memory, SpecFinder * finder);
+  virtual DeviceSpec * FindSpec(const char * sid);
 
-ReferenceSpec::ReferenceSpec(emcee::Memory *memory)
-  : id_(memory), import_device_id_(memory), is_poly_device_(false) { }
+ private:
+  emcee::Memory * memory_;
+  SpecFinder * finder_;
+  emcee::Map<emcee::String,DeviceSpec*> device_map_;
 
-void ReferenceSpec::SetSid(const char *sid) { id_.SetSid(sid); }
+};
 
-void ReferenceSpec::SetIid(uint32_t iid) { id_.SetIid(iid); }
+} // pious
 
-void ReferenceSpec::SetImportDeviceSid(const char *sid) { import_device_id_.SetSid(sid); }
-
-void ReferenceSpec::SetImportDeviceIid(uint32_t iid) { import_device_id_.SetIid(iid); }
-
-void ReferenceSpec::SetPolyDevice(bool b) { is_poly_device_ = b; }
-
-bool ReferenceSpec::is_poly_device() const { return is_poly_device_; }
-Id ReferenceSpec::id() const { return id_; }
-Id ReferenceSpec::import_id() const { return import_device_id_; }
-
-}
+#endif /* PIOUS_SPEC_FINDER_HPP */

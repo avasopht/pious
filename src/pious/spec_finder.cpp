@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 29/01/2017.
+ * Created by The Pious Authors on 07/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,28 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef PIOUS_PIOUS_ENVIRONMENT_H
-#define PIOUS_PIOUS_ENVIRONMENT_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <pious/spec_finder.hpp>
+#include <emcee/string.hpp>
 
-#include <stddef.h>
+namespace pious {
 
+SpecFinder::~SpecFinder() {}
 
-struct Pious_Env;
-struct Pious_DeviceInstance;
-struct Pious_ConnectionInstance;
+CachedSpecFinder::CachedSpecFinder(emcee::Memory * memory, SpecFinder * finder)
+    : memory_(memory), finder_(finder), device_map_(memory) {}
 
-struct Pious_Env * PiousEnv_Create(struct Pious_Db * db);
-size_t PiousEnv_GetDeviceCount(struct Pious_Env * p);
-struct Pious_DeviceInstance * PiousEnv_GetDeviceAt(struct Pious_Env * p, size_t index);
-struct Pious_DeviceInstance * PiousEnv_CreateInstance(struct Pious_Env * p, struct Pious_DeviceSpec * spec);
+DeviceSpec * CachedSpecFinder::FindSpec(const char * sid) {
+  emcee::String id (memory_, sid);
+  if(device_map_.ContainsKey(id)) {
+    return device_map_[id];
+  }
 
-
-#ifdef __cplusplus
+  DeviceSpec * spec = finder_->FindSpec(sid);
+  if(spec)
+    device_map_[id] = spec;
+  return spec;
 }
-#endif
 
-#endif /* PIOUS_PIOUS_ENVIRONMENT_H */
+} // pious

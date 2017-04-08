@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 25/03/2017.
+ * Created by The Pious Authors on 07/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,27 +21,18 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_PIOUS_DB_H
-#define PIOUS_PIOUS_DB_H
+#ifndef PIOUS_INSTANCE_FACTORY_HPP
+#define PIOUS_INSTANCE_FACTORY_HPP
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace pious {
 
-#include <stddef.h>
+class DeviceInstance;
 
-struct Pious_Db* PiousDb_Create(struct Pious_Mem *mem);
-struct Pious_Db* PiousDb_CreateChildDb(struct Pious_Db *db);
-void PiousDb_RemoveChildDb(struct Pious_Db *db, struct Pious_Db *child);
-struct Pious_DeviceSpec* PiousDb_FindDevice(struct Pious_Db *db, const char *id);
-size_t PiousDb_GetDeviceCount(const struct Pious_Db *db);
-struct Pious_DeviceSpec* PiousDb_DeviceAt(struct Pious_Db *db, size_t idx);
-struct Pious_DeviceSpec* PiousDb_CreateDevice(struct Pious_Db *db, const char *id);
-void PiousDb_DestroyDb(struct Pious_Db *db);
-bool PiousDb_IsChildDb(const struct Pious_Db *db, const struct Pious_Db *child);
-
-#ifdef __cplusplus
+class InstanceFactory {
+ public:
+  virtual ~InstanceFactory(){}
+  virtual DeviceInstance * CreateDevice() = 0;
+};
 }
-#endif
 
-#endif /* PIOUS_PIOUS_DB_H */
+#endif /* PIOUS_INSTANCE_FACTORY_HPP */

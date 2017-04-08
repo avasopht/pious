@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 10/10/16.
+ * Created by The Pious Authors on 06/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,29 @@
  * SOFTWARE.
  */
 
-#include "reference_spec.hpp"
+#ifndef PIOUS_DEVICE_INSTANCE_HPP
+#define PIOUS_DEVICE_INSTANCE_HPP
+
+#include <cstddef>
+
+namespace emcee {
+class String;
+}
 
 namespace pious {
 
-ReferenceSpec::ReferenceSpec() : is_poly_device_(false) {
+class PortInstance;
+
+class DeviceInstance {
+ public:
+  virtual ~DeviceInstance(){};
+
+  virtual PortInstance * PortAt(size_t index) = 0;
+  virtual size_t port_count() const = 0;
+  virtual PortInstance * FindPort(const char * id) = 0;
+  virtual PortInstance * FindPort(const emcee::String * id) = 0;
+};
 
 }
 
-
-ReferenceSpec::ReferenceSpec(emcee::Memory *memory)
-  : id_(memory), import_device_id_(memory), is_poly_device_(false) { }
-
-void ReferenceSpec::SetSid(const char *sid) { id_.SetSid(sid); }
-
-void ReferenceSpec::SetIid(uint32_t iid) { id_.SetIid(iid); }
-
-void ReferenceSpec::SetImportDeviceSid(const char *sid) { import_device_id_.SetSid(sid); }
-
-void ReferenceSpec::SetImportDeviceIid(uint32_t iid) { import_device_id_.SetIid(iid); }
-
-void ReferenceSpec::SetPolyDevice(bool b) { is_poly_device_ = b; }
-
-bool ReferenceSpec::is_poly_device() const { return is_poly_device_; }
-Id ReferenceSpec::id() const { return id_; }
-Id ReferenceSpec::import_id() const { return import_device_id_; }
-
-}
+#endif /* PIOUS_DEVICE_INSTANCE_HPP */

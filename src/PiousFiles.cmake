@@ -6,8 +6,10 @@ set(PIOUS_SOURCE_FILES
         connection_spec.cpp
         device_spec.cpp
         id.cpp
-        pious_db.cpp
+        db.cpp
         pious_device_instance.cpp
         port_spec.cpp
         reference_spec.cpp
+        spec_finder.cpp
+        spec_to_instance.cpp
         )
