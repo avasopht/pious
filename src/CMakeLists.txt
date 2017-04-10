@@ -53,7 +53,7 @@ Prepend(PIOUS_INCLUDE_FILES "${INCLUDE_DIR}/pious" ${PIOUS_INCLUDE_FILES})
 Prepend(PIOUS_DSP_LIB_INCLUDE_FILES "${INCLUDE_DIR}/pious_dsp_lib" ${PIOUS_DSP_LIB_INCLUDE_FILES})
 
 
-find_package(Boost 1.55 REQUIRED)
+find_package(Boost 1.48 REQUIRED)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
 else()
