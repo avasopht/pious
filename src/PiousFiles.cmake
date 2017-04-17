@@ -10,6 +10,8 @@ set(PIOUS_SOURCE_FILES
         pious_device_instance.cpp
         port_spec.cpp
         reference_spec.cpp
+        signal_channel.cpp
+        signal_hold_channel.cpp
         spec_finder.cpp
         spec_to_instance.cpp
         )

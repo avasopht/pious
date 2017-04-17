@@ -31,7 +31,6 @@
 #include "connection_spec.hpp"
 #include "device_spec.hpp"
 #include "id.hpp"
-#include "port.hpp"
 #include "port_spec.hpp"
 #include "process.hpp"
 #include "reference_spec.hpp"

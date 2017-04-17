@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 09/10/16.
+ * Created by The Pious Authors on 12/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,19 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SCOPE_HPP
-#define PIOUS_SCOPE_HPP
-
-#include <api/pious_device.h>
-#include <cstdint>
-
-struct Pious_HoldSignalEvent;
-struct Pious_DataPacket;
+#ifndef PIOUS_DSP_HPP
+#define PIOUS_DSP_HPP
 
 namespace pious {
 
-class PortInstance;
+class Scope;
 
-
-class Scope {
+class Dsp {
  public:
-  virtual ~Scope() {}
-
-  virtual void SetPluginDelay(float delay_in_samples) = 0;
-  virtual Pious_Handle GetHandle(const char *object_uri) = 0;
-  virtual bool IsValidHandle(const Pious_Handle *handle) = 0;
-  virtual PortInstance* GetPort(const Pious_Handle *handle) = 0;
+  virtual ~Dsp() {}
+  virtual void Render(Scope * scope) = 0;
 };
 
 }
 
-#endif /* PIOUS_SCOPE_HPP */
+#endif /* PIOUS_DSP_HPP */

@@ -32,7 +32,7 @@ set(PIOUS_INCLUDE_FILES
         device_spec.hpp
         id.hpp
         instance_factory.hpp
-        port.hpp
+        port_instance.hpp
         port_spec.hpp
         process.hpp
         reference_spec.hpp

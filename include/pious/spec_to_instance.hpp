@@ -24,14 +24,13 @@
 #ifndef PIOUS_SPEC_TO_INSTANCE_HPP
 #define PIOUS_SPEC_TO_INSTANCE_HPP
 
-#include <pious/spec_to_instance.hpp>
-#include <pious/device_spec.hpp>
-#include <emcee/shared_ptr.hpp>
-#include <emcee/vector.hpp>
-#include <emcee/map.hpp>
+
+#include <algorithm>
 
 namespace emcee {
 class String;
+template<typename T> class Vector;
+template<typename Key, typename T> class Map;
 }
 
 namespace pious {
@@ -41,15 +40,28 @@ class SpecFinder;
 class InstanceFactory;
 class DeviceInstance;
 class ConnectionSpec;
+class PortInstance;
 
 class SpecToInstance {
  public:
-  static void Convert(SpecFinder * spec_finder, InstanceFactory * instance_factory, DeviceSpec * spec);
+  /*! Creates a DeviceInstance based on provided spec, also instantiating and connecting its children.
+   *
+   * @param spec_finder
+   * @param instance_factory
+   * @param spec
+   * @return
+   */
+  static DeviceInstance * CreateInstance(SpecFinder * spec_finder,
+                                         InstanceFactory * instance_factory,
+                                         DeviceSpec * spec);
+
   static void CreatePorts(DeviceInstance * instance, DeviceSpec * specs);
-  static void InstantiateChildren(emcee::Map<emcee::String,DeviceInstance*> children, SpecFinder * spec_finder,
+  static void InstantiateChildren(emcee::Map<emcee::String,DeviceInstance*> * children, SpecFinder * spec_finder,
                                                                        InstanceFactory * instance_factory,
                                                                        DeviceSpec * spec);
-  static void ConnectChildren(emcee::Map<emcee::String,DeviceInstance*>,emcee::Vector<ConnectionSpec*> connections);
+  static void ConnectChildren(emcee::Map<emcee::String,DeviceInstance*> * devices,
+                              emcee::Vector<ConnectionSpec*> * connections);
+  static void GetConnections(DeviceSpec * spec, emcee::Vector<ConnectionSpec *> * connections);
 };
 
 }

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 09/10/16.
+ * Created by The Pious Authors on 14/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,25 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_SCOPE_HPP
-#define PIOUS_SCOPE_HPP
+#ifndef PIOUS_SIGNAL_CHANNEL_HPP
+#define PIOUS_SIGNAL_CHANNEL_HPP
 
-#include <api/pious_device.h>
+#include <emcee/vector.hpp>
 #include <cstdint>
 
-struct Pious_HoldSignalEvent;
-struct Pious_DataPacket;
+namespace emcee { class Memory; }
 
 namespace pious {
 
-class PortInstance;
-
-
-class Scope {
+class SignalChannel {
  public:
-  virtual ~Scope() {}
-
-  virtual void SetPluginDelay(float delay_in_samples) = 0;
-  virtual Pious_Handle GetHandle(const char *object_uri) = 0;
-  virtual bool IsValidHandle(const Pious_Handle *handle) = 0;
-  virtual PortInstance* GetPort(const Pious_Handle *handle) = 0;
+  SignalChannel(emcee::Memory * memory, size_t size);
+  size_t ReadSignal(float * dest, size_t max_samples) const;
+  size_t WriteSignal(const float * signal, size_t frame_count);
+ private:
+  emcee::Vector<float> buffer_;
 };
 
 }
 
-#endif /* PIOUS_SCOPE_HPP */
+#endif /* PIOUS_SIGNAL_CHANNEL_HPP */

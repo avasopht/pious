@@ -66,6 +66,63 @@ template<typename T>
 class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySetter {
  public:
 
+  class Iterator {
+   public:
+    Iterator() : vector_(nullptr), idx_(0) {}
+    Iterator(Vector * vector, size_t idx) : vector_(vector), idx_(idx) {}
+
+    static bool BothAreNull(const Iterator & lhs, const Iterator & rhs) {
+      return !lhs.vector_ && !rhs.vector_;
+    }
+    static bool OneIsNull(const Iterator & lhs, const Iterator & rhs) {
+      return !lhs.vector_ ^ !rhs.vector_;
+    }
+    bool operator==(const Iterator & rhs) const {
+      if(this == &rhs)
+        return true;
+
+      if(BothAreNull(*this, rhs))
+        return true;
+
+      if(OneIsNull(*this, rhs))
+        return false;
+
+      return vector_ == rhs.vector_ && idx_ == rhs.idx_;
+    }
+
+    bool operator!=(const Iterator & rhs) const {
+      if(this == &rhs)
+        return false;
+
+      if(BothAreNull(*this, rhs))
+        return false;
+
+      if(OneIsNull(*this, rhs))
+        return true;
+
+      return vector_ != rhs.vector_ || idx_ != rhs.idx_;
+    }
+
+    T & operator*() const { return vector_[idx_]; }
+
+    Iterator & operator++() { ++idx_; return *this; }
+    Iterator operator++(int) {
+      Iterator tmp = *this;
+      ++idx_;
+      return tmp;
+    }
+
+    Iterator & operator--() { --idx_; return *this; }
+    Iterator operator--(int) {
+      Iterator tmp = *this;
+      --idx_;
+      return tmp;
+    }
+   private:
+    Vector * vector_;
+    size_t idx_;
+  };
+
   Vector() :
       memory_(nullptr), array_(nullptr), size_(0), capacity_(0) {}
 

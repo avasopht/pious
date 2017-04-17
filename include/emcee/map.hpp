@@ -46,6 +46,65 @@ class Map : public virtual MemoryDependentWithCopy {
     Node& WithKey(const Key &new_key) { key = new_key; return *this; }
   };
 
+  class Iterator {
+   public:
+    Iterator(SharedPtr<Node> &node) : current_(node) {}
+    Iterator() {}
+    T & operator*() const { return value(); }
+    T & value() const {
+      assert(current_);
+      return current_->value;
+    }
+    Key & key() const {
+      assert(current_);
+      return current_->key;
+    }
+    bool operator!=(const Iterator & rhs) const {
+      if(&rhs == this)
+        return false;
+
+      if(BothAreNull(*this, rhs))
+        return false;
+
+      if(OneIsNull(*this, rhs))
+        return true;
+
+      return current_->key != rhs.current_->key;
+    }
+    bool operator==(const Iterator &rhs) const {
+      if(&rhs == this)
+        return true;
+
+      if(OneIsNull(*this, rhs))
+        return false;
+
+      if(BothAreNull(*this, rhs))
+        return true;
+
+      return current_->key == rhs.current_->key;
+    }
+
+    bool BothAreNull(const Iterator &lhs, const Iterator &rhs) const {
+      return !lhs.current_ && !rhs.current_;
+    }
+    bool OneIsNull(const Iterator & lhs, const Iterator & rhs) const {
+      return !lhs.current_ ^ !rhs.current_;
+    }
+
+    Iterator& operator++() {
+      assert(current_ && current_->next.size() > 0);
+      current_ = current_->next[0];
+    }
+   private:
+    SharedPtr<Node> current_;
+  };
+
+  Iterator begin() {
+    return Iterator(head_->next[0]);
+  }
+
+  Iterator end() { return Iterator(); }
+
   Map() : head_(), levels_(0), size_(0) {}
 
   Map(Memory *memory) : head_(memory), levels_(1), size_(0){
@@ -81,6 +140,13 @@ class Map : public virtual MemoryDependentWithCopy {
   }
 
   bool Empty() const { return size_ == 0; }
+
+  T* Get(const Key & key) {
+    if(ContainsKey(key))
+      return &operator[](key);
+
+    return nullptr;
+  }
 
   T& operator[](const Key &key) {
     SharedPtr<Node> search = Find(key);

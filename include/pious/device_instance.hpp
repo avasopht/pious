@@ -38,10 +38,23 @@ class DeviceInstance {
  public:
   virtual ~DeviceInstance(){};
 
+  virtual bool has_dsp() const = 0;
+
+  /*! Returns inner device that connects to its children. */
+  virtual DeviceInstance * GetInnerDevice() = 0;
+
+  virtual void SetLabel(const char * name) = 0;
+  virtual const char * label() const = 0;
+
+  virtual void AddChild(DeviceInstance * child) = 0;
+  virtual void RemoveChild(DeviceInstance * child) = 0;
+  virtual DeviceInstance * ChildAt(size_t index) = 0;
+  virtual size_t child_count() const = 0;
+  virtual PortInstance * CreatePort(const char * id, Pious_IoType io_type) = 0;
   virtual PortInstance * PortAt(size_t index) = 0;
   virtual size_t port_count() const = 0;
   virtual PortInstance * FindPort(const char * id) = 0;
-  virtual PortInstance * FindPort(const emcee::String * id) = 0;
+  virtual PortInstance * FindPort(const emcee::String & id) = 0;
 };
 
 }

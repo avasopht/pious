@@ -26,11 +26,35 @@
 
 namespace pious {
 
+class SignalHoldEvent;
+class DataPacket;
+
 class PortInstance {
  public:
   virtual ~PortInstance(){};
   virtual void Connect(PortInstance * dest_port) = 0;
+  virtual Pious_IoType io_type() const = 0;
+  virtual void SetIoType(Pious_IoType io_type) = 0;
+
+  virtual bool CanReadSignal() const = 0;
+  /*! Reads signal into dest, returning number of frames read. */
+  virtual size_t ReadSignal(float * dest, size_t max_samples) const = 0;
+  virtual bool CanWriteSignal() const = 0;
+  /*! Writes signal to port, returning number of frames written. */
+  virtual size_t WriteSignal(const float * signal, size_t frame_count) = 0;
+  virtual bool CanReadSignalEvents() const = 0;
+  virtual size_t ReadSignalEvents(SignalHoldEvent * events, size_t max_events) const = 0;
+  virtual float GetHoldSignalAt(size_t position) const = 0;
+  virtual bool CanWriteSignalEvents() const = 0;
+  virtual size_t WriteSignalEvents(const SignalHoldEvent * events, size_t event_count) = 0;
+  virtual void ClearSignalEvents() = 0;
+  virtual void ClearPackets() = 0;
+  virtual bool CanReadPackets() const = 0;
+  virtual size_t ReadPackets(DataPacket * dest, size_t max_packet_count) const = 0;
+  virtual bool CanWritePackets() const = 0;
+  virtual size_t WritePackets(const DataPacket * packets, size_t packet_count) = 0;
 };
+
 
 }
 
