@@ -25,30 +25,34 @@
 
 namespace pious {
 
-ConnectionSpec::ConnectionSpec(emcee::Memory *memory)
-  : source_device_(memory),
-    source_port_(memory),
-    dest_device_(memory),
-    dest_port_(memory) { }
+ConnectionSpec::ConnectionSpec(emcee::Memory * memory)
+    : source_device_(memory),
+      source_port_(memory),
+      dest_device_(memory),
+      dest_port_(memory) {}
 
-void ConnectionSpec::AddSourceDevice(const char *sid) { source_device_.SetSid(sid); }
+void ConnectionSpec::AddSourceDevice(const char * sid) { source_device_.SetSid(sid); }
 
 void ConnectionSpec::AddSourceDevice(uint32_t iid) { source_device_.SetIid(iid); }
 
-void ConnectionSpec::AddSourcePort(const char *sid) { source_port_.SetSid(sid); }
+void ConnectionSpec::AddSourcePort(const char * sid) { source_port_.SetSid(sid); }
 
 void ConnectionSpec::AddSourcePort(uint32_t iid) { source_port_.SetIid(iid); }
 
-void ConnectionSpec::AddDestDevice(const char *sid) { dest_device_.SetSid(sid); }
+void ConnectionSpec::AddDestDevice(const char * sid) { dest_device_.SetSid(sid); }
 
 void ConnectionSpec::AddDestDevice(uint32_t iid) { dest_device_.SetIid(iid); }
 
-void ConnectionSpec::AddDestPort(const char *sid) { dest_port_.SetSid(sid); }
+void ConnectionSpec::AddDestPort(const char * sid) { dest_port_.SetSid(sid); }
 
 void ConnectionSpec::AddDestPort(uint32_t iid) { dest_port_.SetIid(iid); }
+
 Id ConnectionSpec::source_device() const { return source_device_; }
+
 Id ConnectionSpec::source_port() const { return source_port_; }
+
 Id ConnectionSpec::dest_device() const { return dest_device_; }
+
 Id ConnectionSpec::dest_port() const { return dest_port_; }
 
 }

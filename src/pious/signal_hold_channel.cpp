@@ -26,8 +26,7 @@
 namespace pious {
 
 SignalHoldChannel::SignalHoldChannel(emcee::Memory * memory, size_t event_count)
-  : events_(memory)
-{
+    : events_(memory) {
   events_.Reserve(event_count);
 }
 
@@ -36,7 +35,7 @@ void SignalHoldChannel::AddEvent(size_t frame, float old_value, float new_value)
 }
 
 size_t SignalHoldChannel::WriteEvents(const struct SignalHoldEvent * signal_events, size_t event_count) {
-  for(size_t i = 0; i < event_count; ++i) {
+  for (size_t i = 0; i < event_count; ++i) {
     SignalHoldEvent current_event(signal_events[i]);
     events_.PushBack(current_event);
   }
@@ -48,9 +47,9 @@ void SignalHoldChannel::ClearEvents() {
 }
 
 size_t SignalHoldChannel::ReadEvents(struct SignalHoldEvent * signal_events, size_t max_events) const {
-  for(size_t i = 0; i < max_events && i < events_.size(); ++i) {
+  for (size_t i = 0; i < max_events && i < events_.size(); ++i) {
     SignalHoldEvent event = events_[i];
-    signal_events[i] = { (uint32_t) event.frame(), event.old_value(), event.new_value()};
+    signal_events[i] = {(uint32_t) event.frame(), event.old_value(), event.new_value()};
   }
   return std::min(max_events, events_.size());
 }

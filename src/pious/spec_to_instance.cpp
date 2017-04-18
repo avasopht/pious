@@ -92,7 +92,7 @@ void SpecToInstance::InstantiateChildren(emcee::Map<emcee::String, DeviceInstanc
 }
 
 void SpecToInstance::CreatePorts(DeviceInstance * instance, DeviceSpec * specs) {
-  for(size_t port_idx = 0; port_idx < specs->port_count(); ++port_idx) {
+  for (size_t port_idx = 0; port_idx < specs->port_count(); ++port_idx) {
     PortSpec * port_spec = specs->PortAt(port_idx);
     assert(port_spec);
     instance->CreatePort(port_spec->sid_cstr(), port_spec->io_type());
@@ -100,7 +100,7 @@ void SpecToInstance::CreatePorts(DeviceInstance * instance, DeviceSpec * specs) 
 }
 
 void SpecToInstance::GetConnections(DeviceSpec * spec, emcee::Vector<ConnectionSpec *> * connections) {
-  for(size_t i = 0; i < spec->connection_count(); ++i) {
+  for (size_t i = 0; i < spec->connection_count(); ++i) {
     connections->PushBack(spec->ConnectionAt(i));
   }
 }

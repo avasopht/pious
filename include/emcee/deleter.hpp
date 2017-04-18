@@ -48,44 +48,45 @@ class Deleter {
 template<typename T>
 class TypedDeleter : public Deleter, MemoryDependent, MemorySetter {
  public:
-  TypedDeleter() : mem_(nullptr), ptr_(nullptr) { }
+  TypedDeleter() : mem_(nullptr), ptr_(nullptr) {}
+
   ~TypedDeleter() {
     mem_ = nullptr;
     ptr_ = nullptr;
   }
 
-  TypedDeleter(Memory *mem) : mem_(mem), ptr_(nullptr) {}
+  TypedDeleter(Memory * mem) : mem_(mem), ptr_(nullptr) {}
 
-  TypedDeleter(Memory *mem, T *ptr) : mem_(mem), ptr_(ptr) { assert(mem_); }
+  TypedDeleter(Memory * mem, T * ptr) : mem_(mem), ptr_(ptr) { assert(mem_); }
 
-  TypedDeleter(const TypedDeleter &rhs) : mem_(rhs.mem_), ptr_(rhs.ptr_)  { }
+  TypedDeleter(const TypedDeleter & rhs) : mem_(rhs.mem_), ptr_(rhs.ptr_) {}
 
-  TypedDeleter(Memory *, const TypedDeleter &other) : mem_(other.mem_), ptr_(other.ptr_) {}
+  TypedDeleter(Memory *, const TypedDeleter & other) : mem_(other.mem_), ptr_(other.ptr_) {}
 
-  virtual void SetMemory(Memory *ptr) override {
+  virtual void SetMemory(Memory * ptr) override {
     Init(*ptr);
   }
 
-  void Init(Memory &mem) {
+  void Init(Memory & mem) {
     mem_ = &mem;
   }
 
-  TypedDeleter& Watch(T *ptr) {
+  TypedDeleter & Watch(T * ptr) {
     assert(mem_);
     ptr_ = ptr;
     return *this;
   }
 
   void Delete() override {
-    if(ptr_) {
+    if (ptr_) {
       emcee::Delete(ptr_);
       ptr_ = nullptr;
     }
   }
 
  private:
-  Memory *mem_;
-  T *ptr_;
+  Memory * mem_;
+  T * ptr_;
 };
 
 }

@@ -31,19 +31,20 @@ SharedCount::SharedCount() : counter_(nullptr) {
 
 }
 
-SharedCount::SharedCount(const SharedCount &other) : counter_(nullptr) {
+SharedCount::SharedCount(const SharedCount & other) : counter_(nullptr) {
   ImportCounter(other);
 }
-void SharedCount::ImportCounter(const SharedCount &other) {
+
+void SharedCount::ImportCounter(const SharedCount & other) {
   counter_ = other.counter_;
   AddUse();
 }
 
-SharedCount::SharedCount(ReferenceCounter *counter) : counter_(counter) {
+SharedCount::SharedCount(ReferenceCounter * counter) : counter_(counter) {
 }
 
 void SharedCount::AddUse() {
-  if(counter_) {
+  if (counter_) {
     counter_->AddUse();
   }
 }
@@ -51,12 +52,13 @@ void SharedCount::AddUse() {
 SharedCount::~SharedCount() {
   Release();
 }
+
 void SharedCount::Release() {
-  if(counter_) {
+  if (counter_) {
 
     counter_->Release();
 
-    if(!counter_->is_referenced()) {
+    if (!counter_->is_referenced()) {
       emcee::Delete(counter_);
     }
 
@@ -64,21 +66,23 @@ void SharedCount::Release() {
   }
 }
 
-SharedCount &SharedCount::operator=(const SharedCount &rhs) {
-  if(rhs.counter_ == counter_) return *this;
+SharedCount & SharedCount::operator=(const SharedCount & rhs) {
+  if (rhs.counter_ == counter_) return *this;
 
   Release();
   ImportCounter(rhs);
 
   return *this;
 }
+
 size_t SharedCount::use_count() const {
-  if(counter_)
+  if (counter_)
     return counter_->use_count();
 
   return 0;
 }
-ReferenceCounter *SharedCount::counter() const { return counter_; }
+
+ReferenceCounter * SharedCount::counter() const { return counter_; }
 
 }
 

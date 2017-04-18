@@ -32,13 +32,13 @@ CachedSpecFinder::CachedSpecFinder(emcee::Memory * memory, SpecFinder * finder)
     : memory_(memory), finder_(finder), device_map_(memory) {}
 
 DeviceSpec * CachedSpecFinder::FindSpec(const char * sid) {
-  emcee::String id (memory_, sid);
-  if(device_map_.ContainsKey(id)) {
+  emcee::String id(memory_, sid);
+  if (device_map_.ContainsKey(id)) {
     return device_map_[id];
   }
 
   DeviceSpec * spec = finder_->FindSpec(sid);
-  if(spec)
+  if (spec)
     device_map_[id] = spec;
   return spec;
 }

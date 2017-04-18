@@ -28,7 +28,7 @@ class SineDsp : public pious::Dsp {
     pious::PortInstance * out_port = scope->GetPort(&out_signal_handle);
 
     float buffer[64];
-    for(int N = 0; N < 64; ++N)
+    for (int N = 0; N < 64; ++N)
       buffer[N] = sin(2 * M_PI * N / 64 / 2);
 
     out_port->WriteSignal(buffer, 64);

@@ -26,14 +26,13 @@
 
 namespace emcee {
 
-
-void Delete(void *ptr) {
-  ObjectBlock *block = ObjectBlock::FromDataPtr(ptr);
-  if(block) {
+void Delete(void * ptr) {
+  ObjectBlock * block = ObjectBlock::FromDataPtr(ptr);
+  if (block) {
     Memory * mem = block->allocation_block->memory();
     assert(mem);
 
-    NewAllocationBlock *allocation = block->allocation_block;
+    NewAllocationBlock * allocation = block->allocation_block;
     assert(allocation);
 
     allocation->destructor()->Destroy();
@@ -43,9 +42,9 @@ void Delete(void *ptr) {
   }
 }
 
-size_t ArraySize(void *ptr) {
-  ObjectBlock *block = ObjectBlock::FromDataPtr(ptr);
-  if(block) {
+size_t ArraySize(void * ptr) {
+  ObjectBlock * block = ObjectBlock::FromDataPtr(ptr);
+  if (block) {
     assert(block->allocation_block);
     return block->allocation_block->count();
   }

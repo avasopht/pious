@@ -26,11 +26,11 @@
 
 namespace emcee {
 
-ReferenceCounter::ReferenceCounter(Deleter *deleter) : deleter_(nullptr), shared_count_(0), weak_count_(0) {
+ReferenceCounter::ReferenceCounter(Deleter * deleter) : deleter_(nullptr), shared_count_(0), weak_count_(0) {
   SetDeleter(deleter);
 }
 
-ReferenceCounter::ReferenceCounter() : deleter_(nullptr), shared_count_(0), weak_count_(0) { }
+ReferenceCounter::ReferenceCounter() : deleter_(nullptr), shared_count_(0), weak_count_(0) {}
 
 void ReferenceCounter::AddUse() {
   // If count is 0, there should be no object.
@@ -45,7 +45,7 @@ void ReferenceCounter::Release() {
   assert(shared_count_ > 0);
 
   --shared_count_;
-  if(shared_count_ == 0) {
+  if (shared_count_ == 0) {
     Dispose();
     WeakRelease();
   }
@@ -53,26 +53,28 @@ void ReferenceCounter::Release() {
 }
 
 void ReferenceCounter::Dispose() {
-  if(!deleter_)
+  if (!deleter_)
     return;
 
   deleter_->Delete();
   deleter_ = nullptr;
 }
 
-void ReferenceCounter::SetDeleter(Deleter *deleter) {
+void ReferenceCounter::SetDeleter(Deleter * deleter) {
   Dispose();
 
   deleter_ = deleter;
-  if(deleter) {
+  if (deleter) {
     shared_count_ = 1;
     weak_count_ = 1;
   }
 }
+
 void ReferenceCounter::WeakAddUse() {
   assert(weak_count_ > 0);
   ++weak_count_;
 }
+
 void ReferenceCounter::WeakRelease() {
   assert(weak_count_ > 0);
   --weak_count_;

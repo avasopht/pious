@@ -37,15 +37,23 @@ namespace emcee {
 template<typename T, size_t N>
 class Array {
  public:
-  Array(Memory &memory) : size_(N) {
+  Array(Memory & memory) : size_(N) {
     InitArray(memory);
   }
 
-  const T& At(size_t idx) const { assert(idx < size_); return array()[idx]; }
-  T& At(size_t idx) { assert(idx < size_); return array()[idx]; }
+  const T & At(size_t idx) const {
+    assert(idx < size_);
+    return array()[idx];
+  }
 
-  const T& operator[](size_t idx) const { return array()[idx]; }
-  T& operator[](size_t idx) { return array()[idx]; }
+  T & At(size_t idx) {
+    assert(idx < size_);
+    return array()[idx];
+  }
+
+  const T & operator[](size_t idx) const { return array()[idx]; }
+
+  T & operator[](size_t idx) { return array()[idx]; }
 
   size_t size() const { return size_; }
 
@@ -53,24 +61,25 @@ class Array {
   size_t size_;
   uint8_t data_[sizeof(T[N])];
 
-  const T* array() const { return reinterpret_cast<const T*>(data_); }
-  T* array() { return reinterpret_cast<T*>(data_); }
+  const T * array() const { return reinterpret_cast<const T *>(data_); }
 
-  void Construct(Memory &memory, T &obj) {
-    boost::is_base_of<MemoryDependent,T> is_memory_dependent;
+  T * array() { return reinterpret_cast<T *>(data_); }
+
+  void Construct(Memory & memory, T & obj) {
+    boost::is_base_of<MemoryDependent, T> is_memory_dependent;
     Construct(memory, obj, is_memory_dependent);
   }
 
-  void Construct(Memory &memory, T &obj, boost::true_type) {
+  void Construct(Memory & memory, T & obj, boost::true_type) {
     new(&obj)T(memory);
   }
 
-  void Construct(Memory &memory, T &obj, boost::false_type) {
+  void Construct(Memory & memory, T & obj, boost::false_type) {
     new(&obj)T();
   }
 
-  void InitArray(Memory &memory) {
-    for(size_t i = 0; i < N; ++i) {
+  void InitArray(Memory & memory) {
+    for (size_t i = 0; i < N; ++i) {
       Construct(memory, operator[](i));
       MemorySetter::Inject(operator[](i), &memory);
     }

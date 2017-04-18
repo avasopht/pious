@@ -27,8 +27,6 @@
 #include <cstddef> // size_t
 #include <api/pious_sys.h>
 
-
-
 namespace emcee {
 
 Pious_Mem PiousMem_CreateDefault();
@@ -36,24 +34,29 @@ Pious_Mem PiousMem_CreateDefault();
 class Memory {
  public:
   virtual ~Memory() {}
-  virtual void* Allocate(size_t size) = 0;
-  virtual void Free(void *ptr) = 0;
+
+  virtual void * Allocate(size_t size) = 0;
+  virtual void Free(void * ptr) = 0;
 };
 
 class DefaultMemory : public Memory {
  public:
-  virtual void* Allocate(size_t size) override;
-  virtual void Free(void *ptr) override;
+  virtual void * Allocate(size_t size) override;
+  virtual void Free(void * ptr) override;
 };
 
 class StructMemory : public Memory {
  public:
 
-  StructMemory(Pious_Mem *mem) : mem_(*mem) {}
-  void SetMemory(Pious_Mem *mem) { mem_ = *mem; }
-  void *Allocate(size_t size) override;
-  void Free(void *ptr) override;
-  Pious_Mem *mem_struct() { return &mem_; }
+  StructMemory(Pious_Mem * mem) : mem_(*mem) {}
+
+  void SetMemory(Pious_Mem * mem) { mem_ = *mem; }
+
+  void * Allocate(size_t size) override;
+  void Free(void * ptr) override;
+
+  Pious_Mem * mem_struct() { return &mem_; }
+
  private:
   Pious_Mem mem_;
 };

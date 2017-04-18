@@ -69,55 +69,70 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
   class Iterator {
    public:
     Iterator() : vector_(nullptr), idx_(0) {}
+
     Iterator(Vector * vector, size_t idx) : vector_(vector), idx_(idx) {}
 
     static bool BothAreNull(const Iterator & lhs, const Iterator & rhs) {
       return !lhs.vector_ && !rhs.vector_;
     }
+
     static bool OneIsNull(const Iterator & lhs, const Iterator & rhs) {
       return !lhs.vector_ ^ !rhs.vector_;
     }
+
     bool operator==(const Iterator & rhs) const {
-      if(this == &rhs)
+      if (this == &rhs)
         return true;
 
-      if(BothAreNull(*this, rhs))
+      if (BothAreNull(*this, rhs))
         return true;
 
-      if(OneIsNull(*this, rhs))
+      if (OneIsNull(*this, rhs))
         return false;
 
       return vector_ == rhs.vector_ && idx_ == rhs.idx_;
     }
 
     bool operator!=(const Iterator & rhs) const {
-      if(this == &rhs)
+      if (this == &rhs)
         return false;
 
-      if(BothAreNull(*this, rhs))
+      if (BothAreNull(*this, rhs))
         return false;
 
-      if(OneIsNull(*this, rhs))
+      if (OneIsNull(*this, rhs))
         return true;
 
       return vector_ != rhs.vector_ || idx_ != rhs.idx_;
     }
 
-    T & operator*() const { return vector_[idx_]; }
+    T & operator*() const {
+      assert(vector_);
+      return vector_->At(idx_);
+    }
 
-    Iterator & operator++() { ++idx_; return *this; }
+    Iterator & operator++() {
+      ++idx_;
+      return *this;
+    }
+
     Iterator operator++(int) {
       Iterator tmp = *this;
       ++idx_;
       return tmp;
     }
 
-    Iterator & operator--() { --idx_; return *this; }
+    Iterator & operator--() {
+      --idx_;
+      return *this;
+    }
+
     Iterator operator--(int) {
       Iterator tmp = *this;
       --idx_;
       return tmp;
     }
+
    private:
     Vector * vector_;
     size_t idx_;
@@ -133,27 +148,27 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
    * \param val default value for elements
    */
   template<typename Y>
-  Vector(Memory *memory, size_t n, const Y &val = T())
+  Vector(Memory * memory, size_t n, const Y & val = T())
       : memory_(memory), array_(nullptr), capacity_(0), size_(n) {
     assert(memory);
 
     capacity_ = CalcReserveSize(n);
     array_ = AllocateArray(memory_, capacity_);
-    for(size_t i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
       InitAt(i, val);
     }
   }
 
+  Iterator begin() { return Iterator(this, 0); }
+  Iterator end() { return Iterator(this, size()); }
   /*! \brief Constructs an empty Vector of size 0. */
-  Vector(Memory *memory) :
+  Vector(Memory * memory) :
       memory_(memory),
       array_(nullptr),
       size_(0),
-      capacity_(0)
-  { }
+      capacity_(0) {}
 
-
-  Vector(Memory *memory, const Vector &rhs) :
+  Vector(Memory * memory, const Vector & rhs) :
       memory_(memory_),
       array_(nullptr),
       size_(0),
@@ -169,7 +184,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
    * \param rhs
    * \return
    */
-  Vector(const Vector &rhs) :
+  Vector(const Vector & rhs) :
       memory_(nullptr),
       array_(nullptr),
       capacity_(0),
@@ -180,23 +195,23 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
 
   void Clear() {
     while (size() > 0) {
-      EraseAt(size()-1);
+      EraseAt(size() - 1);
     }
   }
 
-  Memory* memory() const { return memory_; }
+  Memory * memory() const { return memory_; }
 
   void SetMemory(Memory * memory) override {
-    if(memory == memory_)
+    if (memory == memory_)
       return;
 
-    if(array_ && memory_) {
+    if (array_ && memory_) {
       // Create new array with new memory, copying old elements (and injecting memory pointer).
-      T *old_array = array_;
-      Memory *old_memory = memory_;
+      T * old_array = array_;
+      Memory * old_memory = memory_;
       memory_ = memory;
       array_ = AllocateArray(memory_, capacity_);
-      for(size_t i = 0; i < size_; ++i) {
+      for (size_t i = 0; i < size_; ++i) {
         InitAt(i, old_array[i]);
       }
       DestroyArray(old_array, size_);
@@ -210,7 +225,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
   /*! \brief  Calls destructor on array elements. */
   ~Vector() {
     DestroyArray();
-    if(memory_ && array_) {
+    if (memory_ && array_) {
       memory_->Free(array_);
       array_ = nullptr;
       memory_ = nullptr;
@@ -223,7 +238,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
    */
   static size_t CalcReserveSize(size_t min_size) {
     size_t size = 1;
-    while(size < min_size) {
+    while (size < min_size) {
       size *= 2;
     }
 
@@ -235,9 +250,9 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
    *    Vector may be resized if the capacity has been reached.
    */
   template<typename Y>
-  void PushBack(const Y &y) {
-    if(size() == capacity()) {
-      Reserve(CalcReserveSize(size()+1));
+  void PushBack(const Y & y) {
+    if (size() == capacity()) {
+      Reserve(CalcReserveSize(size() + 1));
     }
 
     assert(array_);
@@ -272,30 +287,30 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
   }
 
   template<typename Y>
-  void Resize(size_t new_size, const Y& value) {
+  void Resize(size_t new_size, const Y & value) {
     Reserve(new_size);
-    while(new_size < size()) {
+    while (new_size < size()) {
       EraseAt(size() - 1);
     }
-    while(new_size > size()) {
+    while (new_size > size()) {
       PushBack(value);
     }
   }
 
   /*! \brief Requests a change in capacity. */
   void Reserve(size_t new_capacity) {
-    if(new_capacity == 0)
+    if (new_capacity == 0)
       return;
-    if(new_capacity <= capacity())
+    if (new_capacity <= capacity())
       return;
     assert(memory_);
 
     size_t old_size = size_;
     capacity_ = CalcReserveSize(new_capacity);
-    T *old_array = array_;
+    T * old_array = array_;
     array_ = AllocateArray(memory_, capacity_);
-    if(old_array) {
-      for(size_t i = 0; i < size(); ++i) {
+    if (old_array) {
+      for (size_t i = 0; i < size(); ++i) {
         InitAt(i, old_array[i]);
       }
       DestroyArray(old_array, old_size);
@@ -313,52 +328,57 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
    * \param rhs
    * \return
    */
-  Vector& operator=(const Vector& rhs) {
-    if(this == &rhs) {
+  Vector & operator=(const Vector & rhs) {
+    if (this == &rhs) {
       return *this;
     }
 
     Clear();
-    if(!memory_) {
+    if (!memory_) {
       memory_ = rhs.memory_;
     }
     Reserve(rhs.size());
-    for(size_t i = 0; i < rhs.size(); ++i) {
+    for (size_t i = 0; i < rhs.size(); ++i) {
       PushBack(rhs[i]);
     }
     return *this;
   }
 
-  const T& Front() const { return At(0); }
-  T& Front() { return At(0); }
-  const T& Back() const { return At(size() - 1); }
-  T& Back() { return At(size() - 1); }
+  const T & Front() const { return At(0); }
 
-  const T &At(size_t idx) const {
+  T & Front() { return At(0); }
+
+  const T & Back() const { return At(size() - 1); }
+
+  T & Back() { return At(size() - 1); }
+
+  const T & At(size_t idx) const {
     assert(array_);
     assert(idx < size_);
     return array_[idx];
   };
 
-  T &At(size_t idx) {
+  T & At(size_t idx) {
     assert(array_);
     assert(idx < size_);
     return array_[idx];
   }
 
-  const T &operator[](size_t idx) const { return At(idx); };
-  T &operator[](size_t idx) { return At(idx); }
+  const T & operator[](size_t idx) const { return At(idx); };
+
+  T & operator[](size_t idx) { return At(idx); }
 
   /*! Returns number of elements in this Vector. */
   size_t size() const { return size_; }
+
   /*! Returns capacity of the Vector. */
   size_t capacity() const { return capacity_; }
 
   bool Empty() const { return size_ == 0; }
 
  private:
-  Memory *memory_;
-  T* array_;
+  Memory * memory_;
+  T * array_;
   size_t capacity_;
   size_t size_;
 
@@ -367,13 +387,13 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
    *
    * Only call in constructor as it does not destroy existing elements.
    */
-  void InitWithCopy(const Vector &rhs) {
+  void InitWithCopy(const Vector & rhs) {
     assert(!array_);
     assert(size_ == 0);
-    if(rhs.memory_ && !memory_)
-        memory_ = rhs.memory_;
+    if (rhs.memory_ && !memory_)
+      memory_ = rhs.memory_;
     Reserve(rhs.size());
-    for(size_t i = 0; i < rhs.size(); ++i) {
+    for (size_t i = 0; i < rhs.size(); ++i) {
       PushBack(rhs[i]);
     }
 
@@ -383,25 +403,24 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
    * Initializes element at given index with provided value.
    */
   template<typename Y>
-  void InitAt(size_t idx, const Y &new_val) {
+  void InitAt(size_t idx, const Y & new_val) {
     boost::has_trivial_default_constructor<T> has_trivial_constructor;
-    if(has_trivial_constructor) {
+    if (has_trivial_constructor) {
       InitAtTrivial(idx, new_val);
     } else {
       InitAtNonTrivial(idx, new_val);
     }
   }
 
-
   /*
    * Initializes non-trivial element at given index with provided value,
    * injecting Memory reference into compatible classes.
    */
   template<typename Y>
-  void InitAtNonTrivial(size_t idx, const Y &new_val) {
+  void InitAtNonTrivial(size_t idx, const Y & new_val) {
     bool memory_injected =
         MemoryDependentWithCopy::ConstructAt(&array_[idx], memory_, new_val);
-    if(!memory_injected)
+    if (!memory_injected)
       MemorySetter::Inject(array_[idx], memory_);
   }
 
@@ -409,7 +428,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
    * Initializes trivial element at given index with provided value.
    */
   template<typename Y>
-  void InitAtTrivial(size_t idx, const Y &new_val) {
+  void InitAtTrivial(size_t idx, const Y & new_val) {
     array_[idx] = T(new_val);
   }
 
@@ -423,9 +442,9 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
   /*
    * Calls destructor for elements in the array.
    */
-  static void DestroyArray(T *p, size_t num_elements) {
+  static void DestroyArray(T * p, size_t num_elements) {
     boost::has_trivial_destructor<T> has_trivial_destructor;
-    if(!has_trivial_destructor) {
+    if (!has_trivial_destructor) {
       DestroyArrayNonTrivial(p, num_elements);
     }
   }
@@ -433,17 +452,17 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
   /*
    * Calls destructor for non-trivial elements in the array.
    */
-  static void DestroyArrayNonTrivial(T *p, size_t size) {
-    for(size_t i = 0; i < size; ++i) {
+  static void DestroyArrayNonTrivial(T * p, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
       p[i].~T();
     }
   }
 
-  T* AllocateArray(Memory *memory, size_t size) {
+  T * AllocateArray(Memory * memory, size_t size) {
     assert(memory);
 
-    void *ptr = memory->Allocate(sizeof(T) * size);
-    T *array = static_cast<T*>(ptr);
+    void * ptr = memory->Allocate(sizeof(T) * size);
+    T * array = static_cast<T *>(ptr);
     return array;
   }
 };

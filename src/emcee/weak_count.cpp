@@ -28,26 +28,22 @@
 
 namespace emcee {
 
-WeakCount::WeakCount() : counter_(nullptr) { }
+WeakCount::WeakCount() : counter_(nullptr) {}
 
-
-WeakCount::WeakCount(const WeakCount &rhs) : counter_(nullptr) {
+WeakCount::WeakCount(const WeakCount & rhs) : counter_(nullptr) {
   ImportCounter(rhs);
 }
 
-
-WeakCount::WeakCount(const SharedCount &shared_count) : counter_(nullptr){
+WeakCount::WeakCount(const SharedCount & shared_count) : counter_(nullptr) {
   ImportCounter(shared_count);
 }
-
 
 WeakCount::~WeakCount() {
   Release();
 }
 
-
-WeakCount &WeakCount::operator=(const WeakCount &rhs) {
-  if(this == &rhs) return *this;
+WeakCount & WeakCount::operator=(const WeakCount & rhs) {
+  if (this == &rhs) return *this;
 
   Release();
   ImportCounter(rhs);
@@ -55,31 +51,27 @@ WeakCount &WeakCount::operator=(const WeakCount &rhs) {
   return *this;
 }
 
-
-WeakCount &WeakCount::operator=(const SharedCount &shared_count) {
+WeakCount & WeakCount::operator=(const SharedCount & shared_count) {
   Release();
   ImportCounter(shared_count);
   return *this;
 }
 
-
 size_t WeakCount::use_count() const {
-  if(!counter_) {
+  if (!counter_) {
     return 0;
   }
 
   return counter_->use_count();
 }
 
-
-ReferenceCounter* WeakCount::counter() const { return counter_; }
-
+ReferenceCounter * WeakCount::counter() const { return counter_; }
 
 void WeakCount::Release() {
-  if(counter_) {
+  if (counter_) {
     counter_->WeakRelease();
 
-    if(!counter_->is_referenced()) {
+    if (!counter_->is_referenced()) {
       emcee::Delete(counter_);
     }
 
@@ -87,22 +79,19 @@ void WeakCount::Release() {
   }
 }
 
-
 void WeakCount::AddUse() {
-  if(counter_) {
+  if (counter_) {
     counter_->WeakAddUse();
   }
 }
 
-
-void WeakCount::ImportCounter(const SharedCount &count) {
+void WeakCount::ImportCounter(const SharedCount & count) {
   Release();
   counter_ = count.counter();
   AddUse();
 }
 
-
-void WeakCount::ImportCounter(const WeakCount &count) {
+void WeakCount::ImportCounter(const WeakCount & count) {
   Release();
   counter_ = count.counter();
   AddUse();

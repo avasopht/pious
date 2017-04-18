@@ -29,10 +29,10 @@
 
 namespace pious {
 
-AddConnectionPort::AddConnectionPort(ConnectionSpec *connection)
-    : connection_(connection){ }
+AddConnectionPort::AddConnectionPort(ConnectionSpec * connection)
+    : connection_(connection) {}
 
-AddConnectionPortDest AddConnectionPort::Dest(const char *sid) {
+AddConnectionPortDest AddConnectionPort::Dest(const char * sid) {
   assert(connection_);
   connection_->AddDestDevice(sid);
   return AddConnectionPortDest(connection_);

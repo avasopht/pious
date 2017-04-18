@@ -20,11 +20,11 @@ Prepend(EMCEE_SOURCE_FILES "${SRC_DIR}/emcee" ${EMCEE_SOURCE_FILES})
 
 SET(ALL_SOURCE_FILES ${PIOUS_SOURCE_FILES} ${DSP_LIB_SOURCE_FILES} ${EMCEE_SOURCE_FILES})
 
-if(JACK_FOUND)
+if (JACK_FOUND)
     include_directories(${JACK_INCLUDE_DIRS})
     add_executable(pious_exe pious_jack_main.cpp)
     target_link_libraries(pious_exe ${JACK_LIBRARIES})
-else()
+else ()
     # empty build target.
     add_executable(pious_exe pious_main.cpp ${ALL_SOURCE_FILES})
-endif()
+endif ()

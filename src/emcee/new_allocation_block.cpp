@@ -25,7 +25,7 @@
 
 namespace emcee {
 
-NewAllocationBlock::NewAllocationBlock(Memory *memory)
+NewAllocationBlock::NewAllocationBlock(Memory * memory)
     : memory_(memory),
       data_(nullptr),
       destructor_(nullptr),

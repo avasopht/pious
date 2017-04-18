@@ -35,9 +35,9 @@ void VarRms::Write(float sample) {
 
 void VarRms::SumMeanSquaredToEndOfCell() {
   // Write to buffers where current position is at the end of the cell.
-  for(size_t level = 1; level < buffer_levels() && buffers_[level].IsCellEnd(pos_); ++level) {
-    emcee::MaskedCellVector<float> &cur_buffer = buffers_[level];
-    emcee::MaskedCellVector<float> &prev_level_buffer = buffers_[level-1];
+  for (size_t level = 1; level < buffer_levels() && buffers_[level].IsCellEnd(pos_); ++level) {
+    emcee::MaskedCellVector<float> & cur_buffer = buffers_[level];
+    emcee::MaskedCellVector<float> & prev_level_buffer = buffers_[level - 1];
     size_t prev_level_cell_size = prev_level_buffer.cell_size();
     float first = prev_level_buffer[pos_];
     float second = prev_level_buffer[pos_ - prev_level_cell_size];
@@ -50,15 +50,14 @@ float VarRms::CalcRms(int rms_size) { return CalcRmsAt(rms_size, 0); }
 size_t VarRms::buffer_levels() const { return buffers_.size(); }
 
 size_t VarRms::capacity() const {
-  if(buffer_levels() == 0)
+  if (buffer_levels() == 0)
     return 0;
   return buffers_[0].size();
 }
 
-VarRms::VarRms(emcee::Memory *memory)
-  : buffers_(memory),
-    pos_(SIZE_MAX)
-{ }
+VarRms::VarRms(emcee::Memory * memory)
+    : buffers_(memory),
+      pos_(SIZE_MAX) {}
 
 void VarRms::SetCapacity(size_t min_capacity) {
   buffers_.Clear();
@@ -66,12 +65,12 @@ void VarRms::SetCapacity(size_t min_capacity) {
   pos_ = SIZE_MAX;
   size_t capacity = (size_t) ToPow2(min_capacity);
   int levels = Log2(capacity);
-  buffers_.Reserve((size_t)levels);
+  buffers_.Reserve((size_t) levels);
 
-  for(int cur_level = 0; cur_level < levels; ++cur_level) {
+  for (int cur_level = 0; cur_level < levels; ++cur_level) {
     buffers_.PushBack(emcee::MaskedCellVector<float>());
     size_t cell_size = 1U << cur_level;
-    emcee::MaskedCellVector<float> &cur_buffer = buffers_.Back();
+    emcee::MaskedCellVector<float> & cur_buffer = buffers_.Back();
     cur_buffer.SetSize(cell_size, capacity);
   }
 }
@@ -88,7 +87,7 @@ float VarRms::CalcRmsAt(int s_rms_size, int s_offset) {
 
   float mean_squared = 0.f;
 
-  while(rms_read < rms_size) {
+  while (rms_read < rms_size) {
     size_t rms_remaining = rms_size - rms_read;
     SearchCell cell = FindLargestCellEndingAt(cur_pos, rms_remaining);
 
@@ -105,7 +104,7 @@ VarRms::SearchCell VarRms::FindLargestCellEndingAt(size_t position, size_t max_s
   largest_cell.value = 0.f;
   largest_cell.cell_size = 0;
 
-  for(int level = 0; level < buffer_levels() && buffers_[level].cell_size() <= max_size; ++ level) {
+  for (int level = 0; level < buffer_levels() && buffers_[level].cell_size() <= max_size; ++level) {
     size_t cell_size = buffers_[level].cell_size();
     largest_cell.cell_size = cell_size;
     largest_cell.value = buffers_[level].At(position);
@@ -115,11 +114,11 @@ VarRms::SearchCell VarRms::FindLargestCellEndingAt(size_t position, size_t max_s
 }
 
 VarRms::VarRms()
-  : buffers_(nullptr),
-    pos_(0) { }
+    : buffers_(nullptr),
+      pos_(0) {}
 
 void VarRms::Clear() {
-  for(size_t i = 0; i < buffers_.size(); ++i) {
+  for (size_t i = 0; i < buffers_.size(); ++i) {
     buffers_.At(i).Clear();
   }
   pos_ = SIZE_MAX;

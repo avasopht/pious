@@ -39,11 +39,12 @@ class WeakPtr {
 
   WeakPtr() : ptr_(nullptr) {}
 
-  WeakPtr(const WeakPtr &other) : ptr_(nullptr) {
+  WeakPtr(const WeakPtr & other) : ptr_(nullptr) {
     Reset(other);
   }
 
-  template<typename Y>WeakPtr(SharedPtr<Y> &shared) : ptr_(nullptr) {
+  template<typename Y>
+  WeakPtr(SharedPtr<Y> & shared) : ptr_(nullptr) {
     Reset(shared);
   }
 
@@ -51,64 +52,70 @@ class WeakPtr {
     count_ = WeakCount();
     ptr_ = nullptr;
   }
-  template<typename Y> void Reset(SharedPtr<Y> &other) {
+
+  template<typename Y>
+  void Reset(SharedPtr<Y> & other) {
     ptr_ = other.get();
     count_ = WeakCount(other.count_);
   }
 
-  template<typename Y> void Reset(const WeakPtr<Y> &other) {
-    if(this == &other || ptr_ == other.ptr_)
+  template<typename Y>
+  void Reset(const WeakPtr<Y> & other) {
+    if (this == &other || ptr_ == other.ptr_)
       return;
 
     ptr_ = other.ptr_;
     count_ = other.count_;
   }
 
-  void Swap(WeakPtr &b) {
+  void Swap(WeakPtr & b) {
     std::swap(count_, b.count_);
-    T *tmp = ptr_;
+    T * tmp = ptr_;
     ptr_ = b.ptr_;
     b.ptr_ = tmp;
   }
 
-  T* get() const { return count_.use_count() > 0 ? ptr_ : nullptr; }
-  T& operator*() const { return *get(); }
-  T* operator->() const { return get(); }
+  T * get() const { return count_.use_count() > 0 ? ptr_ : nullptr; }
+
+  T & operator*() const { return *get(); }
+
+  T * operator->() const { return get(); }
 
   explicit operator bool() const { return ptr_ != nullptr; }
 
-  WeakPtr& operator=(const WeakPtr &rhs) {
+  WeakPtr & operator=(const WeakPtr & rhs) {
     Reset(rhs);
     return *this;
   }
 
-  template<typename Y> WeakPtr& operator=(WeakPtr<Y> &rhs) {
+  template<typename Y>
+  WeakPtr & operator=(WeakPtr<Y> & rhs) {
     Reset(rhs);
     return *this;
   }
 
-  template<typename Y> WeakPtr& operator=(SharedPtr<Y> &shared) {
+  template<typename Y>
+  WeakPtr & operator=(SharedPtr<Y> & shared) {
     Reset(shared);
     return *this;
   }
 
  private:
-  T *ptr_;
+  T * ptr_;
   WeakCount count_;
 };
-
 
 template<typename T>
 class WeakPtr<T[]> {
  public:
   typedef TypedDeleter<T> DefaultDeleterType;
 
-
-  WeakPtr(const WeakPtr &other) : ptr_(nullptr) {
+  WeakPtr(const WeakPtr & other) : ptr_(nullptr) {
     Reset(other);
   }
 
-  template<typename Y>WeakPtr(SharedPtr<Y> &shared) : ptr_(nullptr) {
+  template<typename Y>
+  WeakPtr(SharedPtr<Y> & shared) : ptr_(nullptr) {
     Reset(shared);
   }
 
@@ -117,51 +124,57 @@ class WeakPtr<T[]> {
     ptr_ = nullptr;
   }
 
-  template<typename Y> void Reset(SharedPtr<Y> &other) {
+  template<typename Y>
+  void Reset(SharedPtr<Y> & other) {
     ptr_ = other.get();
     count_ = WeakCount(other.count_);
   }
 
-  template<typename Y> void Reset(const WeakPtr<Y> &other) {
-    if(this == &other || ptr_ == other.ptr_)
+  template<typename Y>
+  void Reset(const WeakPtr<Y> & other) {
+    if (this == &other || ptr_ == other.ptr_)
       return;
 
     ptr_ = other.ptr_;
     count_ = other.count_;
   }
 
-  void Swap(WeakPtr &b) {
+  void Swap(WeakPtr & b) {
     std::swap(count_, b.count_);
-    T *tmp = ptr_;
+    T * tmp = ptr_;
     ptr_ = b.ptr_;
     b.ptr_ = tmp;
   }
 
-  T& operator[](size_t idx) const {
+  T & operator[](size_t idx) const {
     return ptr_[idx];
   }
 
-  T* get() const { return count_.use_count() > 0 ? ptr_ : nullptr; }
-  T& operator*() const { return *get(); }
-  T* operator->() const { return get(); }
+  T * get() const { return count_.use_count() > 0 ? ptr_ : nullptr; }
 
-  WeakPtr& operator=(const WeakPtr &rhs) {
+  T & operator*() const { return *get(); }
+
+  T * operator->() const { return get(); }
+
+  WeakPtr & operator=(const WeakPtr & rhs) {
     Reset(rhs);
     return *this;
   }
 
-  template<typename Y> WeakPtr& operator=(WeakPtr<Y> &rhs) {
+  template<typename Y>
+  WeakPtr & operator=(WeakPtr<Y> & rhs) {
     Reset(rhs);
     return *this;
   }
 
-  template<typename Y> WeakPtr& operator=(SharedPtr<Y> &shared) {
+  template<typename Y>
+  WeakPtr & operator=(SharedPtr<Y> & shared) {
     Reset(shared);
     return *this;
   }
 
  private:
-  T *ptr_;
+  T * ptr_;
   WeakCount count_;
 };
 

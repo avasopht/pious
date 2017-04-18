@@ -29,22 +29,23 @@ ReferenceSpec::ReferenceSpec() : is_poly_device_(false) {
 
 }
 
+ReferenceSpec::ReferenceSpec(emcee::Memory * memory)
+    : id_(memory), import_device_id_(memory), is_poly_device_(false) {}
 
-ReferenceSpec::ReferenceSpec(emcee::Memory *memory)
-  : id_(memory), import_device_id_(memory), is_poly_device_(false) { }
-
-void ReferenceSpec::SetSid(const char *sid) { id_.SetSid(sid); }
+void ReferenceSpec::SetSid(const char * sid) { id_.SetSid(sid); }
 
 void ReferenceSpec::SetIid(uint32_t iid) { id_.SetIid(iid); }
 
-void ReferenceSpec::SetImportDeviceSid(const char *sid) { import_device_id_.SetSid(sid); }
+void ReferenceSpec::SetImportDeviceSid(const char * sid) { import_device_id_.SetSid(sid); }
 
 void ReferenceSpec::SetImportDeviceIid(uint32_t iid) { import_device_id_.SetIid(iid); }
 
 void ReferenceSpec::SetPolyDevice(bool b) { is_poly_device_ = b; }
 
 bool ReferenceSpec::is_poly_device() const { return is_poly_device_; }
+
 Id ReferenceSpec::id() const { return id_; }
+
 Id ReferenceSpec::import_id() const { return import_device_id_; }
 
 }

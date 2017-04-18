@@ -28,14 +28,14 @@
 
 namespace pious {
 
-AddDevice::AddDevice(ReferenceSpec *reference) : device_(reference) { }
+AddDevice::AddDevice(ReferenceSpec * reference) : device_(reference) {}
 
-void AddDevice::As(const char *sid, uint32_t iid) {
+void AddDevice::As(const char * sid, uint32_t iid) {
   As(sid);
   As(iid);
 }
 
-void AddDevice::As(const char *sid) {
+void AddDevice::As(const char * sid) {
   assert(device_);
   device_->SetSid(sid);
 }

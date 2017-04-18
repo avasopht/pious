@@ -23,10 +23,8 @@
 
 #include "memory_dependent.hpp"
 
-
 namespace emcee {
 
 MemoryDependent::~MemoryDependent() {}
-
 
 } /* namespace emcee */

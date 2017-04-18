@@ -41,7 +41,7 @@ class ReferenceCounter {
   ReferenceCounter();
 
   /*! Constructs a instance with a use count of 1. */
-  ReferenceCounter(Deleter *deleter);
+  ReferenceCounter(Deleter * deleter);
 
   /*! Increments use count. */
   void AddUse();
@@ -57,26 +57,29 @@ class ReferenceCounter {
    *
    * Calling this will invoke the deleter before assigning the new deleter.
    */
-  void SetDeleter(Deleter *deleter);
+  void SetDeleter(Deleter * deleter);
 
-  ReferenceCounter& WithDeleter(Deleter *deleter) { SetDeleter(deleter); return *this; }
+  ReferenceCounter & WithDeleter(Deleter * deleter) {
+    SetDeleter(deleter);
+    return *this;
+  }
 
   /*! Invokes deleter. */
   void Dispose();
 
   /*! Returns shared use count. */
-  size_t use_count() const { return shared_count_ ; }
+  size_t use_count() const { return shared_count_; }
 
   /*! Returns whether this reference counter has any shared or weak references. */
   bool is_referenced() const { return weak_count_ > 0; }
 
  private:
-  Deleter *deleter_;
+  Deleter * deleter_;
   size_t shared_count_;
   size_t weak_count_; // weak_count + (shared_count_ != 0)
 
   ReferenceCounter(const ReferenceCounter &) = delete;
-  ReferenceCounter& operator=(const ReferenceCounter &) = delete;
+  ReferenceCounter & operator=(const ReferenceCounter &) = delete;
 };
 
 }

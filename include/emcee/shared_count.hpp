@@ -33,18 +33,18 @@ class ReferenceCounter;
 class SharedCount {
  public:
   SharedCount();
-  SharedCount(const SharedCount &other);
-  SharedCount(ReferenceCounter *counter);
+  SharedCount(const SharedCount & other);
+  SharedCount(ReferenceCounter * counter);
 
   ~SharedCount();
 
-  SharedCount& operator=(const SharedCount &rhs);
+  SharedCount & operator=(const SharedCount & rhs);
   size_t use_count() const;
-  ReferenceCounter* counter() const;
+  ReferenceCounter * counter() const;
 
  private:
-  ReferenceCounter *counter_;
-  void ImportCounter(const SharedCount &other);
+  ReferenceCounter * counter_;
+  void ImportCounter(const SharedCount & other);
   void Release();
   void AddUse();
 };

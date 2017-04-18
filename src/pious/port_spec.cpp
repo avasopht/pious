@@ -25,14 +25,23 @@
 
 namespace pious {
 
-PortSpec::PortSpec() : id_(nullptr), io_type_(Pious_IoTypeNone) { }
-PortSpec::PortSpec(emcee::Memory *m) : id_(m), io_type_(Pious_IoTypeNone) { }
-void PortSpec::SetMemory(emcee::Memory *m) { id_.SetMemory(m); }
+PortSpec::PortSpec() : id_(nullptr), io_type_(Pious_IoTypeNone) {}
+
+PortSpec::PortSpec(emcee::Memory * m) : id_(m), io_type_(Pious_IoTypeNone) {}
+
+void PortSpec::SetMemory(emcee::Memory * m) { id_.SetMemory(m); }
+
 uint32_t PortSpec::iid() const { return id_.iid(); }
+
 void PortSpec::SetIid(uint32_t id) { id_.SetIid(id); }
-const char *PortSpec::sid_cstr() const { return id_.sid_cstr(); }
+
+const char * PortSpec::sid_cstr() const { return id_.sid_cstr(); }
+
 emcee::String PortSpec::sid() const { return id_.sid(); }
-void PortSpec::SetSid(const char *sid) { id_.SetSid(sid); }
-Pious_IoType PortSpec::io_type() const { return io_type_;}
+
+void PortSpec::SetSid(const char * sid) { id_.SetSid(sid); }
+
+Pious_IoType PortSpec::io_type() const { return io_type_; }
+
 void PortSpec::SetIoType(Pious_IoType io_type) { io_type_ = io_type; }
 }

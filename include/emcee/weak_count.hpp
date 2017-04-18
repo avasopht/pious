@@ -29,27 +29,28 @@
 namespace emcee {
 
 class ReferenceCounter;
+
 class SharedCount;
 
 class WeakCount {
  public:
   WeakCount();
-  WeakCount(const WeakCount &rhs);
-  WeakCount(const SharedCount &shared_count);
+  WeakCount(const WeakCount & rhs);
+  WeakCount(const SharedCount & shared_count);
 
   ~WeakCount();
 
-  WeakCount& operator=(const WeakCount& rhs);
-  WeakCount& operator=(const SharedCount& shared_count);
+  WeakCount & operator=(const WeakCount & rhs);
+  WeakCount & operator=(const SharedCount & shared_count);
 
   size_t use_count() const;
-  ReferenceCounter* counter() const;
+  ReferenceCounter * counter() const;
 
-  void ImportCounter(const SharedCount &count);
-  void ImportCounter(const WeakCount &count);
+  void ImportCounter(const SharedCount & count);
+  void ImportCounter(const WeakCount & count);
 
  private:
-  ReferenceCounter *counter_;
+  ReferenceCounter * counter_;
 
   void Release();
   void AddUse();

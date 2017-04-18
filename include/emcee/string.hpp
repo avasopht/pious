@@ -36,60 +36,61 @@ class String : public virtual MemoryDependentWithCopy {
   // Note: default copy and assignment operators are fine.
 
   String();
-  String(Memory *memory);
-  String(Memory *memory, const String &other);
-  String(Memory *memory, const char *str);
-  String(Memory *memory, const char *str, size_t begin);
-  String(Memory *memory, const char *str, size_t begin, size_t end);
-  String(const String &str, size_t begin);
-  String(const String &str, size_t begin, size_t end);
-  String(const String &first, const String &second);
+  String(Memory * memory);
+  String(Memory * memory, const String & other);
+  String(Memory * memory, const char * str);
+  String(Memory * memory, const char * str, size_t begin);
+  String(Memory * memory, const char * str, size_t begin, size_t end);
+  String(const String & str, size_t begin);
+  String(const String & str, size_t begin, size_t end);
+  String(const String & first, const String & second);
 
-  const char *c_str() const;
+  const char * c_str() const;
   size_t length() const;
-  Memory* memory() const { return memory_; }
+
+  Memory * memory() const { return memory_; }
 
   String Substring(size_t begin_idx) const;
   String Substring(size_t begin_idx, size_t end_idx) const;
 
   String ToLower() const;
 
-  int Compare(const String &rhs) const;
+  int Compare(const String & rhs) const;
 
-  const char& operator[](size_t idx) const;
-  String operator+(const String &rhs) const;
+  const char & operator[](size_t idx) const;
+  String operator+(const String & rhs) const;
 
  private:
-  Memory *memory_;
+  Memory * memory_;
   SharedPtr<char[]> string_;
   size_t size_;
 
-  void ConstructString(const char *cstr, size_t begin, size_t end);
+  void ConstructString(const char * cstr, size_t begin, size_t end);
 };
 
-bool operator==(const String &lhs, const String &rhs);
-bool operator==(const char *lhs, const String &rhs);
-bool operator==(const String &lhs, const char *rhs);
+bool operator==(const String & lhs, const String & rhs);
+bool operator==(const char * lhs, const String & rhs);
+bool operator==(const String & lhs, const char * rhs);
 
-bool operator!=(const String &lhs, const String &rhs);
-bool operator!=(const char *lhs, const String &rhs);
-bool operator!=(const String &lhs, const char *rhs);
+bool operator!=(const String & lhs, const String & rhs);
+bool operator!=(const char * lhs, const String & rhs);
+bool operator!=(const String & lhs, const char * rhs);
 
-bool operator<(const String &lhs, const String &rhs);
-bool operator<(const char *lhs, const String &rhs);
-bool operator<(const String &lhs, const char *rhs);
+bool operator<(const String & lhs, const String & rhs);
+bool operator<(const char * lhs, const String & rhs);
+bool operator<(const String & lhs, const char * rhs);
 
-bool operator<=(const String &lhs, const String &rhs);
-bool operator<=(const char *lhs, const String &rhs);
-bool operator<=(const String &lhs, const char *rhs);
+bool operator<=(const String & lhs, const String & rhs);
+bool operator<=(const char * lhs, const String & rhs);
+bool operator<=(const String & lhs, const char * rhs);
 
-bool operator>(const String &lhs, const String &rhs);
-bool operator>(const char *lhs, const String &rhs);
-bool operator>(const String &lhs, const char *rhs);
+bool operator>(const String & lhs, const String & rhs);
+bool operator>(const char * lhs, const String & rhs);
+bool operator>(const String & lhs, const char * rhs);
 
-bool operator>=(const String &lhs, const String &rhs);
-bool operator>=(const char *lhs, const String &rhs);
-bool operator>=(const String &lhs, const char *rhs);
+bool operator>=(const String & lhs, const String & rhs);
+bool operator>=(const char * lhs, const String & rhs);
+bool operator>=(const String & lhs, const char * rhs);
 
 }
 

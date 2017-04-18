@@ -54,11 +54,11 @@ Prepend(PIOUS_DSP_LIB_INCLUDE_FILES "${INCLUDE_DIR}/pious_dsp_lib" ${PIOUS_DSP_L
 
 
 find_package(Boost 1.48 REQUIRED)
-if(Boost_FOUND)
+if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
-else()
-    message( FATAL_ERROR "Boost required.")
-endif()
+else ()
+    message(FATAL_ERROR "Boost required.")
+endif ()
 
 add_subdirectory(pious)
 add_subdirectory(emcee)

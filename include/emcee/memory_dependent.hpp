@@ -30,7 +30,6 @@
 namespace emcee {
 class Memory;
 
-
 /*! \brief  Indicates at compile time that a class accepts a Memory pointer
  *  in construction.
  *
@@ -44,20 +43,20 @@ class MemoryDependent {
 
   /*! Calls constructor. Returns whether memory was injected. */
   template<typename T>
-  static bool ConstructAt(T *t, Memory *memory) {
-    boost::is_base_of<MemoryDependent,T> is_memory_dependent;
+  static bool ConstructAt(T * t, Memory * memory) {
+    boost::is_base_of<MemoryDependent, T> is_memory_dependent;
     ConstructAtWithMemory(is_memory_dependent, t, memory);
     bool memory_was_injected = is_memory_dependent;
     return memory_was_injected;
   }
 
   template<typename T>
-  static void ConstructAtWithMemory(boost::true_type, T *t, Memory *memory) {
+  static void ConstructAtWithMemory(boost::true_type, T * t, Memory * memory) {
     new(t)T(memory);
   }
 
   template<typename T>
-  static void ConstructAtMemory(boost::false_type, T* t, Memory*){
+  static void ConstructAtMemory(boost::false_type, T * t, Memory *) {
     new(t)T();
   }
 };
@@ -78,27 +77,27 @@ class MemoryDependentWithCopy : public virtual MemoryDependent {
    * injected. */
   template<typename T, typename Y>
   static bool ConstructAt(
-      T *t, Memory *memory, const Y &other){
-    boost::is_base_of<MemoryDependentWithCopy,T> is_memory_dependent_with_copy;
+      T * t, Memory * memory, const Y & other) {
+    boost::is_base_of<MemoryDependentWithCopy, T> is_memory_dependent_with_copy;
     ConstructAtWithMemoryAndCopy(
         is_memory_dependent_with_copy, t, memory, other);
     bool memory_was_injected = is_memory_dependent_with_copy;
     return memory_was_injected;
   }
+
   template<typename T, typename Y>
   static void ConstructAtWithMemoryAndCopy(
-      boost::true_type, T *t, Memory *memory, const Y &other){
+      boost::true_type, T * t, Memory * memory, const Y & other) {
     new(t)T(memory, other);
   }
 
   template<typename T, typename Y>
   static void ConstructAtWithMemoryAndCopy(
-      boost::false_type, T *t, Memory*, const Y &other) {
+      boost::false_type, T * t, Memory *, const Y & other) {
     new(t)T(other);
   }
 
 };
-
 
 } /* namespace emcee */
 

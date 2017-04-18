@@ -26,22 +26,21 @@
 namespace pious {
 
 SignalChannel::SignalChannel(emcee::Memory * memory, size_t size)
-  : buffer_(memory)
-{
+    : buffer_(memory) {
   assert(size >= 0);
-  if(size > 0)
+  if (size > 0)
     buffer_.Resize((size_t) size);
 }
 
 size_t SignalChannel::ReadSignal(float * dest, size_t max_samples) const {
-  for(size_t i = 0; i < max_samples && i < buffer_.size(); ++i) {
+  for (size_t i = 0; i < max_samples && i < buffer_.size(); ++i) {
     dest[i] = buffer_[i];
   }
   return std::min(buffer_.size(), max_samples);
 }
 
 size_t SignalChannel::WriteSignal(const float * signal, size_t frame_count) {
-  for(size_t i = 0; i < frame_count && i < buffer_.size(); ++i)
+  for (size_t i = 0; i < frame_count && i < buffer_.size(); ++i)
     buffer_[i] = signal[i];
   return std::min(buffer_.size(), frame_count);
 }

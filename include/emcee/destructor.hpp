@@ -20,36 +20,34 @@ class Destructor {
   virtual void Destroy() = 0;
 };
 
-
-template<typename T> class TypedDestructor : public Destructor {
+template<typename T>
+class TypedDestructor : public Destructor {
  public:
-  TypedDestructor(T *ptr) : ptr_(ptr) {}
+  TypedDestructor(T * ptr) : ptr_(ptr) {}
 
   void Destroy() override {
     ptr_->~T();
   }
 
-
  private:
-  T *ptr_;
+  T * ptr_;
 };
 
-template<typename T> class TypedDestructor<T[]> : public Destructor {
+template<typename T>
+class TypedDestructor<T[]> : public Destructor {
  public:
-  TypedDestructor(T *ptr, size_t count) : ptr_(ptr), count_(count) {}
+  TypedDestructor(T * ptr, size_t count) : ptr_(ptr), count_(count) {}
 
   void Destroy() override {
-    for(size_t i = 0; i < count_; ++i) {
+    for (size_t i = 0; i < count_; ++i) {
       ptr_[i].~T();
     }
   }
 
-
  private:
-  T *ptr_;
+  T * ptr_;
   size_t count_;
 };
-
 
 /*! \brief  Destructor for arrays and single items.
  *
@@ -57,17 +55,18 @@ template<typename T> class TypedDestructor<T[]> : public Destructor {
  * instance but makes deletion incredibly easy.
  */
 template<typename T, size_t N>
-class TypedDestructor <T[N]> : public Destructor {
+class TypedDestructor<T[N]> : public Destructor {
  public:
-  TypedDestructor(T *ptr) : array_(ptr), count_(N) {}
+  TypedDestructor(T * ptr) : array_(ptr), count_(N) {}
+
   void Destroy() override {
-    for(size_t i = 0; i < count_; ++i) {
+    for (size_t i = 0; i < count_; ++i) {
       array_[i].~T();
     }
   }
 
  private:
-  T *array_;
+  T * array_;
   size_t count_;
 };
 

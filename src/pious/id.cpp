@@ -25,53 +25,60 @@
 
 namespace pious {
 
-Id::Id() : iid_(0) { }
+Id::Id() : iid_(0) {}
 
+Id::Id(emcee::Memory * memory) : sid_(memory), iid_(0) {}
 
-Id::Id(emcee::Memory *memory) : sid_(memory), iid_(0) {}
+Id::Id(emcee::String sid, uint32_t iid) : sid_(sid), iid_(iid) {}
 
-Id::Id(emcee::String sid, uint32_t iid) : sid_(sid), iid_(iid) { }
+Id::Id(emcee::String sid) : sid_(sid), iid_(0) {}
 
-Id::Id(emcee::String sid) : sid_(sid), iid_(0) { }
+Id::Id(uint32_t iid) : iid_(iid) {}
 
-Id::Id(uint32_t iid) : iid_(iid) { }
-
-Id& Id::SetSid(const char *sid) {
+Id & Id::SetSid(const char * sid) {
   assert(sid_.memory());
   sid_ = emcee::String(sid_.memory(), sid);
   return *this;
 }
 
-Id& Id::SetSid(const emcee::String &sid) { sid_ = sid; return *this; }
+Id & Id::SetSid(const emcee::String & sid) {
+  sid_ = sid;
+  return *this;
+}
 
-Id& Id::SetIid(uint32_t iid) { iid_ = iid; return *this; }
+Id & Id::SetIid(uint32_t iid) {
+  iid_ = iid;
+  return *this;
+}
 
-const char *Id::sid_cstr() const { return sid_.c_str(); }
+const char * Id::sid_cstr() const { return sid_.c_str(); }
 
 emcee::String Id::sid() const { return sid_; }
 
 uint32_t Id::iid() const { return iid_; }
 
-int Id::Compare(const Id &rhs) const {
+int Id::Compare(const Id & rhs) const {
   int string_compare = sid().Compare(rhs.sid());
   bool strings_equal = string_compare == 0;
-  if(strings_equal) {
+  if (strings_equal) {
     return iid() - rhs.iid();
   }
   return string_compare;
 }
-void Id::SetMemory(emcee::Memory *m) {
+
+void Id::SetMemory(emcee::Memory * m) {
   sid_ = emcee::String(m);
 }
 
-
-bool operator==(const Id &lhs, const Id &rhs) {
+bool operator==(const Id & lhs, const Id & rhs) {
   return lhs.Compare(rhs) == 0;
 }
-bool operator==(const char *lhs, const Id &rhs) {
+
+bool operator==(const char * lhs, const Id & rhs) {
   return lhs == rhs.sid();
 }
-bool operator==(const Id &lhs, const char *rhs) {
+
+bool operator==(const Id & lhs, const char * rhs) {
   return lhs.sid() == rhs;
 }
 
