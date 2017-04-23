@@ -19,17 +19,15 @@
 class SineDsp : public pious::Dsp {
  public:
   void Render(pious::Scope * scope) override {
-    Pious_Handle in_signal_handle = scope->GetHandle("freq");
-    pious::PortInstance * in_port = scope->GetPort(&in_signal_handle);
+    pious::PortInstance * in_port = scope->GetPort("freq");
     float freq = in_port->GetHoldSignalAt(0);
     (void) freq;
 
-    Pious_Handle out_signal_handle = scope->GetHandle("out");
-    pious::PortInstance * out_port = scope->GetPort(&out_signal_handle);
+    pious::PortInstance * out_port = scope->GetPort("out");
 
     float buffer[64];
     for (int N = 0; N < 64; ++N)
-      buffer[N] = sin(2 * M_PI * N / 64 / 2);
+      buffer[N] = (float) sin(2 * M_PI * N / 64 / 2);
 
     out_port->WriteSignal(buffer, 64);
   }

@@ -30,6 +30,8 @@
 struct Pious_HoldSignalEvent;
 struct Pious_DataPacket;
 
+namespace emcee { class Memory; }
+
 namespace pious {
 
 class PortInstance;
@@ -39,10 +41,10 @@ class Scope {
  public:
   virtual ~Scope() {}
 
+  /*! Returns memory pointer during Dsp::Initialize() */
+  virtual emcee::Memory * GetMemory() = 0;
   virtual void SetPluginDelay(float delay_in_samples) = 0;
-  virtual Pious_Handle GetHandle(const char *object_uri) = 0;
-  virtual bool IsValidHandle(const Pious_Handle *handle) = 0;
-  virtual PortInstance* GetPort(const Pious_Handle *handle) = 0;
+  virtual PortInstance* GetPort(const char * port_uri) = 0;
 };
 
 }

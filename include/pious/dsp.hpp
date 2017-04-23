@@ -31,6 +31,7 @@ class Scope;
 class Dsp {
  public:
   virtual ~Dsp() {}
+  virtual void Initialize(Scope * scope) = 0;
   virtual void Render(Scope * scope) = 0;
 };
 

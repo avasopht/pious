@@ -111,6 +111,12 @@ class Map : public virtual MemoryDependentWithCopy {
       current_ = current_->next[0];
     }
 
+    Iterator operator++(int) {
+      Iterator prev = *this;
+      ++(*this);
+      return prev;
+    }
+
    private:
     SharedPtr<Node> current_;
   };
