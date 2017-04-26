@@ -10,6 +10,7 @@ FUNCTION(Prepend var prefix)
 ENDFUNCTION()
 
 add_definitions(-std=gnu++0x)
+option(gtest_disable_pthreads "Disable uses of pthreads in gtest." OFF)
 
 include_directories(include)
 

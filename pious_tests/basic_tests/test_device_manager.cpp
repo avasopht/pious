@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 07/04/2017.
+ * Created by The Pious Authors on 25/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,18 +21,25 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_INSTANCE_FACTORY_HPP
-#define PIOUS_INSTANCE_FACTORY_HPP
+#include <gtest/gtest.h>
+#include <pious/device_manager.hpp>
+#include <pious/mock/mock_device_manager.hpp>
+using ::testing::Return;
+using ::testing::_;
 
-namespace pious {
+TEST(DeviceManager,DeviceMock) {
+  pious::MockDeviceManager mock_manager;
+  EXPECT_CALL(mock_manager,DeleteDevice(nullptr)).Times(1);
+  mock_manager.DeleteDevice(nullptr);
+  /*
+  emcee::DefaultMemory mem;
+  pious::Rack rack(&mem, &mock_manager);
 
-class Device;
-
-class InstanceFactory {
- public:
-  virtual ~InstanceFactory(){}
-  virtual Device * CreateDevice() = 0;
-};
+  /*
+  EXPECT_CALL(mock_manager,CreateDevice()).WillRepeatedly(Return(&mock_device));
+  EXPECT_CALL(mock_device,parent()).WillRepeatedly(Return(&rack));
+  EXPECT_CALL(mock_device,port_count()).Times(1).WillOnce(Return(0));
+  EXPECT_CALL(mock_device,child_count()).Times(1).WillOnce(Return(0));
+  pious::Device * device = rack.CreateDevice();
+  */
 }
-
-#endif /* PIOUS_INSTANCE_FACTORY_HPP */

@@ -4,11 +4,12 @@ set(PIOUS_SOURCE_FILES
         add_connection_port_dest.cpp
         add_device.cpp
         connection_spec.cpp
+        db.cpp
         device_spec.cpp
         id.cpp
-        db.cpp
         pious_device_instance.cpp
         port_spec.cpp
+        rack.cpp
         reference_spec.cpp
         signal_channel.cpp
         signal_hold_channel.cpp

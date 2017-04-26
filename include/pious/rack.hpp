@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 06/04/2017.
+ * Created by The Pious Authors on 23/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,42 +21,45 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_DEVICE_INSTANCE_HPP
-#define PIOUS_DEVICE_INSTANCE_HPP
+#ifndef PIOUS_RACK_HPP
+#define PIOUS_RACK_HPP
 
-#include <cstddef>
+#include "device_container.hpp"
+
+#include <emcee/shared_ptr.hpp>
+#include <emcee/vector.hpp>
 
 namespace emcee {
-class String;
+class Memory;
 }
 
 namespace pious {
 
-class PortInstance;
+class Device;
+class DeviceManager;
 
-class DeviceInstance {
+class Rack : public DeviceContainer {
  public:
-  virtual ~DeviceInstance(){};
+  Rack(emcee::Memory * memory, DeviceManager * device_manager);
+  Device * CreateDevice();
+  Device * CreateChildDevice(Device * parent);
+  void RemoveDevice(Device * device);
+  size_t device_count() const;
+  Device * DeviceAt(size_t idx);
 
-  virtual bool has_dsp() const = 0;
+  size_t child_count() const override;
+  void AddChild(Device * device) override;
+  void RemoveChild(Device * child) override;
+  Device * ChildAt(size_t idx) override;
+  bool IsChild(Device * device) const override;
 
-  /*! Returns inner device that connects to its children. */
-  virtual DeviceInstance * GetInnerDevice() = 0;
+ private:
+  emcee::Memory * memory_;
+  emcee::Vector<emcee::SharedPtr<Device>> devices_;
+  DeviceManager * device_manager_;
 
-  virtual void SetLabel(const char * name) = 0;
-  virtual const char * label() const = 0;
-
-  virtual void AddChild(DeviceInstance * child) = 0;
-  virtual void RemoveChild(DeviceInstance * child) = 0;
-  virtual DeviceInstance * ChildAt(size_t index) = 0;
-  virtual size_t child_count() const = 0;
-  virtual PortInstance * CreatePort(const char * id, Pious_IoType io_type) = 0;
-  virtual PortInstance * PortAt(size_t index) = 0;
-  virtual size_t port_count() const = 0;
-  virtual PortInstance * FindPort(const char * id) = 0;
-  virtual PortInstance * FindPort(const emcee::String & id) = 0;
+  size_t GetDeviceIndex(Device * device) const;
 };
-
 }
 
-#endif /* PIOUS_DEVICE_INSTANCE_HPP */
+#endif /* PIOUS_RACK_HPP */

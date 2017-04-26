@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 07/04/2017.
+ * Created by The Pious Authors on 25/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,18 +21,21 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_INSTANCE_FACTORY_HPP
-#define PIOUS_INSTANCE_FACTORY_HPP
+#ifndef PIOUS_DEVICE_MANAGER_HPP
+#define PIOUS_DEVICE_MANAGER_HPP
 
 namespace pious {
 
 class Device;
 
-class InstanceFactory {
+class DeviceManager {
  public:
-  virtual ~InstanceFactory(){}
+  virtual ~DeviceManager() {}
+
   virtual Device * CreateDevice() = 0;
+  virtual void DeleteDevice(Device * d) = 0;
 };
+
 }
 
-#endif /* PIOUS_INSTANCE_FACTORY_HPP */
+#endif /* PIOUS_DEVICE_MANAGER_HPP */

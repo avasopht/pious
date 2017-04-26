@@ -38,3 +38,25 @@ TEST(Map,BasicTest) {
   ASSERT_TRUE(map.Empty());
   ASSERT_FALSE(map.ContainsKey(10));
 }
+
+TEST(Map,SharedPtrInMap) {
+  emcee::DefaultMemory mem;
+  typedef emcee::SharedPtr<char[]> SharedCPtr;
+  emcee::Map<SharedCPtr,SharedCPtr> map(&mem);
+  emcee::SharedPtr<char[]> a(&mem,emcee::New<char[]>(&mem,2).Create());
+  emcee::SharedPtr<char[]> b(&mem,emcee::New<char[]>(&mem,2).Create());
+  emcee::SharedPtr<char[]> c(&mem,emcee::New<char[]>(&mem,2).Create());
+  emcee::SharedPtr<char[]> d(&mem,emcee::New<char[]>(&mem,2).Create());
+  strcpy(a.get(), "a");
+  strcpy(b.get(), "b");
+  strcpy(c.get(), "c");
+  strcpy(d.get(), "d");
+  map[a] = a;
+  map[b] = b;
+  map[c] = c;
+  map[d] = d;
+  ASSERT_EQ(map[a],a);
+  ASSERT_EQ(map[b],b);
+  ASSERT_EQ(map[c],c);
+  ASSERT_EQ(map[d],d);
+}

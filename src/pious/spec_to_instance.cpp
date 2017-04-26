@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-#include <pious/spec_to_instance.hpp>
+#include <pious/spec_to_devices.hpp>
 #include <emcee/map.hpp>
 #include <emcee/vector.hpp>
 #include <pious/device_spec.hpp>
@@ -30,23 +30,23 @@
 #include <pious/reference_spec.hpp>
 #include <pious/spec_finder.hpp>
 #include <pious/connection_spec.hpp>
-#include <pious/port_instance.hpp>
+#include <pious/port.hpp>
 #include <utility>
-#include <pious/device_instance.hpp>
+#include <pious/device.hpp>
 #include <pious/instance_factory.hpp>
 #include <cassert>
 
 namespace pious {
 
-DeviceInstance * SpecToInstance::CreateInstance(SpecFinder * spec_finder,
+Device * SpecToInstance::CreateInstance(SpecFinder * spec_finder,
                                                 InstanceFactory * instance_factory,
                                                 DeviceSpec * spec) {
   // CachedSpecFinder cached_spec_finder (spec_finder)
 
-  DeviceInstance * device = instance_factory->CreateDevice();
+  Device * device = instance_factory->CreateDevice();
 
   CreatePorts(device, spec);
-  emcee::Map<emcee::String, DeviceInstance *> children;
+  emcee::Map<emcee::String, Device *> children;
   InstantiateChildren(&children, spec_finder, instance_factory, spec);
   emcee::Vector<ConnectionSpec *> connections;
   GetConnections(spec, &connections);
@@ -55,27 +55,27 @@ DeviceInstance * SpecToInstance::CreateInstance(SpecFinder * spec_finder,
   return device;
 }
 
-void SpecToInstance::ConnectChildren(emcee::Map<emcee::String, DeviceInstance *> * devices,
+void SpecToInstance::ConnectChildren(emcee::Map<emcee::String, Device *> * devices,
                                      emcee::Vector<ConnectionSpec *> * connections) {
   for (size_t connection_idx = 0; connection_idx < connections->size(); ++connection_idx) {
     ConnectionSpec * connection_spec = connections->At(connection_idx);
     assert(connection_spec);
 
-    DeviceInstance * source_device = (*devices)[connection_spec->source_device().sid()];
+    Device * source_device = (*devices)[connection_spec->source_device().sid()];
     assert(source_device);
-    PortInstance * source_port = source_device->FindPort(connection_spec->source_port().sid());
+    Port * source_port = source_device->FindPort(connection_spec->source_port().sid());
     assert(source_port);
 
-    DeviceInstance * dest_device = (*devices)[connection_spec->dest_device().sid()];
+    Device * dest_device = (*devices)[connection_spec->dest_device().sid()];
     assert(dest_device);
-    PortInstance * dest_port = source_device->FindPort(connection_spec->dest_port().sid());
+    Port * dest_port = source_device->FindPort(connection_spec->dest_port().sid());
     assert(dest_port);
 
     source_port->Connect(dest_port);
   }
 }
 
-void SpecToInstance::InstantiateChildren(emcee::Map<emcee::String, DeviceInstance *> * children,
+void SpecToInstance::InstantiateChildren(emcee::Map<emcee::String, Device *> * children,
                                          SpecFinder * spec_finder,
                                          InstanceFactory * instance_factory,
                                          DeviceSpec * spec) {
@@ -85,13 +85,13 @@ void SpecToInstance::InstantiateChildren(emcee::Map<emcee::String, DeviceInstanc
     emcee::String ref_id = child_ref->id().sid();
     DeviceSpec * spec = spec_finder->FindSpec(child_ref->import_id().sid_cstr());
     assert(spec);
-    DeviceInstance * instance = instance_factory->CreateDevice();
+    Device * instance = instance_factory->CreateDevice();
     assert(instance);
     (*children)[ref_id] = instance;
   }
 }
 
-void SpecToInstance::CreatePorts(DeviceInstance * instance, DeviceSpec * specs) {
+void SpecToInstance::CreatePorts(Device * instance, DeviceSpec * specs) {
   for (size_t port_idx = 0; port_idx < specs->port_count(); ++port_idx) {
     PortSpec * port_spec = specs->PortAt(port_idx);
     assert(port_spec);

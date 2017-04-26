@@ -23,18 +23,20 @@
 
 #ifndef PIOUS_PORT_INSTANCE_HPP
 #define PIOUS_PORT_INSTANCE_HPP
+#include <api/pious_spec.h>
 
 namespace pious {
 
 class SignalHoldEvent;
 class DataPacket;
 
-class PortInstance {
+class Port {
  public:
-  virtual ~PortInstance(){};
-  virtual void Connect(PortInstance * dest_port) = 0;
+  virtual ~Port(){};
+  virtual void Connect(Port * dest_port) = 0;
   virtual Pious_IoType io_type() const = 0;
   virtual void SetIoType(Pious_IoType io_type) = 0;
+  virtual void Disconnect() = 0;
 
   virtual bool CanReadSignal() const = 0;
   /*! Reads signal into dest, returning number of frames read. */

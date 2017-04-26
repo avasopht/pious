@@ -34,7 +34,7 @@ namespace emcee { class Memory; }
 
 namespace pious {
 
-class PortInstance;
+class Port;
 
 
 class Scope {
@@ -42,9 +42,9 @@ class Scope {
   virtual ~Scope() {}
 
   /*! Returns memory pointer during Dsp::Initialize() */
-  virtual emcee::Memory * GetMemory() = 0;
+  virtual emcee::Memory * memory() = 0;
   virtual void SetPluginDelay(float delay_in_samples) = 0;
-  virtual PortInstance* GetPort(const char * port_uri) = 0;
+  virtual Port* GetPort(const char * port_uri) = 0;
 };
 
 }

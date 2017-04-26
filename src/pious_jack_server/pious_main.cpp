@@ -12,18 +12,18 @@
 #include <pious/dsp.hpp>
 #include <pious/scope.hpp>
 #include <emcee/vector.hpp>
-#include <pious/port_instance.hpp>
+#include <pious/port.hpp>
 #include <cmath>
 #include <emcee/emcee.hpp>
 
 class SineDsp : public pious::Dsp {
  public:
   void Render(pious::Scope * scope) override {
-    pious::PortInstance * in_port = scope->GetPort("freq");
+    pious::Port * in_port = scope->GetPort("freq");
     float freq = in_port->GetHoldSignalAt(0);
     (void) freq;
 
-    pious::PortInstance * out_port = scope->GetPort("out");
+    pious::Port * out_port = scope->GetPort("out");
 
     float buffer[64];
     for (int N = 0; N < 64; ++N)

@@ -26,7 +26,7 @@
 struct Pious_DeviceInstance {};
 
 namespace pious {
-class DeviceInstance : public Pious_DeviceInstance {
+class Device : public Pious_DeviceInstance {
 
 };
 }

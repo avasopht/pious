@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 07/04/2017.
+ * Created by The Pious Authors on 23/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,18 +21,24 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_INSTANCE_FACTORY_HPP
-#define PIOUS_INSTANCE_FACTORY_HPP
+#ifndef PIOUS_DEVICE_CONTAINER_HPP
+#define PIOUS_DEVICE_CONTAINER_HPP
 
+#include <cstddef>
 namespace pious {
 
 class Device;
 
-class InstanceFactory {
+class DeviceContainer {
  public:
-  virtual ~InstanceFactory(){}
-  virtual Device * CreateDevice() = 0;
+  virtual ~DeviceContainer() {}
+
+  virtual size_t child_count() const = 0;
+  virtual void AddChild(Device * device) = 0;
+  virtual void RemoveChild(Device * child) = 0;
+  virtual Device * ChildAt(size_t idx) = 0;
+  virtual bool IsChild(Device * device) const = 0;
 };
 }
 
-#endif /* PIOUS_INSTANCE_FACTORY_HPP */
+#endif /* PIOUS_DEVICE_CONTAINER_HPP */

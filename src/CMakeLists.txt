@@ -32,13 +32,13 @@ set(PIOUS_INCLUDE_FILES
         device_spec.hpp
         id.hpp
         instance_factory.hpp
-        port_instance.hpp
+        port.hpp
         port_spec.hpp
         process.hpp
         reference_spec.hpp
         scope.hpp
         spec_finder.hpp
-        spec_to_instance.hpp
+        spec_to_devices.hpp
         )
 
 set(PIOUS_DSP_LIB_INCLUDE_FILES

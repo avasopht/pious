@@ -21,6 +21,7 @@ add_executable(runBasicPiousTests
         count_calls.hpp
         class_method_notifier.hpp
         test_device_spec.cpp
+        test_device_manager.cpp
         test_id.cpp
         test_main.cpp
         test_map.cpp

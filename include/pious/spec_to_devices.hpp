@@ -38,9 +38,9 @@ namespace pious {
 class DeviceSpec;
 class SpecFinder;
 class InstanceFactory;
-class DeviceInstance;
+class Device;
 class ConnectionSpec;
-class PortInstance;
+class Port;
 
 class SpecToInstance {
  public:
@@ -51,15 +51,15 @@ class SpecToInstance {
    * @param spec
    * @return
    */
-  static DeviceInstance * CreateInstance(SpecFinder * spec_finder,
+  static Device * CreateInstance(SpecFinder * spec_finder,
                                          InstanceFactory * instance_factory,
                                          DeviceSpec * spec);
 
-  static void CreatePorts(DeviceInstance * instance, DeviceSpec * specs);
-  static void InstantiateChildren(emcee::Map<emcee::String,DeviceInstance*> * children, SpecFinder * spec_finder,
+  static void CreatePorts(Device * instance, DeviceSpec * specs);
+  static void InstantiateChildren(emcee::Map<emcee::String,Device*> * children, SpecFinder * spec_finder,
                                                                        InstanceFactory * instance_factory,
                                                                        DeviceSpec * spec);
-  static void ConnectChildren(emcee::Map<emcee::String,DeviceInstance*> * devices,
+  static void ConnectChildren(emcee::Map<emcee::String,Device*> * devices,
                               emcee::Vector<ConnectionSpec*> * connections);
   static void GetConnections(DeviceSpec * spec, emcee::Vector<ConnectionSpec *> * connections);
 };
