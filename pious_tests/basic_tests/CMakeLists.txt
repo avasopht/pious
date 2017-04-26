@@ -1,5 +1,12 @@
-include_directories(${gmock_SOURCE_DIR}/gtest/include ${gmock_SOURCE_DIR}/gtest)
-include_directories(${gmock_SOURCE_DIR}/include ${gmock_SOURCE_DIR})
+#include_directories(${gmock_SOURCE_DIR}/gtest/include ${gmock_SOURCE_DIR}/gtest)
+#include_directories(${gmock_SOURCE_DIR}/include ${gmock_SOURCE_DIR})
+
+
+if (CMAKE_VERSION VERSION_LESS 2.8.11)
+    include_directories("${gtest_SOURCE_DIR}/include")
+    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+endif()
+
 include_directories(${Boost_INCLUDE_DIR})
 
 include_directories(${INCLUDE_DIR}/emcee)

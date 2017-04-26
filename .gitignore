@@ -3,6 +3,7 @@
 
 build/
 rack_extension/
+cmake-build-debug/
 
 # Object files
 *.o

@@ -22,24 +22,28 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include <emcee/memory.hpp>
+#include <pious/rack.hpp>
 #include <pious/device_manager.hpp>
 #include <pious/mock/mock_device_manager.hpp>
+#include <pious/mock/mock_device.hpp>
 using ::testing::Return;
 using ::testing::_;
 
+
 TEST(DeviceManager,DeviceMock) {
   pious::MockDeviceManager mock_manager;
+  pious::MockDevice mock_device;
   EXPECT_CALL(mock_manager,DeleteDevice(nullptr)).Times(1);
   mock_manager.DeleteDevice(nullptr);
-  /*
   emcee::DefaultMemory mem;
   pious::Rack rack(&mem, &mock_manager);
 
-  /*
   EXPECT_CALL(mock_manager,CreateDevice()).WillRepeatedly(Return(&mock_device));
   EXPECT_CALL(mock_device,parent()).WillRepeatedly(Return(&rack));
   EXPECT_CALL(mock_device,port_count()).Times(1).WillOnce(Return(0));
   EXPECT_CALL(mock_device,child_count()).Times(1).WillOnce(Return(0));
   pious::Device * device = rack.CreateDevice();
-  */
+  rack.RemoveDevice(device);
 }
