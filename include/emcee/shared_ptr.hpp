@@ -170,6 +170,13 @@ class SharedPtr : public virtual MemoryDependentWithCopy {
     return *this;
   }
 
+  template<typename Y> bool operator==(const SharedPtr<Y> & rhs) const { return ptr_ == rhs.ptr_; }
+  template<typename Y> bool operator<(const SharedPtr<Y> & rhs) const { return ptr_ < rhs.ptr_; }
+  template<typename Y> bool operator>(const SharedPtr<Y> & rhs) const { return rhs < *this; }
+  template<typename Y> bool operator!=(const SharedPtr<Y> & rhs) const { return !(*this == rhs);}
+  template<typename Y> bool operator<=(const SharedPtr<Y> & rhs) const { return !(rhs < *this); }
+  template<typename Y> bool operator>=(const SharedPtr<Y> & rhs) const { return !(*this < rhs); }
+
   explicit operator bool() const { return ptr_ != nullptr; }
 
  private:
@@ -302,6 +309,12 @@ class SharedPtr<T[]> : public virtual MemoryDependentWithCopy {
 
   T * operator->() const { return get(); }
 
+  template<typename Y> bool operator==(const SharedPtr<Y> & rhs) const { return ptr_ == rhs.ptr_; }
+  template<typename Y> bool operator<(const SharedPtr<Y> & rhs) const { return ptr_ < rhs.ptr_; }
+  template<typename Y> bool operator>(const SharedPtr<Y> & rhs) const { return rhs < *this; }
+  template<typename Y> bool operator!=(const SharedPtr<Y> & rhs) const { return !(*this == rhs);}
+  template<typename Y> bool operator<=(const SharedPtr<Y> & rhs) const { return !(rhs < *this); }
+  
   SharedPtr & operator=(const SharedPtr & rhs) {
     Reset(rhs);
     return *this;
