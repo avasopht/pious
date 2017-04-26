@@ -37,7 +37,7 @@ void Rack::AddChild(Device * device) {
 }
 
 void Rack::RemoveChild(Device * child) {
-  assert(false);
+  RemoveDevice(child);
 }
 
 Device * Rack::ChildAt(size_t idx) {
@@ -90,7 +90,7 @@ void Rack::RemoveDevice(Device * device) {
 
   size_t device_index = GetDeviceIndex(device);
   devices_.EraseAt(device_index);
-
+  device_manager_->DeleteDevice(device);
 }
 
 size_t Rack::device_count() const {

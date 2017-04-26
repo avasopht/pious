@@ -28,7 +28,6 @@ add_executable(runBasicPiousTests
         count_calls.hpp
         class_method_notifier.hpp
         test_device_spec.cpp
-        test_device_manager.cpp
         test_id.cpp
         test_main.cpp
         test_map.cpp
@@ -36,6 +35,7 @@ add_executable(runBasicPiousTests
         test_new.cpp
         test_pious_db.cpp
         # test_pious_spec.cpp
+        test_rack.cpp
         test_shared_ptr.cpp
         test_string.cpp
         test_unique_ptr.cpp
