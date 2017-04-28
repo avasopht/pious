@@ -35,11 +35,12 @@ class Memory;
 
 /*! A "cell vector" with a power of 2 size.
  *
- *  A cell vector is divided into cells that share the same value. For example
- *  you may have a vector that references 8 elements, but is really made of
- *  4 cell vectors.
+ *  A "cell vector" maps a small array to a larger vector space by treating
+ *  the smaller array's elements as cells spanning contiguous vector indexes.
+ *  For example the Cell Vector might have 8 indexes but be made up of just
+ *  2 array elements, which span indexes 0-3 and 4-7 respectively.
  *
- *  In this scenario elements 0 and 1 share the same value.
+ *  In this scenario elements 0, 1, 2 and 3 share the same value.
  *
  *  The masking allows you to reference elements with an index greater than
  *  its size (which will be wrapped around). So with an 8 element vector,
@@ -92,6 +93,7 @@ class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDepen
     cell_shift_ = Log2(cell_size);
 
     size_t vector_size = size / cell_size;
+    vector_.Reserve(vector_size);
     vector_.Resize(vector_size);
   }
 

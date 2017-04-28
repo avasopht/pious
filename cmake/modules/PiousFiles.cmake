@@ -5,7 +5,9 @@ set(PIOUS_SOURCE_FILES
         add_device.cpp
         connection_spec.cpp
         db.cpp
+        device_path_extractor.cpp
         device_spec.cpp
+        dsp_planner.cpp
         id.cpp
         pious_device_instance.cpp
         port_spec.cpp

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 03/01/2017.
+ * Created by The Pious Authors on 28/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,8 @@
  * SOFTWARE.
  */
 
-#include <gtest/gtest.h>
-#include <pious_dsp_lib/var_rms.hpp>
-#include <memory.hpp>
+#include <pious/device_path_extractor.hpp>
 
-TEST(VarRms, Basic) {
-  emcee::DefaultMemory mem;
-  pious::VarRms rms(&mem);
-  rms.SetCapacity(65536);
-  rms.Write(7);
-  rms.Write(9);
-  rms.Write(12);
-  rms.Write(3);
-  rms.Write(6);
-  rms.Write(4);
-  rms.Write(8);
-  rms.Write(2);
-  float precision = 0.001f;
-  ASSERT_NEAR(2.000,  rms.CalcRms(1), precision);
-  ASSERT_NEAR(5.831,  rms.CalcRms(2), precision);
-  ASSERT_NEAR(5.292,  rms.CalcRms(3), precision);
-  ASSERT_NEAR(5.477,  rms.CalcRms(4), precision);
-  ASSERT_NEAR(5.079,  rms.CalcRms(5), precision);
-  ASSERT_NEAR(6.745,  rms.CalcRms(6), precision);
-  ASSERT_NEAR(7.111,  rms.CalcRms(7), precision);
-  ASSERT_NEAR(7.098,  rms.CalcRms(8), precision);
+namespace pious {
+
 }

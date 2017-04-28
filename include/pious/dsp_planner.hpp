@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 02/01/2017.
+ * Created by The Pious Authors on 27/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,58 +21,34 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_VAR_RMS_HPP
-#define PIOUS_VAR_RMS_HPP
+#ifndef PIOUS_DSP_PLANNER_HPP
+#define PIOUS_DSP_PLANNER_HPP
 
-#include <cstdlib>
-
+#include <cstddef>
 #include <emcee/vector.hpp>
-#include <emcee/memory_dependent.hpp>
-#include <emcee/masked_cell_vector.hpp>
-
 namespace emcee {
 class Memory;
-template<typename T> class MaskedCellVector;
+template<typename T> class Vector;
 }
 
 namespace pious {
 
-/*! Allows you to calculate the Rms for an arbitrary length at O(log N), where N is the maximum Rms size.
- */
-class VarRms : public virtual emcee::MemoryDependent {
+class Device;
+class DeviceContainer;
+
+class DspPlanner : public virtual emcee::MemoryDependent {
  public:
-  VarRms();
-  VarRms(emcee::Memory *memory);
-
-  float CalcRms(int rms_size);
-  float CalcRmsAt(int rms_size, int offset);
-
-  void Write(float sample);
-
-  void SetCapacity(size_t min_capacity);
-  void Clear();
-
-  size_t capacity() const;
+  DspPlanner(emcee::Memory * memory);
+  void CreatePlan(DeviceContainer * container);
+  int device_count() const;
+  Device * DeviceAt(int index);
 
  private:
+  emcee::Memory * memory_;
+  emcee::Vector<Device*> dsp_plan_;
 
-  struct SearchCell {
-    float value;
-    size_t cell_size;
-  };
-
-  /* sample[i-1] is the previous sample to sample[i].
-   */
-  emcee::Vector<emcee::MaskedCellVector<float> > buffers_;
-  size_t pos_;
-
-
-  size_t buffer_levels() const;
-
-  void CalcSumMeanSquaredAndWriteToEndOfCell();
-  SearchCell FindLargestCellEndingAt(size_t position, size_t max_size);
 };
 
-}
+} /* pious */
 
-#endif /* PIOUS_VAR_RMS_HPP */
+#endif /* PIOUS_DSP_PLANNER_HPP */

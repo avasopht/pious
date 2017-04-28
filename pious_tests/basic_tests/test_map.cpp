@@ -24,6 +24,11 @@
 #include <gtest/gtest.h>
 #include <emcee/map.hpp>
 #include <emcee/string.hpp>
+#include <emcee/vector.hpp>
+using emcee::Map;
+using emcee::DefaultMemory;
+using emcee::Memory;
+using emcee::Vector;
 
 TEST(Map,BasicTest) {
   emcee::DefaultMemory mem;
@@ -59,4 +64,13 @@ TEST(Map,SharedPtrInMap) {
   ASSERT_EQ(map[b],b);
   ASSERT_EQ(map[c],c);
   ASSERT_EQ(map[d],d);
+}
+
+TEST(Map,ToVectorOfVectors) {
+  DefaultMemory mem;
+  Map<int,Vector<Vector<int>>> map(&mem);
+  map[10] = Vector<Vector<int>>(&mem);
+  map[10].PushBack(Vector<int>(&mem));
+  map[10][0].PushBack(110);
+  ASSERT_EQ(map[10][0][0], 110);
 }

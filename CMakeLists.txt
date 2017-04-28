@@ -12,7 +12,8 @@ ENDFUNCTION()
 add_definitions(-std=gnu++0x)
 
 
-include(GTest.cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+include(GTest)
 include_directories(include)
 
 set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)

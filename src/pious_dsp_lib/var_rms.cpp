@@ -30,12 +30,14 @@ void VarRms::Write(float sample) {
   ++pos_;
   float sample_sq = sample * sample;
   buffers_[0].At(pos_) = sample_sq;
-  SumMeanSquaredToEndOfCell();
+  CalcSumMeanSquaredAndWriteToEndOfCell();
 }
 
-void VarRms::SumMeanSquaredToEndOfCell() {
+void VarRms::CalcSumMeanSquaredAndWriteToEndOfCell() {
   // Write to buffers where current position is at the end of the cell.
+  // If level[n].IsCellEnd(pos) is false, then it is false for all m > n.
   for (size_t level = 1; level < buffer_levels() && buffers_[level].IsCellEnd(pos_); ++level) {
+    // Calculates the SUM(mean_squared) by summing 2 last samples at previous level.
     emcee::MaskedCellVector<float> & cur_buffer = buffers_[level];
     emcee::MaskedCellVector<float> & prev_level_buffer = buffers_[level - 1];
     size_t prev_level_cell_size = prev_level_buffer.cell_size();
@@ -76,6 +78,17 @@ void VarRms::SetCapacity(size_t min_capacity) {
 }
 
 float VarRms::CalcRmsAt(int s_rms_size, int s_offset) {
+  //  RMS is calculated by summing the SUM(mean squared) stored in cells
+  //  in the window.
+  //  --
+  //  How sum(mean squared) is stored at each level (note, level[1][0]
+  //  stores the SUM(mean squared) of samples 0-1):
+  //  level[0]  0   1   2   3   4   5   6   7
+  //  level[1]  0       2       4       6
+  //  level[2]  0               4
+  //  --
+  //  An RMS with a window between 1 and 5 would use the following cells:
+  //  level[0][1], level[1][2], level[0][5].
   assert(s_offset >= 0);
   assert(s_rms_size >= 0);
 

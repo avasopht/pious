@@ -8,7 +8,7 @@ include_directories(${INCLUDE_DIR}/emcee)
 set(INCLUDE_FILES
         ${EMCEE_INCLUDE_FILES})
 
-include(../EmceeFiles.cmake)
+include(EmceeFiles)
 set(SOURCE_FILES ${EMCEE_SOURCE_FILES})
 
 

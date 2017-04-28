@@ -1,6 +1,5 @@
 project(pious_jack_server)
 
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 find_package(JACK)
 
 
@@ -11,11 +10,11 @@ include_directories(${INCLUDE_DIR}/emcee)
 include_directories(${INCLUDE_DIR}/pious)
 include_directories(${INCLUDE_DIR}/pious_dsp_lib)
 
-include(${SRC_DIR}/PiousFiles.cmake)
+include(PiousFiles)
 Prepend(PIOUS_SOURCE_FILES "${SRC_DIR}/pious" ${PIOUS_SOURCE_FILES})
-include(${SRC_DIR}/PiousDspLibFiles.cmake)
+include(PiousDspLibFiles)
 Prepend(DSP_LIB_SOURCE_FILES "${SRC_DIR}/pious_dsp_lib" ${DSP_LIB_SOURCE_FILES})
-include(${SRC_DIR}/EmceeFiles.cmake)
+include(EmceeFiles)
 Prepend(EMCEE_SOURCE_FILES "${SRC_DIR}/emcee" ${EMCEE_SOURCE_FILES})
 
 SET(ALL_SOURCE_FILES ${PIOUS_SOURCE_FILES} ${DSP_LIB_SOURCE_FILES} ${EMCEE_SOURCE_FILES})
