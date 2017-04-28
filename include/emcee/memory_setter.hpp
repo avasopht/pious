@@ -42,10 +42,10 @@ class MemorySetter {
    *  Returns whether injected.
    */
   template<typename T>
-  static bool Inject(T & ref, Memory * memory) {
+  static bool Inject(T * ref, Memory * memory) {
     boost::is_base_of<MemorySetter, T> can_inject;
     if (can_inject) {
-      MemorySetter * setter_ref = reinterpret_cast<MemorySetter *>(&ref);
+      MemorySetter * setter_ref = reinterpret_cast<MemorySetter *>(ref);
       setter_ref->SetMemory(memory);
       return true;
     }

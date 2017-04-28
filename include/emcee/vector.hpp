@@ -262,6 +262,10 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
     ++size_;
   }
 
+  void CreateBack() {
+    PushBack(T());
+  }
+
   /*! \brief  Erases element at the given index.
    *
    *    Calling this may result in a resize.
@@ -421,7 +425,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
     bool memory_injected =
         MemoryDependentWithCopy::ConstructAt(&array_[idx], memory_, new_val);
     if (!memory_injected)
-      MemorySetter::Inject(array_[idx], memory_);
+      MemorySetter::Inject(&array_[idx], memory_);
   }
 
   /*

@@ -41,7 +41,9 @@ class Map : public virtual MemoryDependentWithCopy {
     T value;
     Key key;
 
-    Node(Memory * memory) : next(memory), value(), key() {}
+    Node(Memory * memory) : next(memory), value(), key() {
+      emcee::MemorySetter::Inject(&value, memory);
+    }
 
     Node & WithLevel(int level) {
       next.Resize(level);

@@ -28,7 +28,7 @@
 TEST(VarRms, Basic) {
   emcee::DefaultMemory mem;
   pious::VarRms rms(&mem);
-  rms.SetCapacity(65536);
+  rms.SetCapacity(1024);
   rms.Write(7);
   rms.Write(9);
   rms.Write(12);

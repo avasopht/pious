@@ -21,32 +21,38 @@
  * SOFTWARE.
  */
 
-#include <pious/device_path_extractor.hpp>
-#include <pious/device_container.hpp>
+#include <gtest/gtest.h>
+#include <emcee/set.hpp>
+using emcee::Set;
+using emcee::Memory;
+using emcee::DefaultMemory;
 
-namespace pious {
-
-DevicePathExtractor::DevicePathExtractor(emcee::Memory * memory) : memory_(memory), paths_(memory){
-
+TEST(Set,BasicTest) {
+  DefaultMemory mem;
+  Set<int> set(&mem);
+  set.Add(11);
+  ASSERT_TRUE(set.Contains(11));
+  set.Add(11);
+  ASSERT_TRUE(set.Contains(11));
+  set.Remove(11);
+  ASSERT_TRUE(set.Contains(11));
+  set.Remove(11);
+  ASSERT_FALSE(set.Contains(11));
 }
 
-void DevicePathExtractor::ExtractPaths(DeviceContainer * container) {
-  for(size_t i = 0; i < container->child_count(); ++i) {
-    ExtractPaths(container->ChildAt(i));
-  }
-}
+TEST(Set,Iterator) {
+  DefaultMemory mem;
+  Set<int> set(&mem);
+  set.Add(7);
+  set.Add(8);
+  set.Add(1);
 
-void DevicePathExtractor::ExtractPaths(Device * device) {
-  emcee::Vector<PathSearch> searches (memory_);
-  searches.PushBack(CreatePathSearch(device));
-}
-
-DevicePathExtractor::PathSearch DevicePathExtractor::CreatePathSearch(Device * device) {
-  PathSearch search;
-  search.path.SetMemory(memory_);
-  search.path.PushBack(device);
-  search.iterator = search.path.begin();
-  return search;
-}
-
+  Set<int>::Iterator iter = set.begin();
+  ASSERT_EQ(iter.value(), 1);
+  ++iter;
+  ASSERT_EQ(iter.value(), 7);
+  ++iter;
+  ASSERT_EQ(iter.value(), 8);
+  ++iter;
+  ASSERT_EQ(iter, set.end());
 }

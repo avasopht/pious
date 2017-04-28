@@ -40,8 +40,15 @@ class DevicePathExtractor {
   emcee::Vector<emcee::Vector<Device*>> GetPathsForDevice(Device * device);
 
  private:
+  struct PathSearch {
+    emcee::Vector<Device*>::Iterator iterator;
+    emcee::Vector<Device*> path;
+  };
   emcee::Memory * memory_;
   emcee::Map<Device*,emcee::Vector<emcee::Vector<Device*>>> paths_;
+
+  void ExtractPaths(Device * device);
+  PathSearch CreatePathSearch(Device * device);
 };
 
 }

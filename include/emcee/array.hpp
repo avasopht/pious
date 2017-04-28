@@ -81,7 +81,7 @@ class Array {
   void InitArray(Memory & memory) {
     for (size_t i = 0; i < N; ++i) {
       Construct(memory, operator[](i));
-      MemorySetter::Inject(operator[](i), &memory);
+      MemorySetter::Inject(&operator[](i), &memory);
     }
   }
 };

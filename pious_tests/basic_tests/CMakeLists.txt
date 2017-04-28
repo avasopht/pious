@@ -31,6 +31,7 @@ add_executable(runBasicPiousTests
         test_new.cpp
         test_pious_db.cpp
         test_rack.cpp
+        test_set.cpp
         test_shared_ptr.cpp
         test_string.cpp
         test_unique_ptr.cpp
