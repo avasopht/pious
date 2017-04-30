@@ -29,14 +29,20 @@ namespace pious {
 
 class SignalHoldEvent;
 class DataPacket;
+class Device;
 
 class Port {
  public:
+  static bool IsOutput(const Port & port);
+  static bool IsInput(const Port & port);
   virtual ~Port(){};
   virtual void Connect(Port * dest_port) = 0;
+  virtual bool IsConnected() const = 0;
+  virtual Port * GetConnectedPort() = 0;
   virtual Pious_IoType io_type() const = 0;
   virtual void SetIoType(Pious_IoType io_type) = 0;
   virtual void Disconnect() = 0;
+  virtual Device * device() = 0;
 
   virtual bool CanReadSignal() const = 0;
   /*! Reads signal into dest, returning number of frames read. */

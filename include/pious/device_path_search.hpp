@@ -21,34 +21,35 @@
  * SOFTWARE.
  */
 
-#ifndef PIOUS_DEVICE_PATH_EXTRACTOR_HPP
-#define PIOUS_DEVICE_PATH_EXTRACTOR_HPP
+#ifndef PIOUS_DEVICE_PATH_SEARCH_HPP
+#define PIOUS_DEVICE_PATH_SEARCH_HPP
 
-#include <emcee/memory.hpp>
 #include <emcee/vector.hpp>
-#include <emcee/map.hpp>
+
+namespace emcee {
+class Memory;
+}
 
 namespace pious {
 
-class DeviceContainer;
 class Device;
-class DevicePathSearch;
 
-class DevicePathExtractor {
+class DevicePathSearch {
  public:
-  DevicePathExtractor(emcee::Memory * memory);
-  void ExtractPaths(DeviceContainer * container);
-  emcee::Vector<emcee::Vector<Device*>> GetPathsForDevice(Device * device);
+  DevicePathSearch(emcee::Memory * memory, Device * device);
+  void AddConnectedDeviceFromPortAt(size_t port_idx);
 
+  bool is_finished() const;
+  Device * device() const;
+  bool LoopIsDetected() const;
  private:
-  emcee::Memory * memory_;
-  emcee::Map<Device*,emcee::Vector<emcee::Vector<Device*>>> paths_;
+  emcee::Vector<Device*> path_;
+  emcee::Vector<Device*>::Iterator iterator_;
+  Device * device_;
 
-  void ExtractPathsFromDevice(Device * device);
-  DevicePathSearch CreatePathSearch(Device * device);
-  void PerformSearchStep(DevicePathSearch * path_search, emcee::Vector<DevicePathSearch> * next_searchlist);
+  bool DeviceHasOutwardConnections() const;
 };
 
 }
 
-#endif /* PIOUS_DEVICE_PATH_EXTRACTOR_HPP */
+#endif /* PIOUS_DEVICE_PATH_SEARCH_HPP */

@@ -164,7 +164,7 @@ class Map : public virtual MemoryDependentWithCopy {
     head_->WithLevel(33);
   }
 
-  bool Empty() const { return size_ == 0; }
+  bool IsEmpty() const { return size_ == 0; }
 
   T * Get(const Key & key) {
     if (ContainsKey(key))

@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <emcee/vector.hpp>
+using emcee::DefaultMemory;
+using emcee::Vector;
 
 TEST(Vector, CopyAndAssignment) {
   emcee::DefaultMemory mem;
@@ -68,4 +70,43 @@ TEST(Vector, Erase) {
   for(size_t i = 0; i < vec.size(); ++i) {
     ASSERT_EQ(1, vec[i] % 2) << "all elements should be odd";
   }
+}
+
+TEST(Vector,Iterator) {
+  DefaultMemory mem;
+  Vector<int> vec(&mem);
+  vec.PushBack(4);
+  vec.PushBack(8);
+  vec.PushBack(15);
+  vec.PushBack(16);
+  vec.PushBack(23);
+  vec.PushBack(42);
+
+  Vector<int>::Iterator iter = vec.begin();
+  ASSERT_EQ(*iter, 4);
+  ++iter;
+  ASSERT_EQ(*iter, 8);
+  --iter;
+  ASSERT_EQ(*iter, 4);
+  iter++;
+  ASSERT_EQ(*iter, 8);
+  ASSERT_EQ(*(iter--),8);
+  const Vector<int>::ConstIterator const_iter = iter;
+  ASSERT_EQ(*const_iter, 4);
+}
+
+class C {
+ public:
+  C() : array_{0,1,2,3,4,5,6,7,8,9} {}
+  int & val() const {
+    return const_cast<int&>(array_[0]);
+  }
+ private:
+  int array_[10];
+};
+
+static const C c;
+
+TEST(Vector,ConstModification) {
+  c.val() = 9;
 }

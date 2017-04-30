@@ -66,77 +66,127 @@ template<typename T>
 class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySetter {
  public:
 
-  class Iterator {
+  class IteratorBase {
    public:
-    Iterator() : vector_(nullptr), idx_(0) {}
 
-    Iterator(Vector * vector, size_t idx) : vector_(vector), idx_(idx) {}
+    IteratorBase(Vector * vector, size_t idx) : vector_(vector), const_vector_(vector), idx_(idx) {}
+    IteratorBase(const Vector * vector, size_t idx) : vector_(nullptr), const_vector_(vector), idx_(idx) {}
 
-    static bool BothAreNull(const Iterator & lhs, const Iterator & rhs) {
-      return !lhs.vector_ && !rhs.vector_;
+    void Reset(Vector * vector, size_t idx) {
+      vector_ = vector;
+      const_vector_ = vector;
+      idx_ = idx;
     }
 
-    static bool OneIsNull(const Iterator & lhs, const Iterator & rhs) {
-      return !lhs.vector_ ^ !rhs.vector_;
+    void Reset(const Vector * vector, size_t idx) {
+      assert(vector_ == nullptr);
+      const_vector_ = vector;
+      idx_ = idx;
     }
 
-    bool operator==(const Iterator & rhs) const {
-      if (this == &rhs)
-        return true;
+    const Vector * GetVector(const Vector * /*ignored*/) const { return const_vector_; }
+    Vector * GetVector(Vector * /*ignored*/) { return vector_; }
 
+    void Increment() { ++idx_; }
+    void Decrement() { --idx_; }
+
+    static bool BothAreNull(const IteratorBase & lhs, const IteratorBase & rhs) {
+      return !lhs.const_vector_ && !rhs.const_vector_;
+    }
+
+    static bool OneIsNull(const IteratorBase & lhs, const IteratorBase & rhs) {
+      return !lhs.const_vector_ ^ !rhs.const_vector_;
+    }
+
+    bool operator==(const IteratorBase & rhs) const {
       if (BothAreNull(*this, rhs))
         return true;
 
       if (OneIsNull(*this, rhs))
         return false;
 
-      return vector_ == rhs.vector_ && idx_ == rhs.idx_;
+      return const_vector_ == rhs.const_vector_ && idx_ == rhs.idx_;
     }
 
-    bool operator!=(const Iterator & rhs) const {
-      if (this == &rhs)
-        return false;
-
+    bool operator!=(const IteratorBase & rhs) const {
       if (BothAreNull(*this, rhs))
         return false;
 
       if (OneIsNull(*this, rhs))
         return true;
 
-      return vector_ != rhs.vector_ || idx_ != rhs.idx_;
+      return const_vector_ != rhs.const_vector_ || idx_ != rhs.idx_;
     }
 
-    T & operator*() const {
-      assert(vector_);
-      return vector_->At(idx_);
-    }
+    size_t idx() const { return idx_; }
 
-    Iterator & operator++() {
-      ++idx_;
-      return *this;
-    }
-
-    Iterator operator++(int) {
-      Iterator tmp = *this;
-      ++idx_;
-      return tmp;
-    }
-
-    Iterator & operator--() {
-      --idx_;
-      return *this;
-    }
-
-    Iterator operator--(int) {
-      Iterator tmp = *this;
-      --idx_;
-      return tmp;
-    }
-
+   protected:
+    const Vector * const_vector() const { return const_vector_; }
+    Vector * vector() { return vector_; }
    private:
     Vector * vector_;
+    const Vector * const_vector_;
     size_t idx_;
   };
+
+  template<typename VectorType=Vector, typename ValueType=T>
+  class IteratorTemplate : public IteratorBase {
+   public:
+    IteratorTemplate(VectorType * vector, size_t idx) : IteratorBase(vector, idx) {}
+    IteratorTemplate() : IteratorBase(static_cast<VectorType*>(nullptr), 0) {}
+    template<typename Y> IteratorTemplate(const IteratorTemplate<Y> & other)
+        : IteratorBase(other.GetVector(static_cast<VectorType*>(nullptr)), other.idx()) {
+    }
+    template<typename Y> IteratorTemplate(IteratorTemplate<Y> & other)
+        : IteratorBase(other.GetVector(static_cast<VectorType*>(nullptr)), other.idx()) {
+    }
+
+    IteratorTemplate & operator++() {
+      IteratorBase::Increment();
+      return static_cast<IteratorTemplate&>(*this);
+    }
+
+    template<typename Y>
+    IteratorTemplate & operator=(IteratorTemplate<Y> & rhs) {
+      Reset(rhs.GetVector(static_cast<VectorType*>(nullptr)), rhs.idx());
+    }
+
+    IteratorTemplate operator++(int) {
+      IteratorTemplate tmp = *this;
+      IteratorBase::Increment();
+      return tmp;
+    }
+
+    IteratorTemplate & operator--() {
+      IteratorBase::Decrement();
+      return static_cast<IteratorTemplate&>(*this);
+    }
+
+    IteratorTemplate operator--(int) {
+      IteratorTemplate tmp = *this;
+      IteratorBase::Decrement();
+      return tmp;
+    }
+
+
+    const T & value() const {
+      assert(IteratorBase::const_vector());
+      return IteratorBase::const_vector()->At(IteratorBase::idx());
+    }
+
+
+    ValueType & value() {
+      VectorType * vector = IteratorBase::GetVector(static_cast<VectorType*>(nullptr));
+      assert(vector);
+      return vector->At(IteratorBase::idx());
+    }
+
+    const T & operator*() const { return value(); }
+    ValueType & operator*() { return value(); }
+  };
+
+  typedef IteratorTemplate<Vector> Iterator;
+  typedef IteratorTemplate<const Vector, const T> ConstIterator;
 
   Vector() :
       memory_(nullptr), array_(nullptr), size_(0), capacity_(0) {}
@@ -160,7 +210,11 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
   }
 
   Iterator begin() { return Iterator(this, 0); }
+  ConstIterator begin() const { return ConstIterator(this, 0); }
+  ConstIterator cbegin() const { return ConstIterator(this, 0); }
   Iterator end() { return Iterator(this, size()); }
+  ConstIterator end() const { return ConstIterator(this, size()); }
+  ConstIterator cend() const { return ConstIterator(this, size()); }
   /*! \brief Constructs an empty Vector of size 0. */
   Vector(Memory * memory) :
       memory_(memory),

@@ -23,6 +23,8 @@
 
 #include <pious/device_path_extractor.hpp>
 #include <pious/device_container.hpp>
+#include <pious/device_path_search.hpp>
+#include <emcee/set.hpp>
 
 namespace pious {
 
@@ -32,21 +34,30 @@ DevicePathExtractor::DevicePathExtractor(emcee::Memory * memory) : memory_(memor
 
 void DevicePathExtractor::ExtractPaths(DeviceContainer * container) {
   for(size_t i = 0; i < container->child_count(); ++i) {
-    ExtractPaths(container->ChildAt(i));
+    ExtractPathsFromDevice(container->ChildAt(i));
   }
 }
 
-void DevicePathExtractor::ExtractPaths(Device * device) {
-  emcee::Vector<PathSearch> searches (memory_);
-  searches.PushBack(CreatePathSearch(device));
+void DevicePathExtractor::ExtractPathsFromDevice(Device * device) {
+  emcee::Vector<DevicePathSearch> searchlist (memory_);
+  searchlist.PushBack(CreatePathSearch(device));
+  while(!searchlist.Empty()) {
+    emcee::Vector<DevicePathSearch> next_searchlist(memory_);
+    for(emcee::Vector<DevicePathSearch>::Iterator search_iter = searchlist.begin(); search_iter != searchlist.end(); ++search_iter) {
+      // For each connection, create a new path search, adding it to 'next' list.
+      // PerformSearchStep(&search_iter.value(), &next_searchlist);
+    }
+    searchlist = next_searchlist;
+  }
 }
 
-DevicePathExtractor::PathSearch DevicePathExtractor::CreatePathSearch(Device * device) {
-  PathSearch search;
-  search.path.SetMemory(memory_);
-  search.path.PushBack(device);
-  search.iterator = search.path.begin();
+DevicePathSearch DevicePathExtractor::CreatePathSearch(Device * device) {
+  DevicePathSearch search(memory_, device);
   return search;
 }
 
+void DevicePathExtractor::PerformSearchStep(DevicePathSearch * path_search, emcee::Vector<DevicePathSearch> * next_searchlist) {
+
 }
+
+} /* pious */

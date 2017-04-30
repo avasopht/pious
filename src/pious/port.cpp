@@ -20,35 +20,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-#ifndef PIOUS_DEVICE_PATH_EXTRACTOR_HPP
-#define PIOUS_DEVICE_PATH_EXTRACTOR_HPP
-
-#include <emcee/memory.hpp>
-#include <emcee/vector.hpp>
-#include <emcee/map.hpp>
+#include <pious/port.hpp>
 
 namespace pious {
 
-class DeviceContainer;
-class Device;
-class DevicePathSearch;
+bool Port::IsOutput(const Port & port) {
+  switch(port.io_type()) {
+    case Pious_IoTypeSignalOut:
+    case Pious_IoTypeHoldSignalOut:
+    case Pious_IoTypeDataOut:
+      return true;
+  }
 
-class DevicePathExtractor {
- public:
-  DevicePathExtractor(emcee::Memory * memory);
-  void ExtractPaths(DeviceContainer * container);
-  emcee::Vector<emcee::Vector<Device*>> GetPathsForDevice(Device * device);
-
- private:
-  emcee::Memory * memory_;
-  emcee::Map<Device*,emcee::Vector<emcee::Vector<Device*>>> paths_;
-
-  void ExtractPathsFromDevice(Device * device);
-  DevicePathSearch CreatePathSearch(Device * device);
-  void PerformSearchStep(DevicePathSearch * path_search, emcee::Vector<DevicePathSearch> * next_searchlist);
-};
-
+  return false;
 }
 
-#endif /* PIOUS_DEVICE_PATH_EXTRACTOR_HPP */
+bool Port::IsInput(const Port & port) {
+  switch(port.io_type()) {
+    case Pious_IoTypeDataOut:
+    case Pious_IoTypeHoldSignalOut:
+    case Pious_IoTypeSignalOut:
+      return true;
+  }
+
+  return false;
+}
+} /* pious */

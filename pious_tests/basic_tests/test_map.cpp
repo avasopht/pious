@@ -33,14 +33,14 @@ using emcee::Vector;
 TEST(Map,BasicTest) {
   emcee::DefaultMemory mem;
   emcee::Map<int, emcee::String> map(&mem);
-  ASSERT_TRUE(map.Empty());
+  ASSERT_TRUE(map.IsEmpty());
   map[10] = emcee::String(&mem, "Helvetica");
-  ASSERT_FALSE(map.Empty());
+  ASSERT_FALSE(map.IsEmpty());
   ASSERT_TRUE(map.ContainsKey(10));
   ASSERT_STREQ("Helvetica", map[10].c_str());
   ASSERT_FALSE(map.Remove(11));
   ASSERT_TRUE(map.Remove(10));
-  ASSERT_TRUE(map.Empty());
+  ASSERT_TRUE(map.IsEmpty());
   ASSERT_FALSE(map.ContainsKey(10));
 }
 

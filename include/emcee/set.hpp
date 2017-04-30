@@ -80,6 +80,8 @@ class Set {
     return true;
   }
 
+  bool IsEmpty() const { return element_count_.IsEmpty(); }
+
   template<typename Y> bool Remove(const Y & element) {
     if(!element_count_.ContainsKey(element))
       return false;
