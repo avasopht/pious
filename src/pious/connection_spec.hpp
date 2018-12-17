@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 07/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,45 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_CONNECTION_HPP
+#define PIOUS_CONNECTION_HPP
+
+#include "id.hpp"
+#include <cstdint>
 
 namespace emcee {
-
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
-
-static void DefaultFree(void *, void * ptr) { free(ptr); }
-
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+class Memory;
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
+namespace pious {
+
+/*! Stores details for a connection between ports in a device specification. */
+class ConnectionSpec {
+ public:
+  explicit ConnectionSpec(emcee::Memory *memory);
+
+  void AddSourceDevice(const char *sid);
+  void AddSourceDevice(uint32_t iid);
+  void AddSourcePort(const char *sid);
+  void AddSourcePort(uint32_t iid);
+  void AddDestDevice(const char *sid);
+  void AddDestDevice(uint32_t iid);
+  void AddDestPort(const char *sid);
+  void AddDestPort(uint32_t iid);
+
+  Id source_device() const;
+  Id source_port() const;
+  Id dest_device() const;
+  Id dest_port() const;
+
+ private:
+  Id source_device_;
+  Id source_port_;
+  Id dest_device_;
+  Id dest_port_;
+};
+
 }
 
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
+#endif /* PIOUS_CONNECTION_HPP */
 
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}

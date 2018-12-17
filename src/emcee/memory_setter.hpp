@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 28/09/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,38 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_MEMORY_SETTER_HPP
+#define PIOUS_MEMORY_SETTER_HPP
+
+#include <boost/type_traits/is_base_of.hpp>
 
 namespace emcee {
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+class Memory;
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+/*! \brief Interface for a class that accepts a Memory pointer.
+ */
+class MemorySetter {
+ public:
+  virtual ~MemorySetter() = default;
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
-}
+  virtual void SetMemory(Memory * ptr) = 0;
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
-
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
+  /*! Injects memory into object if object derives from MemorySetter.
+   *  Returns whether injected.
+   */
+  template<typename T>
+  static bool Inject(T * ref, Memory * memory) {
+    boost::is_base_of<MemorySetter, T> can_inject;
+    if (can_inject) {
+      MemorySetter * setter_ref = reinterpret_cast<MemorySetter *>(ref);
+      setter_ref->SetMemory(memory);
+      return true;
+    }
+    return false;
+  }
+};
 
 }
+
+#endif /* PIOUS_MEMORY_SETTER_HPP */

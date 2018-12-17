@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 09/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,20 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_PROCESS_HPP
+#define PIOUS_PROCESS_HPP
 
-namespace emcee {
+namespace pious {
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+class Process {
+ public:
+  virtual ~Process() = 0;
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+  virtual void Do() = 0;
+};
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
-}
-
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
-
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
+Process::~Process() = default;
 
 }
+
+#endif /* PIOUS_PROCESS_HPP */

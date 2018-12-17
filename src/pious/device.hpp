@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 06/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,41 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_DEVICE_INSTANCE_HPP
+#define PIOUS_DEVICE_INSTANCE_HPP
+
+#include <cstddef>
+
+#include "device_container.hpp"
+#include <api/pious_spec.h>
 
 namespace emcee {
-
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
-
-static void DefaultFree(void *, void * ptr) { free(ptr); }
-
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+class String;
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
+namespace pious {
+
+class Port;
+
+class Device : public virtual DeviceContainer {
+ public:
+  virtual bool has_dsp() const = 0;
+
+  /*! Returns inner device that connects to its children. */
+  virtual Device * GetInnerDevice() = 0;
+
+  virtual void SetLabel(const char * name) = 0;
+  virtual const char * label() const = 0;
+
+  virtual void SetParent(DeviceContainer * parent) = 0;
+  virtual DeviceContainer * parent () = 0;
+  virtual Port * CreatePort(const char * id, Pious_IoType io_type) = 0;
+  virtual Port * PortAt(size_t index) = 0;
+  virtual size_t port_count() const = 0;
+  virtual Port * FindPort(const char * id) = 0;
+  virtual Port * FindPort(const emcee::String & id) = 0;
+};
+
 }
 
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}
+#endif /* PIOUS_DEVICE_INSTANCE_HPP */

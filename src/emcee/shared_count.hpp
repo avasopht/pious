@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 04/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,34 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_SHARED_COUNT_HPP
+#define PIOUS_SHARED_COUNT_HPP
 
 namespace emcee {
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+class ReferenceCounter;
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+/*! \brief  Implements a reference counter to be shared by value.
+ */
+class SharedCount {
+ public:
+  SharedCount();
+  SharedCount(const SharedCount & other);
+  explicit SharedCount(ReferenceCounter * counter);
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
-}
+  ~SharedCount();
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
+  SharedCount & operator=(const SharedCount & rhs);
+  size_t use_count() const;
+  ReferenceCounter * counter() const;
 
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
+ private:
+  ReferenceCounter * counter_;
+  void ImportCounter(const SharedCount & other);
+  void Release();
+  void AddUse();
+};
 
 }
+
+#endif /* PIOUS_SHARED_COUNT_HPP */

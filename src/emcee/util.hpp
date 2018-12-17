@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 30/09/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,48 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_UTIL_HPP
+#define PIOUS_UTIL_HPP
 
+#include <cstddef>
+#include <cstdint>
 namespace emcee {
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+bool NearEq(float first, float second, float error);
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+/*! Returns an object size that is aligned with memory. */
+size_t CalcPaddedSize(size_t size);
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+/*! Returns whether pointer is memory aligned. */
+bool IsAligned(void * ptr);
+
+/*! Returns the next aligned pointer */
+void * NextAligned(void * ptr);
+
+//! \sa class Offset
+void * CalcOffset(void * ptr, ptrdiff_t offset);
+
+/*! \brief Returns a type T pointer to an address at an offset from a pointer
+ *
+ * Using this class can make it cleaner to
+ */
+template<typename T>
+class Offset {
+ public:
+  explicit Offset(void * ptr) : ptr_(ptr) {}
+
+  const T * Calc(ptrdiff_t offset) const {
+    return reinterpret_cast<T *>(&reinterpret_cast<uint8_t *>(ptr_)[offset]);
+  }
+
+  T * Calc(ptrdiff_t offset) {
+    return const_cast<T *>(static_cast<const Offset<T> *>(this)->Calc(offset));
+  }
+
+ private:
+  void * ptr_;
+};
+
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
-
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}
+#endif /* PIOUS_UTIL_HPP */

@@ -4,6 +4,9 @@
 build/
 rack_extension/
 cmake-build-debug/
+include/*
+lib/*
+bin/*
 
 # Object files
 *.o

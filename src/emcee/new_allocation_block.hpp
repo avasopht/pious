@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 29/09/2016.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,59 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_NEW_ALLOCATION_BLOCK_HPP
+#define PIOUS_NEW_ALLOCATION_BLOCK_HPP
+
+#include <cstddef>
+#include <new>
+#include <cassert>
 
 namespace emcee {
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+class Destructor;
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+class Memory;
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+/*! \brief  Implements an allocation block for New<>.
+ */
+class NewAllocationBlock {
+ public:
+
+  explicit NewAllocationBlock(Memory * memory);
+
+  NewAllocationBlock & WithDestructor(Destructor * d) {
+    destructor_ = d;
+    return *this;
+  }
+
+  NewAllocationBlock & WithData(void * data) {
+    data_ = data;
+    return *this;
+  }
+
+  NewAllocationBlock & WithCount(size_t count) {
+    count_ = count;
+    return *this;
+  }
+
+  Destructor * destructor() { return destructor_; }
+
+  void * data() { return data_; }
+
+  Memory * memory() { return memory_; }
+
+  size_t count() const { return count_; }
+
+  NewAllocationBlock(const NewAllocationBlock &) = delete;
+
+ private:
+  Memory * memory_;
+  void * data_;
+  Destructor * destructor_;
+  size_t count_;
+
+};
+
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
-
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}
+#endif /* PIOUS_NEW_ALLOCATION_HPP */

@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 07/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,42 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_SPEC_PORT_HPP
+#define PIOUS_SPEC_PORT_HPP
+
+#include "id.hpp"
+
+#include <emcee/string.hpp>
+#include <emcee/memory_dependent.hpp>
+
+#include <api/pious_device.h>
 
 namespace emcee {
-
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
-
-static void DefaultFree(void *, void * ptr) { free(ptr); }
-
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+class Memory;
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
+namespace pious {
+
+/*! Stores details of a port for a Device Specification. */
+class PortSpec : public virtual emcee::MemoryDependent {
+ public:
+  PortSpec();
+  explicit PortSpec(emcee::Memory *m);
+  void SetMemory(emcee::Memory *m);
+
+  uint32_t iid() const;
+  void SetIid(uint32_t id);
+  const char *sid_cstr() const;
+  emcee::String sid() const;
+  void SetSid(const char *sid);
+  Pious_IoType io_type() const;
+  void SetIoType(Pious_IoType io_type);
+
+ private:
+  Id id_;
+  Pious_IoType io_type_;
+};
+
 }
 
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}
+#endif /* PIOUS_SPEC_PORT_HPP */

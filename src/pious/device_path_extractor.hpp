@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 28/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,34 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_DEVICE_PATH_EXTRACTOR_HPP
+#define PIOUS_DEVICE_PATH_EXTRACTOR_HPP
 
-namespace emcee {
+#include <emcee/memory.hpp>
+#include <emcee/vector.hpp>
+#include <emcee/map.hpp>
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+namespace pious {
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+class DeviceContainer;
+class Device;
+class DevicePathSearch;
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
-}
+class DevicePathExtractor {
+ public:
+  explicit DevicePathExtractor(emcee::Memory * memory);
+  void ExtractPaths(DeviceContainer * container);
+  emcee::Vector<emcee::Vector<Device*>> GetPathsForDevice(Device * device);
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
+ private:
+  emcee::Memory * memory_;
+  emcee::Map<Device*,emcee::Vector<emcee::Vector<Device*>>> paths_;
 
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
+  void ExtractPathsFromDevice(Device * device);
+  DevicePathSearch CreatePathSearch(Device * device);
+  void PerformSearchStep(DevicePathSearch * path_search, emcee::Vector<DevicePathSearch> * next_searchlist);
+};
 
 }
+
+#endif /* PIOUS_DEVICE_PATH_EXTRACTOR_HPP */

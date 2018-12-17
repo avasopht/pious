@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 09/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,32 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_SCOPE_HPP
+#define PIOUS_SCOPE_HPP
 
-namespace emcee {
+#include <api/pious_device.h>
+#include <cstdint>
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+struct Pious_HoldSignalEvent;
+struct Pious_DataPacket;
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+namespace emcee { class Memory; }
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
-}
+namespace pious {
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
+class Port;
 
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
 
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
+class Scope {
+ public:
+  virtual ~Scope() = default;
 
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
+  /*! Returns memory pointer during Dsp::Initialize() */
+  virtual emcee::Memory * memory() = 0;
+  virtual void SetPluginDelay(float delay_in_samples) = 0;
+  virtual Port* GetPort(const char * port_uri) = 0;
+};
 
 }
+
+#endif /* PIOUS_SCOPE_HPP */

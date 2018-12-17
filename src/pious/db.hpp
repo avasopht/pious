@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 06/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,56 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_DB_HPP
+#define PIOUS_DB_HPP
+
+#include <emcee/map.hpp>
 
 namespace emcee {
-
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
-
-static void DefaultFree(void *, void * ptr) { free(ptr); }
-
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+class String;
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
+namespace pious {
+class DeviceSpec;
 }
 
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
+struct Pious_Db { };
+
+namespace pious {
+class Db : public Pious_Db {
+ public:
+  Db() : mem(nullptr), parent(nullptr) {}
+
+  explicit Db(Pious_Mem * m);
+
+  bool IsChild(const Db * child) const;
+
+  ~Db();
+
+  DeviceSpec * CreateDevice(const char * sid);
+  DeviceSpec * FindDevice(const char * sid);
+
+  void SetMemory(emcee::StructMemory * m);
+
+  static Db * FromStruct(Pious_Db * db);
+
+  void RemoveChildDb(Db * child);
+  void RemoveFromParent();
+  Db * CreateChildDb();
+
+  size_t device_count() const { return devices.size(); }
+  bool HasParent() const { return parent != nullptr; }
+
+  struct Pious_Mem * GetMemStruct();
+
+ private:
+
+  emcee::StructMemory *mem;
+  emcee::Map<emcee::String, emcee::SharedPtr<DeviceSpec>> devices;
+  Db *parent;
+  emcee::Vector<emcee::SharedPtr<Db> > children;
+};
+
 }
 
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}
+#endif /* PIOUS_DB_HPP */

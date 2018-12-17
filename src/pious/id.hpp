@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 10/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,44 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_ID_HPP
+#define PIOUS_ID_HPP
 
-namespace emcee {
+#include <emcee/string.hpp>
+#include <cstdint>
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+namespace pious {
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+class Id : public virtual emcee::MemoryDependent {
+ public:
+  Id();
+  explicit Id(emcee::Memory *memory);
+  explicit Id(emcee::String sid);
+  explicit Id(uint32_t iid);
+  Id(emcee::String sid, uint32_t iid);
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+  void SetMemory(emcee::Memory *m);
+
+  Id& SetSid(const char *sid);
+  Id& SetSid(const emcee::String &sid);
+  Id& SetIid(uint32_t iid);
+
+  const char* sid_cstr() const;
+  emcee::String sid() const;
+  uint32_t iid() const;
+
+  int Compare(const Id &rhs) const;
+
+ private:
+  emcee::String sid_;
+  uint32_t iid_;
+};
+
+
+bool operator==(const Id &lhs, const Id &rhs);
+bool operator==(const char *lhs, const Id &rhs);
+bool operator==(const Id &lhs, const char *rhs);
+
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
-
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}
+#endif /* PIOUS_ID_HPP */

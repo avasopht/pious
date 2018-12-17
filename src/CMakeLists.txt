@@ -1,58 +1,3 @@
-set(EMCEE_INCLUDE_FILES
-        array.hpp
-        deleter.hpp
-        destructor.hpp
-        emcee.hpp
-        map.hpp
-        masked_cell_vector.hpp
-        memory.hpp
-        memory_dependent.hpp
-        memory_setter.hpp
-        new.hpp
-        new_allocation_block.hpp
-        pow2.hpp
-        reference_counter.hpp
-        shared_count.hpp
-        shared_ptr.hpp
-        string.hpp
-        unique_ptr.hpp
-        util.hpp
-        vector.hpp
-        weak_count.hpp
-        weak_ptr.hpp
-        )
-
-set(PIOUS_INCLUDE_FILES
-        add_connection.hpp
-        add_connection_port.hpp
-        add_connection_port_dest.hpp
-        add_device.hpp
-        connection_spec.hpp
-        db.hpp
-        device_spec.hpp
-        id.hpp
-        instance_factory.hpp
-        port.hpp
-        port_spec.hpp
-        process.hpp
-        reference_spec.hpp
-        scope.hpp
-        spec_finder.hpp
-        spec_to_devices.hpp
-        )
-
-set(PIOUS_DSP_LIB_INCLUDE_FILES
-        var_rms.hpp
-        )
-
-set(EMCEE_INCLUDE_DIR "${INCLUDE_DIR}/emcee")
-set(PIOUS_INCLUDE_DIR "${INCLUDE_DIR}/pious")
-set(PIOUS_DSP_LIB_INCLUDE_DIR "${INCLUDE_DIR}/pious_dsp_lib")
-Prepend(EMCEE_INCLUDE_FILES "${INCLUDE_DIR}/emcee" ${EMCEE_INCLUDE_FILES})
-Prepend(PIOUS_INCLUDE_FILES "${INCLUDE_DIR}/pious" ${PIOUS_INCLUDE_FILES})
-Prepend(PIOUS_DSP_LIB_INCLUDE_FILES "${INCLUDE_DIR}/pious_dsp_lib" ${PIOUS_DSP_LIB_INCLUDE_FILES})
-
-
 find_package(Boost 1.48 REQUIRED)
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
@@ -60,6 +5,8 @@ else ()
     message(FATAL_ERROR "Boost required.")
 endif ()
 
+include_directories(./include)
+add_subdirectory(include)
 add_subdirectory(pious)
 add_subdirectory(emcee)
 add_subdirectory(pious_dsp_lib)

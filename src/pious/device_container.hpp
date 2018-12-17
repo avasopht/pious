@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 23/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,24 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_DEVICE_CONTAINER_HPP
+#define PIOUS_DEVICE_CONTAINER_HPP
 
-namespace emcee {
+#include <cstddef>
+namespace pious {
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+class Device;
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+class DeviceContainer {
+ public:
+  virtual ~DeviceContainer() = default;
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+  virtual size_t child_count() const = 0;
+  virtual void AddChild(Device * device) = 0;
+  virtual void RemoveChild(Device * child) = 0;
+  virtual Device * ChildAt(size_t idx) = 0;
+  virtual bool IsChild(Device * device) const = 0;
+};
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
-
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}
+#endif /* PIOUS_DEVICE_CONTAINER_HPP */

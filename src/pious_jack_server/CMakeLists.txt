@@ -5,17 +5,10 @@ find_package(JACK)
 
 include_directories(${Boost_INCLUDE_DIR})
 
-include_directories(${INCLUDE_DIR}/api)
-include_directories(${INCLUDE_DIR}/emcee)
-include_directories(${INCLUDE_DIR}/pious)
-include_directories(${INCLUDE_DIR}/pious_dsp_lib)
-
-include(PiousFiles)
-Prepend(PIOUS_SOURCE_FILES "${SRC_DIR}/pious" ${PIOUS_SOURCE_FILES})
-include(PiousDspLibFiles)
-Prepend(DSP_LIB_SOURCE_FILES "${SRC_DIR}/pious_dsp_lib" ${DSP_LIB_SOURCE_FILES})
-include(EmceeFiles)
-Prepend(EMCEE_SOURCE_FILES "${SRC_DIR}/emcee" ${EMCEE_SOURCE_FILES})
+#include_directories(${INCLUDE_DIR}/api)
+#include_directories(${INCLUDE_DIR}/emcee)
+#include_directories(${INCLUDE_DIR}/pious)
+#include_directories(${INCLUDE_DIR}/pious_dsp_lib)
 
 SET(ALL_SOURCE_FILES ${PIOUS_SOURCE_FILES} ${DSP_LIB_SOURCE_FILES} ${EMCEE_SOURCE_FILES})
 

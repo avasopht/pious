@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 02/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,58 @@
  * SOFTWARE.
  */
 
+#ifndef PIOUS_VAR_RMS_HPP
+#define PIOUS_VAR_RMS_HPP
+
 #include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+
+#include <emcee/vector.hpp>
+#include <emcee/memory_dependent.hpp>
+#include <emcee/masked_cell_vector.hpp>
 
 namespace emcee {
-
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
-
-static void DefaultFree(void *, void * ptr) { free(ptr); }
-
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+class Memory;
+template<typename T> class MaskedCellVector;
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
+namespace pious {
+
+/*! Allows you to calculate the Rms for an arbitrary length at O(log N), where N is the maximum Rms size.
+ */
+class VarRms : public virtual emcee::MemoryDependent {
+ public:
+  VarRms();
+  explicit VarRms(emcee::Memory *memory);
+
+  float CalcRms(int rms_size);
+  float CalcRmsAt(int rms_size, int offset);
+
+  void Write(float sample);
+
+  void SetCapacity(size_t min_capacity);
+  void Clear();
+
+  size_t capacity() const;
+
+ private:
+
+  struct SearchCell {
+    float value;
+    size_t cell_size;
+  };
+
+  /* sample[i-1] is the previous sample to sample[i].
+   */
+  emcee::Vector<emcee::MaskedCellVector<float> > buffers_;
+  size_t pos_;
+
+
+  size_t buffer_levels() const;
+
+  void CalcSumMeanSquaredAndWriteToEndOfCell();
+  SearchCell FindLargestCellEndingAt(size_t position, size_t max_size);
+};
+
 }
 
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}
+#endif /* PIOUS_VAR_RMS_HPP */

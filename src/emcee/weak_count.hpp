@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 19/10/16.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,41 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_WEAK_COUNT_HPP_H
+#define PIOUS_WEAK_COUNT_HPP_H
+
+#include <cstddef>
 
 namespace emcee {
 
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
+class ReferenceCounter;
 
-static void DefaultFree(void *, void * ptr) { free(ptr); }
+class SharedCount;
 
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+class WeakCount {
+ public:
+  WeakCount();
+  WeakCount(const WeakCount & rhs);
+  explicit WeakCount(const SharedCount & shared_count);
+
+  ~WeakCount();
+
+  WeakCount & operator=(const WeakCount & rhs);
+  WeakCount & operator=(const SharedCount & shared_count);
+
+  size_t use_count() const;
+  ReferenceCounter * counter() const;
+
+  void ImportCounter(const SharedCount & count);
+  void ImportCounter(const WeakCount & count);
+
+ private:
+  ReferenceCounter * counter_;
+
+  void Release();
+  void AddUse();
+};
+
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
-
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
-}
+#endif //PIOUS_WEAK_COUNT_HPP_H

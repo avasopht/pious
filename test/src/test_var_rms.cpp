@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 03/01/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,29 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#include <gtest/gtest.h>
+#include <pious_dsp_lib/var_rms.hpp>
+#include <emcee/memory.hpp>
 
-namespace emcee {
-
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
-
-static void DefaultFree(void *, void * ptr) { free(ptr); }
-
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
-}
-
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
-
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
-
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
-
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
-
+TEST(VarRms, Basic) {
+  emcee::DefaultMemory mem;
+  pious::VarRms rms(&mem);
+  rms.SetCapacity(1024);
+  rms.Write(7);
+  rms.Write(9);
+  rms.Write(12);
+  rms.Write(3);
+  rms.Write(6);
+  rms.Write(4);
+  rms.Write(8);
+  rms.Write(2);
+  float precision = 0.001f;
+  ASSERT_NEAR(2.000,  rms.CalcRms(1), precision);
+  ASSERT_NEAR(5.831,  rms.CalcRms(2), precision);
+  ASSERT_NEAR(5.292,  rms.CalcRms(3), precision);
+  ASSERT_NEAR(5.477,  rms.CalcRms(4), precision);
+  ASSERT_NEAR(5.079,  rms.CalcRms(5), precision);
+  ASSERT_NEAR(6.745,  rms.CalcRms(6), precision);
+  ASSERT_NEAR(7.111,  rms.CalcRms(7), precision);
+  ASSERT_NEAR(7.098,  rms.CalcRms(8), precision);
 }

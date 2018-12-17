@@ -1,5 +1,5 @@
 /*
- * Created by The Pious Authors on 26/09/2016.
+ * Created by The Pious Authors on 06/04/2017.
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,37 @@
  * SOFTWARE.
  */
 
-#include <cstdlib>
-#include <api/pious_sys.h>
-#include "memory.hpp"
+#ifndef PIOUS_SPEC_FINDER_HPP
+#define PIOUS_SPEC_FINDER_HPP
+
+#include <emcee/map.hpp>
 
 namespace emcee {
-
-static void * DefaultAlloc(void *, size_t size) { return malloc(size); }
-
-static void DefaultFree(void *, void * ptr) { free(ptr); }
-
-Pious_Mem PiousMem_CreateDefault() {
-  Pious_Mem def{DefaultAlloc, DefaultFree};
-  return def;
+class String;
 }
 
-void * DefaultMemory::Allocate(size_t size) {
-  return malloc(size);
-}
+namespace pious {
 
-void DefaultMemory::Free(void * ptr) {
-  free(ptr);
-}
+class DeviceSpec;
 
-void * StructMemory::Allocate(size_t size) {
-  if (!mem_.Alloc)
-    return nullptr;
-  return mem_.Alloc(mem_.data, size);
-}
+class SpecFinder {
+ public:
+  virtual ~SpecFinder() = 0;
+  virtual DeviceSpec * FindSpec(const char * sid) = 0;
+};
 
-void StructMemory::Free(void * ptr) {
-  if (mem_.Free)
-    mem_.Free(mem_.data, ptr);
-}
+class CachedSpecFinder : public SpecFinder {
+ public:
+  CachedSpecFinder(emcee::Memory * memory, SpecFinder * finder);
+  DeviceSpec * FindSpec(const char * sid) override;
 
-}
+ private:
+  emcee::Memory * memory_;
+  SpecFinder * finder_;
+  emcee::Map<emcee::String,DeviceSpec*> device_map_;
+
+};
+
+} // pious
+
+#endif /* PIOUS_SPEC_FINDER_HPP */
