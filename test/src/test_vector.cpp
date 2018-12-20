@@ -24,11 +24,11 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <emcee/vector.hpp>
-using emcee::DefaultMemory;
+using emcee::DefaultPlatform;
 using emcee::Vector;
 
 TEST(Vector, CopyAndAssignment) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   emcee::Vector<int> first(&mem);
   first.PushBack(1337);
   ASSERT_EQ(1337, first[0]);
@@ -56,7 +56,7 @@ TEST(Vector, CopyAndAssignment) {
 }
 
 TEST(Vector, Erase) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   emcee::Vector<int> vec(&mem);
   vec.Reserve(128);
   for(int i = 0; i < static_cast<int>(vec.size()); ++i) {
@@ -73,7 +73,7 @@ TEST(Vector, Erase) {
 }
 
 TEST(Vector,Iterator) {
-  DefaultMemory mem;
+  DefaultPlatform mem;
   Vector<int> vec(&mem);
   vec.PushBack(4);
   vec.PushBack(8);

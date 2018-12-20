@@ -26,7 +26,7 @@
 #include <pious/pious.hpp>
 
 TEST(DeviceSpec, Basic) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   pious::DeviceSpec spec(&mem);
 
   ASSERT_EQ(0, spec.device_count());

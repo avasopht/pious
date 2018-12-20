@@ -25,7 +25,7 @@
 #include <pious/signal_hold_event.hpp>
 namespace pious {
 
-SignalHoldChannel::SignalHoldChannel(emcee::Memory * memory, size_t event_count)
+SignalHoldChannel::SignalHoldChannel(emcee::Platform * memory, size_t event_count)
     : events_(memory) {
   events_.Reserve(event_count);
 }

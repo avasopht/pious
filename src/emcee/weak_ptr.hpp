@@ -24,7 +24,7 @@
 #ifndef PIOUS_WEAK_PTR_HPP
 #define PIOUS_WEAK_PTR_HPP
 
-#include "memory.hpp"
+#include "platform.hpp"
 #include "memory_dependent.hpp"
 #include "deleter.hpp"
 #include "weak_count.hpp"

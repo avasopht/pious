@@ -42,11 +42,11 @@ class SpecFinder {
 
 class CachedSpecFinder : public SpecFinder {
  public:
-  CachedSpecFinder(emcee::Memory * memory, SpecFinder * finder);
+  CachedSpecFinder(emcee::Platform * memory, SpecFinder * finder);
   DeviceSpec * FindSpec(const char * sid) override;
 
  private:
-  emcee::Memory * memory_;
+  emcee::Platform * memory_;
   SpecFinder * finder_;
   emcee::Map<emcee::String,DeviceSpec*> device_map_;
 

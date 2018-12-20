@@ -57,7 +57,7 @@ size_t VarRms::capacity() const {
   return buffers_[0].size();
 }
 
-VarRms::VarRms(emcee::Memory * memory)
+VarRms::VarRms(emcee::Platform * memory)
     : buffers_(memory),
       pos_(SIZE_MAX) {}
 

@@ -27,13 +27,13 @@
 #include <emcee/vector.hpp>
 #include <cstdint>
 
-namespace emcee { class Memory; }
+namespace emcee { class Platform; }
 
 namespace pious {
 
 class SignalChannel {
  public:
-  SignalChannel(emcee::Memory * memory, size_t size);
+  SignalChannel(emcee::Platform * memory, size_t size);
   size_t ReadSignal(float * dest, size_t max_samples) const;
   size_t WriteSignal(const float * signal, size_t frame_count);
  private:

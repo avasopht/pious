@@ -27,23 +27,23 @@
 
 namespace emcee {
 
-String::String(Memory * memory) : memory_(memory), string_(memory), size_(0) {}
+String::String(Platform * memory) : memory_(memory), string_(memory), size_(0) {}
 
-String::String(Memory * memory, const char * str)
+String::String(Platform * memory, const char * str)
     : memory_(memory),
       string_(memory),
       size_(0) {
   ConstructString(str, 0, strlen(str));
 }
 
-String::String(Memory * memory, const char * str, size_t begin)
+String::String(Platform * memory, const char * str, size_t begin)
     : memory_(memory),
       string_(memory),
       size_(0) {
   ConstructString(str, begin, strlen(str));
 }
 
-String::String(Memory * memory, const char * str, size_t begin, size_t end)
+String::String(Platform * memory, const char * str, size_t begin, size_t end)
     : memory_(memory),
       string_(memory),
       size_(0) {
@@ -160,7 +160,7 @@ String::String()
 
 }
 
-String::String(Memory * memory, const String & other) : memory_(memory), string_(memory_), size_(0) {
+String::String(Platform * memory, const String & other) : memory_(memory), string_(memory_), size_(0) {
   if (!memory_ && other.memory_) {
 
   }

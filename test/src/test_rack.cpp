@@ -23,7 +23,7 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <emcee/memory.hpp>
+#include <emcee/platform.hpp>
 #include <pious/rack.hpp>
 #include <pious/device_manager.hpp>
 #include <pious/mock/mock_device_manager.hpp>
@@ -33,7 +33,7 @@ using ::testing::_;
 
 
 TEST(Rack,CreateAndDelete) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   emcee::UniquePtr<pious::MockDeviceManager> mock_manager(&mem, emcee::New<pious::MockDeviceManager>(&mem).Create());
   emcee::UniquePtr<pious::MockDevice> mock_device(&mem, emcee::New<pious::MockDevice>(&mem).Create());
   pious::Rack rack(&mem, mock_manager.get());
@@ -50,7 +50,7 @@ TEST(Rack,CreateAndDelete) {
 TEST(Rack,ChildOrdering) {
 //  pious::MockDeviceManager device_manager;
 //  pious::MockDevice device_1, device_2, device_3, device_4;
-//  emcee::DefaultMemory mem;
+//  emcee::DefaultPlatform mem;
 //  pious::Rack rack(&mem, &device_manager);
 //
 //  EXPECT_CALL(device_manager,CreateDevice())

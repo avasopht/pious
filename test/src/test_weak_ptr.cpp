@@ -25,7 +25,7 @@
 #include <emcee/emcee.hpp>
 
 TEST(WeakPtr,FromShared) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   typedef int Type;
   typedef emcee::SharedPtr<Type> SharedType;
   typedef emcee::WeakPtr<Type> WeakType;
@@ -42,7 +42,7 @@ TEST(WeakPtr,FromShared) {
 }
 
 TEST(WeakPtr,FromSharedArray) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   typedef int Type;
   typedef emcee::SharedPtr<Type[]> SharedType;
   typedef emcee::WeakPtr<Type[]> WeakType;

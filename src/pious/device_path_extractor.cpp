@@ -28,7 +28,7 @@
 
 namespace pious {
 
-DevicePathExtractor::DevicePathExtractor(emcee::Memory * memory) : memory_(memory), paths_(memory){
+DevicePathExtractor::DevicePathExtractor(emcee::Platform * memory) : memory_(memory), paths_(memory){
 
 }
 

@@ -14,7 +14,7 @@ are prohibited:
 What Emcee provides
 -------------------
 
-1. Memory management abstraction interface with `malloc()`, `free()`, `new()`, etc.
+1. Platform management abstraction interface with `malloc()`, `free()`, `new()`, etc.
 2. Smart pointers (`unique_ptr`, `shared_ptr`, etc.)
 3. A basic containers (`vector`, etc.)
 4. Smart auto-injection

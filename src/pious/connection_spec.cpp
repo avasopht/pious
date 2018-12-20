@@ -25,7 +25,7 @@
 
 namespace pious {
 
-ConnectionSpec::ConnectionSpec(emcee::Memory * memory)
+ConnectionSpec::ConnectionSpec(emcee::Platform * memory)
     : source_device_(memory),
       source_port_(memory),
       dest_device_(memory),

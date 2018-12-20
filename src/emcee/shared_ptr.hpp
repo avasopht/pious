@@ -24,7 +24,7 @@
 #ifndef PIOUS_SHARED_PTR_HPP
 #define PIOUS_SHARED_PTR_HPP
 
-#include "memory.hpp"
+#include "platform.hpp"
 #include "deleter.hpp"
 #include "reference_counter.hpp"
 #include "shared_count.hpp"
@@ -49,14 +49,14 @@ class SharedPtr : public virtual MemoryDependentWithCopy {
 
   SharedPtr() : memory_(nullptr), ptr_(nullptr) {}
 
-  SharedPtr(Memory * memory, const SharedPtr<T> & other) : memory_(memory), ptr_(nullptr) {
+  SharedPtr(Platform * memory, const SharedPtr<T> & other) : memory_(memory), ptr_(nullptr) {
     Reset(other);
   }
 
-  explicit SharedPtr(Memory * memory) : memory_(memory), ptr_(nullptr) {}
+  explicit SharedPtr(Platform * memory) : memory_(memory), ptr_(nullptr) {}
 
   template<typename Y>
-  SharedPtr(Memory * memory, Y * p)
+  SharedPtr(Platform * memory, Y * p)
       : memory_(memory),
         ptr_(nullptr) {
     Reset(p);
@@ -73,7 +73,7 @@ class SharedPtr : public virtual MemoryDependentWithCopy {
     Reset(unique);
   }
 
-  void SetMemory(Memory * m) {
+  void SetMemory(Platform * m) {
     memory_ = m;
   }
 
@@ -95,7 +95,7 @@ class SharedPtr : public virtual MemoryDependentWithCopy {
     return *this;
   }
 
-  Memory * memory() const { return memory_; }
+  Platform * memory() const { return memory_; }
 
   void Reset() {
     count_ = SharedCount();
@@ -180,7 +180,7 @@ class SharedPtr : public virtual MemoryDependentWithCopy {
   explicit operator bool() const { return ptr_ != nullptr; }
 
  private:
-  Memory * memory_;
+  Platform * memory_;
   T * ptr_;
   SharedCount count_;
 
@@ -196,16 +196,16 @@ class SharedPtr<T[]> : public virtual MemoryDependentWithCopy {
 
   SharedPtr() : memory_(nullptr), ptr_(nullptr) {}
 
-  explicit SharedPtr(Memory * mem) : memory_(mem), ptr_(nullptr) {}
+  explicit SharedPtr(Platform * mem) : memory_(mem), ptr_(nullptr) {}
 
   template<typename Y>
-  SharedPtr(Memory * memory, Y * p)
+  SharedPtr(Platform * memory, Y * p)
       : memory_(memory),
         ptr_(nullptr) {
     Reset(p);
   }
 
-  SharedPtr(Memory * memory, const SharedPtr & other) : memory_(memory), ptr_(nullptr) {
+  SharedPtr(Platform * memory, const SharedPtr & other) : memory_(memory), ptr_(nullptr) {
     Reset(other);
   }
 
@@ -229,7 +229,7 @@ class SharedPtr<T[]> : public virtual MemoryDependentWithCopy {
     return *this;
   }
 
-  void SetMemory(Memory * memory) { memory_ = memory; }
+  void SetMemory(Platform * memory) { memory_ = memory; }
 
   SharedPtr & Create(size_t count, const T & other) {
     if (!memory_)
@@ -244,7 +244,7 @@ class SharedPtr<T[]> : public virtual MemoryDependentWithCopy {
     count_ = SharedCount();
   }
 
-  Memory * memory() const { return memory_; }
+  Platform * memory() const { return memory_; }
 
   template<typename Y>
   void Reset(Y * p) {
@@ -333,7 +333,7 @@ class SharedPtr<T[]> : public virtual MemoryDependentWithCopy {
   }
 
  private:
-  Memory * memory_;
+  Platform * memory_;
   T * ptr_;
   SharedCount count_;
 };

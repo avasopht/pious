@@ -28,7 +28,7 @@
 #include <cstdint>
 
 namespace emcee {
-class Memory;
+class Platform;
 }
 
 namespace pious {
@@ -36,7 +36,7 @@ namespace pious {
 /*! Stores details for a connection between ports in a device specification. */
 class ConnectionSpec {
  public:
-  explicit ConnectionSpec(emcee::Memory *memory);
+  explicit ConnectionSpec(emcee::Platform *memory);
 
   void AddSourceDevice(const char *sid);
   void AddSourceDevice(uint32_t iid);

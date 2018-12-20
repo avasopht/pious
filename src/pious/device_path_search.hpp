@@ -27,7 +27,7 @@
 #include <emcee/vector.hpp>
 
 namespace emcee {
-class Memory;
+class Platform;
 }
 
 namespace pious {
@@ -36,7 +36,7 @@ class Device;
 
 class DevicePathSearch {
  public:
-  DevicePathSearch(emcee::Memory * memory, Device * device);
+  DevicePathSearch(emcee::Platform * memory, Device * device);
   void AddConnectedDeviceFromPortAt(size_t port_idx);
 
   bool is_finished() const;

@@ -24,7 +24,7 @@
 #ifndef PIOUS_DEVICE_PATH_EXTRACTOR_HPP
 #define PIOUS_DEVICE_PATH_EXTRACTOR_HPP
 
-#include <emcee/memory.hpp>
+#include <emcee/platform.hpp>
 #include <emcee/vector.hpp>
 #include <emcee/map.hpp>
 
@@ -36,12 +36,12 @@ class DevicePathSearch;
 
 class DevicePathExtractor {
  public:
-  explicit DevicePathExtractor(emcee::Memory * memory);
+  explicit DevicePathExtractor(emcee::Platform * memory);
   void ExtractPaths(DeviceContainer * container);
   emcee::Vector<emcee::Vector<Device*>> GetPathsForDevice(Device * device);
 
  private:
-  emcee::Memory * memory_;
+  emcee::Platform * memory_;
   emcee::Map<Device*,emcee::Vector<emcee::Vector<Device*>>> paths_;
 
   void ExtractPathsFromDevice(Device * device);

@@ -25,7 +25,7 @@
 #define PIOUS_SET_HPP
 
 #include "map.hpp"
-#include "memory.hpp"
+#include "platform.hpp"
 
 namespace emcee {
 
@@ -73,7 +73,7 @@ class Set {
     typename Map<T,int>::Iterator iterator_;
   };
 
-  explicit Set(Memory * memory) : element_count_(memory) {}
+  explicit Set(Platform * memory) : element_count_(memory) {}
 
   template<typename Y> bool Add(const Y & element) {
     ++element_count_[element];

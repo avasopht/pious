@@ -50,7 +50,7 @@ class Db : public Pious_Db {
   DeviceSpec * CreateDevice(const char * sid);
   DeviceSpec * FindDevice(const char * sid);
 
-  void SetMemory(emcee::StructMemory * m);
+  void SetMemory(emcee::StructPlatform * m);
 
   static Db * FromStruct(Pious_Db * db);
 
@@ -65,7 +65,7 @@ class Db : public Pious_Db {
 
  private:
 
-  emcee::StructMemory *mem;
+  emcee::StructPlatform *mem;
   emcee::Map<emcee::String, emcee::SharedPtr<DeviceSpec>> devices;
   Db *parent;
   emcee::Vector<emcee::SharedPtr<Db> > children;

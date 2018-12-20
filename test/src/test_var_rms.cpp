@@ -23,10 +23,10 @@
 
 #include <gtest/gtest.h>
 #include <pious_dsp_lib/var_rms.hpp>
-#include <emcee/memory.hpp>
+#include <emcee/platform.hpp>
 
 TEST(VarRms, Basic) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   pious::VarRms rms(&mem);
   rms.SetCapacity(1024);
   rms.Write(7);

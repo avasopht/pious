@@ -30,7 +30,7 @@
 #include <emcee/vector.hpp>
 
 namespace emcee {
-class Memory;
+class Platform;
 }
 
 namespace pious {
@@ -40,7 +40,7 @@ class DeviceManager;
 
 class Rack : public DeviceContainer {
  public:
-  Rack(emcee::Memory * memory, DeviceManager * device_manager);
+  Rack(emcee::Platform * memory, DeviceManager * device_manager);
   Device * CreateDevice();
   Device * CreateChildDevice(Device * parent);
   void RemoveDevice(Device * device);
@@ -54,7 +54,7 @@ class Rack : public DeviceContainer {
   bool IsChild(Device * device) const override;
 
  private:
-  emcee::Memory * memory_;
+  emcee::Platform * memory_;
   emcee::Vector<emcee::SharedPtr<Device>> devices_;
   DeviceManager * device_manager_;
 

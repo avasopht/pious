@@ -30,7 +30,7 @@
 
 namespace emcee {
 
-class Memory;
+class Platform;
 
 template<typename Key, typename T>
 class Map : public virtual MemoryDependentWithCopy {
@@ -41,7 +41,7 @@ class Map : public virtual MemoryDependentWithCopy {
     T value;
     Key key;
 
-    explicit Node(Memory * memory) : next(memory), value(), key() {
+    explicit Node(Platform * memory) : next(memory), value(), key() {
       emcee::MemorySetter::Inject(&value, memory);
     }
 
@@ -131,11 +131,11 @@ class Map : public virtual MemoryDependentWithCopy {
 
   Map() : head_(), levels_(0), size_(0) {}
 
-  explicit Map(Memory * memory) : head_(memory), levels_(1), size_(0) {
+  explicit Map(Platform * memory) : head_(memory), levels_(1), size_(0) {
     Init();
   }
 
-  Map(Memory * memory, const Map & other) : head_(memory), levels_(1) {
+  Map(Platform * memory, const Map & other) : head_(memory), levels_(1) {
     if (!head_.memory())
       head_.SetMemory(other.memory());
     Init();
@@ -144,7 +144,7 @@ class Map : public virtual MemoryDependentWithCopy {
     }
   }
 
-  void SetMemory(Memory * mem) {
+  void SetMemory(Platform * mem) {
     if (mem == memory())
       return;
 
@@ -242,7 +242,7 @@ class Map : public virtual MemoryDependentWithCopy {
 
   size_t size() const { return size_; }
 
-  Memory * memory() const { return head_.memory(); }
+  Platform * memory() const { return head_.memory(); }
 
  private:
   SharedPtr<Node> head_;

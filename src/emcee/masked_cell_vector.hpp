@@ -31,7 +31,7 @@
 
 namespace emcee {
 
-class Memory;
+class Platform;
 
 /*! A "cell vector" with a power of 2 size.
  *
@@ -57,14 +57,14 @@ class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDepen
       cell_mask_(0),
       cell_shift_(0) {}
 
-  explicit MaskedCellVector(Memory * memory) :
+  explicit MaskedCellVector(Platform * memory) :
       vector_(memory),
       idx_mask_(0),
       cell_size_(0),
       cell_mask_(0),
       cell_shift_(0) {}
 
-  MaskedCellVector(Memory * memory, const MaskedCellVector & rhs) :
+  MaskedCellVector(Platform * memory, const MaskedCellVector & rhs) :
       vector_(rhs.vector_),
       idx_mask_(rhs.idx_mask_),
       cell_size_(rhs.cell_size_),
@@ -73,7 +73,7 @@ class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDepen
     vector_.SetMemory(memory);
   }
 
-  void SetMemory(Memory * ptr) override {
+  void SetMemory(Platform * ptr) override {
     vector_.SetMemory(ptr);
   }
 

@@ -31,7 +31,7 @@
 #include <emcee/masked_cell_vector.hpp>
 
 namespace emcee {
-class Memory;
+class Platform;
 template<typename T> class MaskedCellVector;
 }
 
@@ -42,7 +42,7 @@ namespace pious {
 class VarRms : public virtual emcee::MemoryDependent {
  public:
   VarRms();
-  explicit VarRms(emcee::Memory *memory);
+  explicit VarRms(emcee::Platform *memory);
 
   float CalcRms(int rms_size);
   float CalcRmsAt(int rms_size, int offset);

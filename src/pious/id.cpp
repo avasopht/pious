@@ -27,7 +27,7 @@ namespace pious {
 
 Id::Id() : iid_(0) {}
 
-Id::Id(emcee::Memory * memory) : sid_(memory), iid_(0) {}
+Id::Id(emcee::Platform * memory) : sid_(memory), iid_(0) {}
 
 Id::Id(emcee::String sid, uint32_t iid) : sid_(sid), iid_(iid) {}
 
@@ -66,7 +66,7 @@ int Id::Compare(const Id & rhs) const {
   return string_compare;
 }
 
-void Id::SetMemory(emcee::Memory * m) {
+void Id::SetMemory(emcee::Platform * m) {
   sid_ = emcee::String(m);
 }
 

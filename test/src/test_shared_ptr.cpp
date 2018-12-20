@@ -27,7 +27,7 @@
 using namespace emcee;
 
 TEST(SharedPtr,BasicTest) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   emcee::SharedPtr<int> first(&mem);
 
   ASSERT_EQ(0, first.use_count());
@@ -45,7 +45,7 @@ TEST(SharedPtr,BasicTest) {
 }
 
 TEST(SharedPtr,FromUnique) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   int *iptr = emcee::New<int>(&mem).Create(1337);
   emcee::UniquePtr<int> unique(&mem, iptr);
 
@@ -58,7 +58,7 @@ TEST(SharedPtr,FromUnique) {
 }
 
 TEST(SharedPtr, Swap) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   int *first_ptr = emcee::New<int>(&mem).Create(1);
   int *second_ptr = emcee::New<int>(&mem).Create(2);
   emcee::SharedPtr<int> first(&mem, first_ptr);
@@ -71,7 +71,7 @@ TEST(SharedPtr, Swap) {
 }
 
 TEST(SharedPtr, Array) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   int *array = emcee::New<int[]>(&mem, 10).Create();
   emcee::SharedPtr<int[]> smart_array(&mem, array);
   array[0] = 1337;
@@ -87,7 +87,7 @@ TEST(SharedPtr, Array) {
 
 TEST(SharedPtr,ManyPtrs) {
   typedef emcee::SharedPtr<int> IntPtr;
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   IntPtr a(&mem), b, c, d, e, f, g;
   a.Create();
   (*a) = 10;
@@ -98,9 +98,9 @@ TEST(SharedPtr,InVectors) {
   struct Node : public virtual MemoryDependent {
     Vector<SharedPtr<Node>> arr;
     int val;
-    Node(Memory *mem) : arr(mem), val(){}
+    Node(Platform *mem) : arr(mem), val(){}
   };
-  DefaultMemory mem;
+  DefaultPlatform mem;
   {
     Vector<SharedPtr<Node>> a(&mem);
     a.Resize(10);

@@ -24,7 +24,7 @@
 #ifndef PIOUS_SCOPED_PTR_HPP
 #define PIOUS_SCOPED_PTR_HPP
 
-#include "memory.hpp"
+#include "platform.hpp"
 #include "new.hpp"
 #include "deleter.hpp"
 
@@ -49,11 +49,11 @@ class UniquePtr : public virtual MemoryDependent {
     const_cast<UniquePtr *>(&other)->deleter_ = nullptr;
   }
 
-  explicit UniquePtr(Memory * memory) : memory_(memory), pointer_(nullptr) {}
+  explicit UniquePtr(Platform * memory) : memory_(memory), pointer_(nullptr) {}
 
   UniquePtr() : memory_(nullptr), pointer_(nullptr) {}
 
-  UniquePtr(Memory * mem, T * ptr) : memory_(mem), pointer_(ptr) {
+  UniquePtr(Platform * mem, T * ptr) : memory_(mem), pointer_(ptr) {
     deleter_ = emcee::New<DeleterType>(memory_).Create(DeleterType(memory_, ptr));
   }
 
@@ -68,7 +68,7 @@ class UniquePtr : public virtual MemoryDependent {
 
   explicit operator bool() const { return pointer_ != nullptr; }
 
-  Memory * memory() const { return memory_; }
+  Platform * memory() const { return memory_; }
 
   T * Release() {
     T * ptr = pointer_;
@@ -147,7 +147,7 @@ class UniquePtr : public virtual MemoryDependent {
   }
 
  private:
-  Memory * memory_;
+  Platform * memory_;
   T * pointer_;
   Deleter * deleter_;
 };

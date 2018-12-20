@@ -27,7 +27,7 @@
 #include <cstddef>
 #include <emcee/vector.hpp>
 namespace emcee {
-class Memory;
+class Platform;
 template<typename T> class Vector;
 }
 
@@ -38,13 +38,13 @@ class DeviceContainer;
 
 class DspPlanner : public virtual emcee::MemoryDependent {
  public:
-  explicit DspPlanner(emcee::Memory * memory);
+  explicit DspPlanner(emcee::Platform * memory);
   void CreatePlan(DeviceContainer * container);
   int device_count() const;
   Device * DeviceAt(int index);
 
  private:
-  emcee::Memory * memory_;
+  emcee::Platform * memory_;
   emcee::Vector<Device*> dsp_plan_;
 
 };

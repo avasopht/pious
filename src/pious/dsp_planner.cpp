@@ -25,7 +25,7 @@
 
 namespace pious {
 
-DspPlanner::DspPlanner(emcee::Memory * memory)
+DspPlanner::DspPlanner(emcee::Platform * memory)
     : memory_(memory), dsp_plan_(memory) { }
 
 int DspPlanner::device_count() const { return dsp_plan_.size(); }

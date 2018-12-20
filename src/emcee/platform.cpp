@@ -23,7 +23,7 @@
 
 #include <cstdlib>
 #include <api/pious_sys.h>
-#include "memory.hpp"
+#include "platform.hpp"
 
 namespace emcee {
 
@@ -36,21 +36,21 @@ Pious_Mem PiousMem_CreateDefault() {
   return def;
 }
 
-void * DefaultMemory::Allocate(size_t size) {
+void * DefaultPlatform::Allocate(size_t size) {
   return malloc(size);
 }
 
-void DefaultMemory::Free(void * ptr) {
+void DefaultPlatform::Free(void * ptr) {
   free(ptr);
 }
 
-void * StructMemory::Allocate(size_t size) {
+void * StructPlatform::Allocate(size_t size) {
   if (!mem_.Alloc)
     return nullptr;
   return mem_.Alloc(mem_.data, size);
 }
 
-void StructMemory::Free(void * ptr) {
+void StructPlatform::Free(void * ptr) {
   if (mem_.Free)
     mem_.Free(mem_.data, ptr);
 }

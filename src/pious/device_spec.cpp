@@ -32,7 +32,7 @@
 
 namespace pious {
 
-DeviceSpec::DeviceSpec(emcee::Memory * memory)
+DeviceSpec::DeviceSpec(emcee::Platform * memory)
     : memory_(memory), plugin_(), id_(memory), devices_(memory), ports_(memory), connections_(memory) {
   if (memory)
     id_.New();

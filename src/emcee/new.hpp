@@ -27,7 +27,7 @@
 #include "destructor.hpp"
 #include "new_allocation_block.hpp"
 #include "memory_dependent.hpp"
-#include "memory.hpp"
+#include "platform.hpp"
 #include "util.hpp"
 
 #include <cstddef>
@@ -37,7 +37,7 @@
 
 namespace emcee {
 
-class Memory;
+class Platform;
 
 /*! \brief Returns size of an array providing it was created with New<>.
  *
@@ -87,7 +87,7 @@ struct ObjectBlock {
 template<typename T>
 class New {
  public:
-  explicit New(Memory * memory) : memory_(memory), arena_(0) {}
+  explicit New(Platform * memory) : memory_(memory), arena_(0) {}
 
   /*! Allocates and constructs a default instance of T. */
   T * Create() {
@@ -106,7 +106,7 @@ class New {
   }
 
  private:
-  Memory * memory_;
+  Platform * memory_;
   size_t arena_;
 };
 
@@ -116,7 +116,7 @@ class New<T[]> {
 
   typedef TypedDestructor<T[]> DestructorType;
 
-  New(Memory * memory, size_t count) : memory_(memory), count_(count), arena_(0) {};
+  New(Platform * memory, size_t count) : memory_(memory), count_(count), arena_(0) {};
 
   New & WithArena(size_t arena) {
     arena_ = arena;
@@ -150,7 +150,7 @@ class New<T[]> {
   size_t count() const { return count_; }
 
  private:
-  Memory * memory_;
+  Platform * memory_;
   size_t count_;
   size_t arena_;
 

@@ -25,7 +25,7 @@
 
 #include <emcee/weak_count.hpp>
 #include <emcee/shared_count.hpp>
-#include <emcee/memory.hpp>
+#include <emcee/platform.hpp>
 #include <emcee/new.hpp>
 #include <emcee/deleter.hpp>
 #include <emcee/reference_counter.hpp>
@@ -34,7 +34,7 @@ TEST(WeakCount,Basic) {
   class Tracker {
    public:
   };
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   Tracker *ptr = emcee::New<Tracker>(&mem).Create();
   emcee::Deleter *deleter = &emcee::New<emcee::TypedDeleter<Tracker>>(&mem).Create()->Watch(ptr);
   emcee::ReferenceCounter *counter = emcee::New<emcee::ReferenceCounter>(&mem).Create();

@@ -23,11 +23,11 @@
 
 #include <gtest/gtest.h>
 
-#include <emcee/memory.hpp>
+#include <emcee/platform.hpp>
 #include <emcee/string.hpp>
 
 TEST(String, BasicTest) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   emcee::String bleach(&mem, "Bleach");
   ASSERT_EQ(6, bleach.length());
   ASSERT_EQ('B', bleach[0]);

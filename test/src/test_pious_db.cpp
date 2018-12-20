@@ -24,7 +24,7 @@
 #include <gtest/gtest.h>
 #include <api/pious_spec.h>
 #include <api/db.h>
-#include <emcee/memory.hpp>
+#include <emcee/platform.hpp>
 
 TEST(PiousDb,Basic) {
   Pious_Mem mem = emcee::PiousMem_CreateDefault();

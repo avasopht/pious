@@ -51,7 +51,7 @@ bool Rack::IsChild(Device * device) const {
   return device && device->parent() == this;
 }
 
-Rack::Rack(emcee::Memory * memory, DeviceManager * device_manager)
+Rack::Rack(emcee::Platform * memory, DeviceManager * device_manager)
   : memory_(memory), devices_(memory), device_manager_(device_manager) { }
 
 Device * Rack::CreateDevice() {

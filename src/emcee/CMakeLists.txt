@@ -7,8 +7,8 @@ set(SOURCE_FILES
     emcee.hpp
     map.hpp
     masked_cell_vector.hpp
-    memory.cpp
-    memory.hpp
+        platform.cpp
+        platform.hpp
     memory_dependent.cpp
     memory_dependent.hpp
     memory_setter.hpp
@@ -33,7 +33,7 @@ set(SOURCE_FILES
     vector.hpp
     weak_count.cpp
     weak_count.hpp
-    weak_ptr.hpp)
+    weak_ptr.hpp object.cpp object.hpp)
 
 get_headers(INCLUDE_FILES ${SOURCE_FILES})
 

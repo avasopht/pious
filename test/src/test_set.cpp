@@ -24,11 +24,11 @@
 #include <gtest/gtest.h>
 #include <emcee/set.hpp>
 using emcee::Set;
-using emcee::Memory;
-using emcee::DefaultMemory;
+using emcee::Platform;
+using emcee::DefaultPlatform;
 
 TEST(Set,BasicTest) {
-  DefaultMemory mem;
+  DefaultPlatform mem;
   Set<int> set(&mem);
   set.Add(11);
   ASSERT_TRUE(set.Contains(11));
@@ -41,7 +41,7 @@ TEST(Set,BasicTest) {
 }
 
 TEST(Set,Iterator) {
-  DefaultMemory mem;
+  DefaultPlatform mem;
   Set<int> set(&mem);
   set.Add(7);
   set.Add(8);

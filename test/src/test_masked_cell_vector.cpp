@@ -26,7 +26,7 @@
 #include <emcee/masked_cell_vector.hpp>
 
 TEST(MaskedCellVector,Basic) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   emcee::MaskedCellVector<int> vec(&mem);
   vec.SetSize(2, 8);
   vec[0] = 1;

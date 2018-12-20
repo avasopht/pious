@@ -26,12 +26,12 @@
 #include <emcee/string.hpp>
 #include <emcee/vector.hpp>
 using emcee::Map;
-using emcee::DefaultMemory;
-using emcee::Memory;
+using emcee::DefaultPlatform;
+using emcee::Platform;
 using emcee::Vector;
 
 TEST(Map,BasicTest) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   emcee::Map<int, emcee::String> map(&mem);
   ASSERT_TRUE(map.IsEmpty());
   map[10] = emcee::String(&mem, "Helvetica");
@@ -45,7 +45,7 @@ TEST(Map,BasicTest) {
 }
 
 TEST(Map,SharedPtrInMap) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   typedef emcee::SharedPtr<char[]> SharedCPtr;
   emcee::Map<SharedCPtr,SharedCPtr> map(&mem);
   emcee::SharedPtr<char[]> a(&mem,emcee::New<char[]>(&mem,2).Create());
@@ -67,7 +67,7 @@ TEST(Map,SharedPtrInMap) {
 }
 
 TEST(Map,ToVectorOfVectors) {
-  DefaultMemory mem;
+  DefaultPlatform mem;
   Map<int,Vector<Vector<int>>> map(&mem);
   map[10] = Vector<Vector<int>>(&mem);
   map[10].PushBack(Vector<int>(&mem));

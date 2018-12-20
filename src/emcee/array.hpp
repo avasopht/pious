@@ -24,7 +24,7 @@
 #ifndef PIOUS_ARRAY_HPP
 #define PIOUS_ARRAY_HPP
 
-#include "emcee/memory.hpp"
+#include "emcee/platform.hpp"
 #include "emcee/memory_setter.hpp"
 #include "emcee/memory_dependent.hpp"
 
@@ -37,7 +37,7 @@ namespace emcee {
 template<typename T, size_t N>
 class Array {
  public:
-  explicit Array(Memory & memory) : size_(N) {
+  explicit Array(Platform & memory) : size_(N) {
     InitArray(memory);
   }
 
@@ -65,20 +65,20 @@ class Array {
 
   T * array() { return reinterpret_cast<T *>(data_); }
 
-  void Construct(Memory & memory, T & obj) {
+  void Construct(Platform & memory, T & obj) {
     boost::is_base_of<MemoryDependent, T> is_memory_dependent;
     Construct(memory, obj, is_memory_dependent);
   }
 
-  void Construct(Memory & memory, T & obj, boost::true_type) {
+  void Construct(Platform & memory, T & obj, boost::true_type) {
     new(&obj)T(memory);
   }
 
-  void Construct(Memory & memory, T & obj, boost::false_type) {
+  void Construct(Platform & memory, T & obj, boost::false_type) {
     new(&obj)T();
   }
 
-  void InitArray(Memory & memory) {
+  void InitArray(Platform & memory) {
     for (size_t i = 0; i < N; ++i) {
       Construct(memory, operator[](i));
       MemorySetter::Inject(&operator[](i), &memory);

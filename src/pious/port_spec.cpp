@@ -27,9 +27,9 @@ namespace pious {
 
 PortSpec::PortSpec() : id_(nullptr), io_type_(Pious_IoTypeNone) {}
 
-PortSpec::PortSpec(emcee::Memory * m) : id_(m), io_type_(Pious_IoTypeNone) {}
+PortSpec::PortSpec(emcee::Platform * m) : id_(m), io_type_(Pious_IoTypeNone) {}
 
-void PortSpec::SetMemory(emcee::Memory * m) { id_.SetMemory(m); }
+void PortSpec::SetMemory(emcee::Platform * m) { id_.SetMemory(m); }
 
 uint32_t PortSpec::iid() const { return id_.iid(); }
 

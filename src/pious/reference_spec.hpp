@@ -30,7 +30,7 @@
 #include <emcee/memory_dependent.hpp>
 
 namespace emcee {
-class Memory;
+class Platform;
 }
 
 struct Pious_ConnectionSpec {};
@@ -40,7 +40,7 @@ namespace pious {
 class ReferenceSpec : public Pious_ConnectionSpec,  public virtual emcee::MemoryDependent {
  public:
   ReferenceSpec();
-  explicit ReferenceSpec(emcee::Memory *memory);
+  explicit ReferenceSpec(emcee::Platform *memory);
 
   void SetSid(const char *sid);
   void SetIid(uint32_t iid);

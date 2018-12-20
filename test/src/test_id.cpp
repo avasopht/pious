@@ -26,7 +26,7 @@
 #include <pious/id.hpp>
 
 TEST(Id, Compare) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   pious::Id first(&mem);
   pious::Id second(&mem);
 

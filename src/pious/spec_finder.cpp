@@ -28,7 +28,7 @@ namespace pious {
 
 SpecFinder::~SpecFinder() {}
 
-CachedSpecFinder::CachedSpecFinder(emcee::Memory * memory, SpecFinder * finder)
+CachedSpecFinder::CachedSpecFinder(emcee::Platform * memory, SpecFinder * finder)
     : memory_(memory), finder_(finder), device_map_(memory) {}
 
 DeviceSpec * CachedSpecFinder::FindSpec(const char * sid) {

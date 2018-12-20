@@ -26,7 +26,7 @@
 #ifndef PIOUS_VECTOR_H
 #define PIOUS_VECTOR_H
 
-#include "memory.hpp"
+#include "platform.hpp"
 #include "memory_setter.hpp"
 #include "shared_ptr.hpp"
 
@@ -40,7 +40,7 @@
 
 namespace emcee {
 
-class Memory;
+class Platform;
 
 /*! \brief  The Vector class provides a growable array of objects.
  *
@@ -200,7 +200,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
    * \param val default value for elements
    */
   template<typename Y>
-  Vector(Memory * memory, size_t n, const Y & val = T())
+  Vector(Platform * memory, size_t n, const Y & val = T())
       : memory_(memory), array_(nullptr), capacity_(0), size_(n) {
     assert(memory);
 
@@ -218,13 +218,13 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
   ConstIterator end() const { return ConstIterator(this, size()); }
   ConstIterator cend() const { return ConstIterator(this, size()); }
   /*! \brief Constructs an empty Vector of size 0. */
-  explicit Vector(Memory * memory) :
+  explicit Vector(Platform * memory) :
       memory_(memory),
       array_(nullptr),
       size_(0),
       capacity_(0) {}
 
-  Vector(Memory * memory, const Vector & rhs) :
+  Vector(Platform * memory, const Vector & rhs) :
       memory_(memory_),
       array_(nullptr),
       size_(0),
@@ -255,16 +255,16 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
     }
   }
 
-  Memory * memory() const { return memory_; }
+  Platform * memory() const { return memory_; }
 
-  void SetMemory(Memory * memory) override {
+  void SetMemory(Platform * memory) override {
     if (memory == memory_)
       return;
 
     if (array_ && memory_) {
       // Create new array with new memory, copying old elements (and injecting memory pointer).
       T * old_array = array_;
-      Memory * old_memory = memory_;
+      Platform * old_memory = memory_;
       memory_ = memory;
       array_ = AllocateArray(memory_, capacity_);
       for (size_t i = 0; i < size_; ++i) {
@@ -437,7 +437,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
   bool Empty() const { return size_ == 0; }
 
  private:
-  Memory * memory_;
+  Platform * memory_;
   T * array_;
   size_t capacity_;
   size_t size_;
@@ -474,7 +474,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
 
   /*
    * Initializes non-trivial element at given index with provided value,
-   * injecting Memory reference into compatible classes.
+   * injecting Platform reference into compatible classes.
    */
   template<typename Y>
   void InitAtNonTrivial(size_t idx, const Y & new_val) {
@@ -518,7 +518,7 @@ class Vector : public virtual MemoryDependentWithCopy, public virtual MemorySett
     }
   }
 
-  T * AllocateArray(Memory * memory, size_t size) {
+  T * AllocateArray(Platform * memory, size_t size) {
     assert(memory);
 
     void * ptr = memory->Allocate(sizeof(T) * size);

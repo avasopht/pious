@@ -32,12 +32,12 @@ namespace pious {
 class Id : public virtual emcee::MemoryDependent {
  public:
   Id();
-  explicit Id(emcee::Memory *memory);
+  explicit Id(emcee::Platform *memory);
   explicit Id(emcee::String sid);
   explicit Id(uint32_t iid);
   Id(emcee::String sid, uint32_t iid);
 
-  void SetMemory(emcee::Memory *m);
+  void SetMemory(emcee::Platform *m);
 
   Id& SetSid(const char *sid);
   Id& SetSid(const emcee::String &sid);

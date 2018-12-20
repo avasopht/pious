@@ -25,7 +25,7 @@
 
 namespace pious {
 
-SignalChannel::SignalChannel(emcee::Memory * memory, size_t size)
+SignalChannel::SignalChannel(emcee::Platform * memory, size_t size)
     : buffer_(memory) {
   assert(size >= 0);
   if (size > 0)

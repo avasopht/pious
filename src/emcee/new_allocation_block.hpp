@@ -32,14 +32,14 @@ namespace emcee {
 
 class Destructor;
 
-class Memory;
+class Platform;
 
 /*! \brief  Implements an allocation block for New<>.
  */
 class NewAllocationBlock {
  public:
 
-  explicit NewAllocationBlock(Memory * memory);
+  explicit NewAllocationBlock(Platform * memory);
 
   NewAllocationBlock & WithDestructor(Destructor * d) {
     destructor_ = d;
@@ -60,14 +60,14 @@ class NewAllocationBlock {
 
   void * data() { return data_; }
 
-  Memory * memory() { return memory_; }
+  Platform * memory() { return memory_; }
 
   size_t count() const { return count_; }
 
   NewAllocationBlock(const NewAllocationBlock &) = delete;
 
  private:
-  Memory * memory_;
+  Platform * memory_;
   void * data_;
   Destructor * destructor_;
   size_t count_;

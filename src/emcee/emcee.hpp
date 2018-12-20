@@ -29,7 +29,7 @@
 #include "destructor.hpp"
 #include "map.hpp"
 #include "masked_cell_vector.hpp"
-#include "memory.hpp"
+#include "platform.hpp"
 #include "memory_dependent.hpp"
 #include "memory_setter.hpp"
 #include "new.hpp"

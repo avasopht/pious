@@ -32,7 +32,7 @@
 #include <api/pious_device.h>
 
 namespace emcee {
-class Memory;
+class Platform;
 }
 
 namespace pious {
@@ -41,8 +41,8 @@ namespace pious {
 class PortSpec : public virtual emcee::MemoryDependent {
  public:
   PortSpec();
-  explicit PortSpec(emcee::Memory *m);
-  void SetMemory(emcee::Memory *m);
+  explicit PortSpec(emcee::Platform *m);
+  void SetMemory(emcee::Platform *m);
 
   uint32_t iid() const;
   void SetIid(uint32_t id);

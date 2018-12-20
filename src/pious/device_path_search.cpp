@@ -27,7 +27,7 @@
 
 namespace pious {
 
-DevicePathSearch::DevicePathSearch(emcee::Memory * memory, Device * device)
+DevicePathSearch::DevicePathSearch(emcee::Platform * memory, Device * device)
     : path_(memory), device_(device)
 {
   iterator_ = path_.begin();

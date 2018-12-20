@@ -29,18 +29,18 @@
 
 namespace emcee {
 
-class Memory;
+class Platform;
 
 class String : public virtual MemoryDependentWithCopy {
  public:
   // Note: default copy and assignment operators are fine.
 
   String();
-  explicit String(Memory * memory);
-  String(Memory * memory, const String & other);
-  String(Memory * memory, const char * str);
-  String(Memory * memory, const char * str, size_t begin);
-  String(Memory * memory, const char * str, size_t begin, size_t end);
+  explicit String(Platform * memory);
+  String(Platform * memory, const String & other);
+  String(Platform * memory, const char * str);
+  String(Platform * memory, const char * str, size_t begin);
+  String(Platform * memory, const char * str, size_t begin, size_t end);
   String(const String & str, size_t begin);
   String(const String & str, size_t begin, size_t end);
   String(const String & first, const String & second);
@@ -48,7 +48,7 @@ class String : public virtual MemoryDependentWithCopy {
   const char * c_str() const;
   size_t length() const;
 
-  Memory * memory() const { return memory_; }
+  Platform * memory() const { return memory_; }
 
   String Substring(size_t begin_idx) const;
   String Substring(size_t begin_idx, size_t end_idx) const;
@@ -61,7 +61,7 @@ class String : public virtual MemoryDependentWithCopy {
   String operator+(const String & rhs) const;
 
  private:
-  Memory * memory_;
+  Platform * memory_;
   SharedPtr<char[]> string_;
   size_t size_;
 

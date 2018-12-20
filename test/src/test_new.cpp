@@ -27,7 +27,7 @@
 
 
 TEST(New, BasicTypesCompilesAndRuns) {
-  emcee::DefaultMemory mem;
+  emcee::DefaultPlatform mem;
   int *first = emcee::New<int>(&mem).Create();
   emcee::Delete(first);
 
@@ -44,7 +44,7 @@ TEST(New, CallCount) {
 
   {
     CountCalls::ClearCount();
-    emcee::DefaultMemory memory;
+    emcee::DefaultPlatform memory;
     CountCalls *ptr = emcee::New<CountCalls[]>(&memory, 5).Create();
     emcee::Delete(ptr);
     ASSERT_EQ(5, CountCalls::constructor_calls());
@@ -53,7 +53,7 @@ TEST(New, CallCount) {
 
   {
     CountCalls::ClearCount();
-    emcee::DefaultMemory memory;
+    emcee::DefaultPlatform memory;
     CountCalls *def = emcee::New<CountCalls>(&memory).Create();
     CountCalls *array = emcee::New<CountCalls[]>(&memory, 5).Create(*def);
     emcee::Delete(def);

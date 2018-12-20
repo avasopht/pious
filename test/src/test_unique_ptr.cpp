@@ -26,7 +26,7 @@
 #include "count_calls.hpp"
 
 TEST(UniquePtr, creates_and_destroys) {
-  emcee::DefaultMemory memory;
+  emcee::DefaultPlatform memory;
   CountCalls::ClearCount();
   emcee::UniquePtr<CountCalls> ptr(&memory);
   ptr.Reset(emcee::New<CountCalls>(&memory).Create());

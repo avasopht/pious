@@ -30,7 +30,7 @@
 #include <api/pious_device.h>
 
 namespace emcee {
-class Memory;
+class Platform;
 }
 
 struct Pious_DeviceSpec{};
@@ -51,7 +51,7 @@ class ReferenceSpec;
  */
 class DeviceSpec : public Pious_DeviceSpec, public virtual emcee::MemoryDependent {
  public:
-  explicit DeviceSpec(emcee::Memory *memory);
+  explicit DeviceSpec(emcee::Platform *memory);
 
   void SetId(const char *sid, uint32_t iid);
   void SetId(const char *sid);
@@ -82,7 +82,7 @@ class DeviceSpec : public Pious_DeviceSpec, public virtual emcee::MemoryDependen
   bool has_plugin() const;
 
  private:
-  emcee::Memory *memory_;
+  emcee::Platform *memory_;
   Pious_UnitPlugin plugin_;
   emcee::UniquePtr<Id> id_;
   emcee::Vector<ReferenceSpec> devices_;

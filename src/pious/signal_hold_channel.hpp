@@ -34,7 +34,7 @@ class SignalHoldEvent;
 
 class SignalHoldChannel {
  public:
-  SignalHoldChannel(emcee::Memory * memory, size_t event_count);
+  SignalHoldChannel(emcee::Platform * memory, size_t event_count);
   void AddEvent(size_t frame, float old_value, float new_value);
   size_t WriteEvents(const SignalHoldEvent * signal_events, size_t event_count);
   void ClearEvents();

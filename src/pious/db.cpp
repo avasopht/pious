@@ -26,7 +26,7 @@
 #include <api/pious_spec.h>
 #include <api/pious_sys.h>
 #include <api/db.h>
-#include <emcee/memory.hpp>
+#include <emcee/platform.hpp>
 #include <emcee/map.hpp>
 #include <emcee/emcee.hpp>
 #include <pious/port_spec.hpp>
@@ -64,7 +64,7 @@ pious::Db * Db::FromStruct(Pious_Db * db) {
   return static_cast<Db *>(db);
 }
 
-void Db::SetMemory(emcee::StructMemory * m) {
+void Db::SetMemory(emcee::StructPlatform * m) {
   mem = m;
   devices.SetMemory(m);
   children.SetMemory(m);
@@ -80,7 +80,7 @@ pious::DeviceSpec * Db::CreateDevice(const char * sid) {
 Db::~Db() {
   if (!parent && mem) {
     Pious_Mem * m = mem->mem_struct();
-    mem->~StructMemory();
+    mem->~StructPlatform();
     m->Free(m->data, mem);
   }
 }
@@ -95,7 +95,7 @@ bool Db::IsChild(const pious::Db * child) const {
 }
 
 Db::Db(Pious_Mem * m) : mem(nullptr), parent(nullptr) {
-  emcee::StructMemory * sm = new(m->Alloc(m->data, sizeof(emcee::StructMemory)))emcee::StructMemory(m);
+  emcee::StructPlatform * sm = new(m->Alloc(m->data, sizeof(emcee::StructPlatform)))emcee::StructPlatform(m);
   SetMemory(sm);
 }
 
