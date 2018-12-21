@@ -40,7 +40,7 @@ int Log2(uint64_t val);
 
 bool IsPow2(uint64_t val);
 
-/* Returns the smallest power of 2 equal to or greater than val or UINT64_MAX. */
-uint64_t ToPow2(uint64_t val);
+/* Returns the smallest power of 2 >= val, otherwise returns UINT64_MAX. */
+uint64_t SmallestPow2Gte(uint64_t val);
 
 #endif /* PIOUS_POW2_HPP */

@@ -66,7 +66,7 @@ void VarRms::SetCapacity(size_t min_capacity) {
   buffers_.Clear();
 
   pos_ = SIZE_MAX;
-  size_t capacity = (size_t) ToPow2(min_capacity);
+  size_t capacity = (size_t) SmallestPow2Gte(min_capacity);
   int levels = Log2(capacity);
   buffers_.Reserve((size_t) levels);
 

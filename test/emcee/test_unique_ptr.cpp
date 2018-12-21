@@ -29,7 +29,7 @@
 
 TEST(UniquePtr, creates_and_destroys) {
   (void)Log2(1);
-  (void)ToPow2(1);
+  (void) SmallestPow2Gte(1);
   (void)IsPow2(1);
 
   emcee::DefaultPlatform memory;

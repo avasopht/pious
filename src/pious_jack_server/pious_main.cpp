@@ -42,6 +42,6 @@ int main() {
   (void)emcee::Object(platform);
   (void)Log2(1);
   (void)IsPow2(1);
-  (void)ToPow2(1);
+  (void) SmallestPow2Gte(1);
   return 0;
 }

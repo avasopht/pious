@@ -4146,7 +4146,7 @@ bool IsPow2(uint64_t v) {
   return v && !(v & (v - 1));
 }
 
-uint64_t ToPow2(uint64_t val) {
+uint64_t SmallestPow2Gte(uint64_t val) {
   if (val == 0)
     return val;
 
