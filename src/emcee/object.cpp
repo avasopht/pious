@@ -6,4 +6,3 @@
 
 emcee::Object::Object() : platform_(nullptr) {}
 emcee::Object::Object(emcee::Platform &platform) : platform_(&platform) {}
-emcee::Object::Object(emcee::Platform *platform) : platform_(platform) {}

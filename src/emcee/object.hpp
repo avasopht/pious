@@ -20,8 +20,6 @@ class Platform;
  */
 class Object : public MemoryDependent {
  public:
-  //! Constructor for MemoryDependent
-  explicit Object(Platform *platform);
   explicit Object(Platform &platform);
 
   template<typename T>
@@ -29,10 +27,27 @@ class Object : public MemoryDependent {
     return MakeUnique<T>(*platform_);
   }
 
+  template<typename T>
+  static T *NewWithPlatform(void *address, Platform &p) {
+    T *ptr = new(address)T;
+    static_cast<Object *>(ptr)->platform_ = &p;
+    return ptr;
+
+  }
+
+  void SetPlatform(Platform &p) {
+    platform_ = &p;
+  }
+
  protected:
   explicit Object();
+
  private:
   Platform *platform_;
+
+  friend class New<Object[]>;
+  friend class New<Object>;
+  friend class UniquePtr<Object>;
 };
 
 }

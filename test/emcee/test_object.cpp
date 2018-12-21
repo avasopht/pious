@@ -19,11 +19,21 @@ class ObjectTest : public ::testing::Test {
 
   }
 
-  boost::movelib::unique_ptr<emcee::Platform>  platform_;
+  boost::movelib::unique_ptr<emcee::Platform> platform_;
 };
 
 TEST_F(ObjectTest, CanInstantiateAnObject) {
   auto obj = emcee::Object(*platform_);
   auto inst = obj.Create<emcee::Object>();
   ASSERT_TRUE(inst);
+}
+
+
+class SmallInt : public emcee::Object {
+ public:
+};
+
+TEST_F(ObjectTest, CanInstiateASubclass) {
+  auto obj = emcee::Object(*platform_);
+  auto number = obj.Create<SmallInt>();
 }

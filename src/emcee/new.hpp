@@ -38,6 +38,7 @@
 namespace emcee {
 
 class Platform;
+class Object;
 
 /*! \brief Returns size of an array providing it was created with New<>.
  *
@@ -155,8 +156,18 @@ class New<T[]> {
   size_t arena_;
 
   void Construct(void *ptr) {
+    boost::is_base_of<Object, T> is_object;
+    ConstructIfObject(ptr, is_object);
+  }
+
+  void ConstructIfObject(void *ptr, boost::true_type) {
+    T *obj = new(ptr)T;
+    obj->SetPlatform(*memory_);
+  }
+
+  void ConstructIfObject(void *ptr, boost::false_type) {
     boost::is_base_of<MemoryDependent, T> is_memory_dependent;
-    Construct(ptr, is_memory_dependent);
+    ConstructIfMemoryDependent(ptr, is_memory_dependent);
   }
 
   void Construct(void *ptr, const T &other) {
@@ -164,11 +175,11 @@ class New<T[]> {
     Construct(ptr, other, is_memory_dependent);
   }
 
-  void Construct(void *ptr, boost::true_type /*is memory dependent */) {
+  void ConstructIfMemoryDependent(void *ptr, boost::true_type /*is memory dependent */) {
     new(ptr)T(memory_);
   }
 
-  void Construct(void *ptr, boost::false_type /*not memory dependent */) {
+  void ConstructIfMemoryDependent(void *ptr, boost::false_type /*not memory dependent */) {
     new(ptr)T();
   }
 
