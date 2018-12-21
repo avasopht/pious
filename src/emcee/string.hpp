@@ -31,6 +31,8 @@ namespace emcee {
 
 class Platform;
 
+
+
 class String : public virtual MemoryDependentWithCopy {
  public:
   // Note: default copy and assignment operators are fine.

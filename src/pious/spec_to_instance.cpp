@@ -83,8 +83,8 @@ void SpecToInstance::InstantiateChildren(emcee::Map<emcee::String, Device *> * c
     ReferenceSpec * child_ref = spec->DeviceAt(child_idx);
     assert(child_ref);
     emcee::String ref_id = child_ref->id().sid();
-    DeviceSpec * spec = spec_finder->FindSpec(child_ref->import_id().sid_cstr());
-    assert(spec);
+    DeviceSpec * child_spec = spec_finder->FindSpec(child_ref->import_id().sid_cstr());
+    assert(child_spec);
     Device * instance = instance_factory->CreateDevice();
     assert(instance);
     (*children)[ref_id] = instance;

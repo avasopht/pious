@@ -31,23 +31,32 @@ namespace emcee {
 
 Pious_Mem PiousMem_CreateDefault();
 
+class Library;
+class String;
+class Literal;
+
 class Platform {
  public:
   virtual ~Platform() = default;
 
   virtual void *Allocate(size_t size) = 0;
   virtual void Free(void *ptr) = 0;
+  virtual Library *LoadLibrary(const String &library_name) = 0;
+  virtual Library *LoadLibrary(const Literal &library_name) = 0;
 };
 
 class DefaultPlatform : public Platform {
  public:
   void *Allocate(size_t size) override;
   void Free(void *ptr) override;
+  Library *LoadLibrary(const Literal &library_name) override;
+  Library *LoadLibrary(const String &library_name) override;
 };
 
 class StructPlatform : public Platform {
  public:
-
+  Library *LoadLibrary(const String &library_name) override;
+  Library *LoadLibrary(const Literal &library_name) override;
   explicit StructPlatform(Pious_Mem *mem) : mem_(*mem) {}
 
   void SetMemory(Pious_Mem *mem) { mem_ = *mem; }

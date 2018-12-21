@@ -26,6 +26,8 @@
 #include <emcee/platform.hpp>
 #include <emcee/string.hpp>
 
+#include <emcee/literal.hpp>
+
 TEST(String, BasicTest) {
   emcee::DefaultPlatform mem;
   emcee::String bleach(&mem, "Bleach");

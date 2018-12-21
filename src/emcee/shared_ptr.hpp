@@ -24,6 +24,8 @@
 #ifndef PIOUS_SHARED_PTR_HPP
 #define PIOUS_SHARED_PTR_HPP
 
+#include <algorithm>
+
 #include "platform.hpp"
 #include "deleter.hpp"
 #include "reference_counter.hpp"

@@ -43,6 +43,12 @@ void * DefaultPlatform::Allocate(size_t size) {
 void DefaultPlatform::Free(void * ptr) {
   free(ptr);
 }
+Library *DefaultPlatform::LoadLibrary(const String &library_name) {
+  return nullptr;
+}
+Library *DefaultPlatform::LoadLibrary(const Literal &library_name) {
+  return nullptr;
+}
 
 void * StructPlatform::Allocate(size_t size) {
   if (!mem_.Alloc)
@@ -53,6 +59,14 @@ void * StructPlatform::Allocate(size_t size) {
 void StructPlatform::Free(void * ptr) {
   if (mem_.Free)
     mem_.Free(mem_.data, ptr);
+}
+
+Library *StructPlatform::LoadLibrary(const String &library_name) {
+  return nullptr;
+}
+
+Library *StructPlatform::LoadLibrary(const Literal &library_name) {
+  return nullptr;
 }
 
 }

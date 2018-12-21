@@ -130,10 +130,10 @@ int String::Compare(const String & rhs) const {
   const String & second = rhs;
 
   for (size_t i = 0;; ++i) {
-    bool exceeded_a_string = first.length() <= i || second.length() <= i;
-    if (exceeded_a_string) {
-      ptrdiff_t length_diff = first.length() - second.length();
-      return static_cast<int>(length_diff);
+    bool index_exceeds_a_string_length = first.length() <= i || second.length() <= i;
+    if (index_exceeds_a_string_length) {
+      ptrdiff_t comparison_of_lengths = first.length() - second.length();
+      return static_cast<int>(comparison_of_lengths);
     }
 
     int diff = first[i] - second[i];
@@ -147,7 +147,7 @@ String String::ToLower() const {
   for (size_t i = 0; i < lower.size_; ++i) {
     char c = lower.string_[i];
     c = c >= 'A' && c <= 'Z' ? (char) (c + 32) : c;
-    lower.string_[i] = c; // static_cast<char>(tolower(lower.string_[i]));
+    lower.string_[i] = c;
   }
 
   return lower;

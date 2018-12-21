@@ -24,7 +24,7 @@ set(SOURCE_FILES
     src/test_var_rms.cpp
     src/test_vector.cpp
     src/test_weak_count.cpp
-    src/test_weak_ptr.cpp src/test_object.cpp)
+    src/test_weak_ptr.cpp src/test_object.cpp src/test_literal.cpp)
 
 add_executable(runBasicPiousTests test_main.cpp ${SOURCE_FILES})
 
