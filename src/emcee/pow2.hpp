@@ -33,7 +33,7 @@ static const int32_t INT32_MAX_POW2 = 1 << 30;
 static const uint16_t UINT16_MAX_POW2 = 1 << 15;
 static const int64_t INT16_MAX_POW2 = 1 << 14;
 static const uint8_t UINT8_MAX_POW2 = 1 << 7;
-static const int8_t INT_MAX_POW2 = 1 << 6;
+static const int8_t INT8_MAX_POW2 = 1 << 6;
 
 /* Returns the N in 2^N that equals val, or -1. */
 int Log2(uint64_t val);
