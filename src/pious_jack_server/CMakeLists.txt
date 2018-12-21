@@ -5,18 +5,12 @@ find_package(JACK)
 
 include_directories(${Boost_INCLUDE_DIR})
 
-#include_directories(${INCLUDE_DIR}/api)
-#include_directories(${INCLUDE_DIR}/emcee)
-#include_directories(${INCLUDE_DIR}/pious)
-#include_directories(${INCLUDE_DIR}/pious_dsp_lib)
-
-SET(ALL_SOURCE_FILES ${PIOUS_SOURCE_FILES} ${DSP_LIB_SOURCE_FILES} ${EMCEE_SOURCE_FILES})
-
 if (JACK_FOUND)
     include_directories(${JACK_INCLUDE_DIRS})
-    add_executable(pious_exe pious_jack_main.cpp)
-    target_link_libraries(pious_exe ${JACK_LIBRARIES})
+    add_executable(pious_main pious_jack_main.cpp)
+    target_link_libraries(pious_main ${JACK_LIBRARIES} emcee pious pious_dsp_lib)
 else ()
     # empty build target.
-    add_executable(pious_exe pious_main.cpp ${ALL_SOURCE_FILES})
+    add_executable(pious_main pious_main.cpp)
+    target_link_libraries(pious_main emcee pious pious_dsp_lib)
 endif ()

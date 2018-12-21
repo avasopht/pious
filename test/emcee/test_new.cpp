@@ -23,7 +23,7 @@
 
 #include <gtest/gtest.h>
 #include <emcee/new.hpp>
-#include "count_calls.hpp"
+#include "../pious/count_calls.hpp"
 
 
 TEST(New, BasicTypesCompilesAndRuns) {

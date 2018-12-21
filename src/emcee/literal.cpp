@@ -6,15 +6,15 @@
 #include "literal.hpp"
 namespace emcee {
 
-Literal::Literal(const char *literal, size_t length) : literal_(literal), length_(length) { }
+Literal::Literal(const char *literal, size_t length) : literal_(literal), length_(length) {}
 
 Literal Literal::CreateIfReallyLiteral(const char *literal,
-                 size_t length,
-                 std::true_type,
-                 std::false_type,
-                 std::false_type,
-                 std::false_type,
-                 std::false_type) {
+                                       size_t length,
+                                       std::true_type,
+                                       std::false_type,
+                                       std::false_type,
+                                       std::false_type,
+                                       std::false_type) {
   return {literal, length};
 }
 

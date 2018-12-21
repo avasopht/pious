@@ -43,7 +43,7 @@ class MemoryDependent {
 
   /*! Calls constructor. Returns whether memory was injected. */
   template<typename T>
-  static bool ConstructAt(T * t, Platform * memory) {
+  static bool ConstructAt(T *t, Platform *memory) {
     boost::is_base_of<MemoryDependent, T> is_memory_dependent;
     ConstructAtWithMemory(is_memory_dependent, t, memory);
     bool memory_was_injected = is_memory_dependent;
@@ -51,12 +51,12 @@ class MemoryDependent {
   }
 
   template<typename T>
-  static void ConstructAtWithMemory(boost::true_type, T * t, Platform * memory) {
+  static void ConstructAtWithMemory(boost::true_type, T *t, Platform *memory) {
     new(t)T(memory);
   }
 
   template<typename T>
-  static void ConstructAtMemory(boost::false_type, T * t, Platform *) {
+  static void ConstructAtMemory(boost::false_type, T *t, Platform *) {
     new(t)T();
   }
 };
@@ -77,7 +77,7 @@ class MemoryDependentWithCopy : public virtual MemoryDependent {
    * injected. */
   template<typename T, typename Y>
   static bool ConstructAt(
-      T * t, Platform * memory, const Y & other) {
+      T *t, Platform *memory, const Y &other) {
     boost::is_base_of<MemoryDependentWithCopy, T> is_memory_dependent_with_copy;
     ConstructAtWithMemoryAndCopy(
         is_memory_dependent_with_copy, t, memory, other);
@@ -87,13 +87,13 @@ class MemoryDependentWithCopy : public virtual MemoryDependent {
 
   template<typename T, typename Y>
   static void ConstructAtWithMemoryAndCopy(
-      boost::true_type, T * t, Platform * memory, const Y & other) {
+      boost::true_type, T *t, Platform *memory, const Y &other) {
     new(t)T(memory, other);
   }
 
   template<typename T, typename Y>
   static void ConstructAtWithMemoryAndCopy(
-      boost::false_type, T * t, Platform *, const Y & other) {
+      boost::false_type, T *t, Platform *, const Y &other) {
     new(t)T(other);
   }
 

@@ -38,17 +38,17 @@ size_t CalcPaddedSize(size_t size) {
   return size + padding;
 }
 
-bool IsAligned(void * ptr) {
+bool IsAligned(void *ptr) {
   return reinterpret_cast<size_t>(ptr) % sizeof(size_t) == 0;
 }
 
-void * NextAligned(void * ptr) {
+void *NextAligned(void *ptr) {
   size_t address = reinterpret_cast<size_t>(ptr);
   size_t aligned = CalcPaddedSize(address);
   return reinterpret_cast<void *>(aligned);
 }
 
-void * CalcOffset(void * ptr, ptrdiff_t offset) {
+void *CalcOffset(void *ptr, ptrdiff_t offset) {
   return Offset<char>(ptr).Calc(offset);
 }
 

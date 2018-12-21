@@ -34,9 +34,9 @@ class Set {
  public:
   class Iterator {
    public:
-    explicit Iterator(const typename Map<T,int>::Iterator & map_iterator) : iterator_(map_iterator){ }
+    explicit Iterator(const typename Map<T, int>::Iterator &map_iterator) : iterator_(map_iterator) {}
 
-    Iterator & operator++() {
+    Iterator &operator++() {
       ++iterator_;
       return *this;
     }
@@ -47,7 +47,7 @@ class Set {
       return old;
     }
 
-    T & value() const {
+    T &value() const {
       return iterator_.key();
     }
 
@@ -55,46 +55,49 @@ class Set {
       return iterator_.value();
     }
 
-    bool operator==(const Iterator & rhs) const {
-      if(&rhs == this)
+    bool operator==(const Iterator &rhs) const {
+      if (&rhs == this)
         return true;
 
       return rhs.iterator_ == iterator_;
     }
 
-    bool operator!=(const Iterator & rhs) const {
-      if(&rhs == this)
+    bool operator!=(const Iterator &rhs) const {
+      if (&rhs == this)
         return false;
 
       return rhs.iterator_ != iterator_;
     }
 
    private:
-    typename Map<T,int>::Iterator iterator_;
+    typename Map<T, int>::Iterator iterator_;
   };
 
-  explicit Set(Platform * memory) : element_count_(memory) {}
+  explicit Set(Platform *memory) : element_count_(memory) {}
 
-  template<typename Y> bool Add(const Y & element) {
+  template<typename Y>
+  bool Add(const Y &element) {
     ++element_count_[element];
     return true;
   }
 
   bool IsEmpty() const { return element_count_.IsEmpty(); }
 
-  template<typename Y> bool Remove(const Y & element) {
-    if(!element_count_.ContainsKey(element))
+  template<typename Y>
+  bool Remove(const Y &element) {
+    if (!element_count_.ContainsKey(element))
       return false;
 
-    int & count = element_count_[element];
+    int &count = element_count_[element];
     --count;
-    if(count == 0)
+    if (count == 0)
       element_count_.Remove(element);
 
     return true;
   }
 
-  template<typename Y> bool Contains(const Y & element) {
+  template<typename Y>
+  bool Contains(const Y &element) {
     return element_count_.ContainsKey(element);
   }
 
@@ -102,7 +105,7 @@ class Set {
   Iterator end() { return Iterator(element_count_.end()); }
 
  private:
-  Map<T,int> element_count_;
+  Map<T, int> element_count_;
 };
 
 }

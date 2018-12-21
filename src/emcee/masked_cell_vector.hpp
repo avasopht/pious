@@ -25,9 +25,10 @@
 #define PIOUS_MASKED_CELL_VECTOR_HPP
 
 #include "vector.hpp"
-#include "pow2.hpp"
 #include "memory_setter.hpp"
 #include "memory_dependent.hpp"
+
+#include <emcee/pow2.hpp>
 
 namespace emcee {
 
@@ -57,14 +58,14 @@ class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDepen
       cell_mask_(0),
       cell_shift_(0) {}
 
-  explicit MaskedCellVector(Platform * memory) :
+  explicit MaskedCellVector(Platform *memory) :
       vector_(memory),
       idx_mask_(0),
       cell_size_(0),
       cell_mask_(0),
       cell_shift_(0) {}
 
-  MaskedCellVector(Platform * memory, const MaskedCellVector & rhs) :
+  MaskedCellVector(Platform *memory, const MaskedCellVector &rhs) :
       vector_(rhs.vector_),
       idx_mask_(rhs.idx_mask_),
       cell_size_(rhs.cell_size_),
@@ -73,7 +74,7 @@ class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDepen
     vector_.SetMemory(memory);
   }
 
-  void SetMemory(Platform * ptr) override {
+  void SetMemory(Platform *ptr) override {
     vector_.SetMemory(ptr);
   }
 
@@ -108,11 +109,11 @@ class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDepen
     return IsCellStart(idx + 1);
   }
 
-  const T & At(size_t idx) const {
+  const T &At(size_t idx) const {
     return vector_[CalcIndex(idx)];
   }
 
-  T & At(size_t idx) {
+  T &At(size_t idx) {
     return vector_[CalcIndex(idx)];
   }
 
@@ -122,16 +123,16 @@ class MaskedCellVector : public virtual MemorySetter, public virtual MemoryDepen
     }
   }
 
-  const T & operator[](size_t idx) const { return At(idx); }
+  const T &operator[](size_t idx) const { return At(idx); }
 
-  T & operator[](size_t idx) { return At(idx); }
+  T &operator[](size_t idx) { return At(idx); }
 
   size_t cell_size() const { return cell_size_; }
 
   size_t size() const { return vector_.size() * cell_size_; }
 
  private:
-  Vector <T> vector_;
+  Vector<T> vector_;
   size_t idx_mask_;
   size_t cell_size_;
   size_t cell_mask_;

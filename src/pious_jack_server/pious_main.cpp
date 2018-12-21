@@ -16,6 +16,10 @@
 #include <cmath>
 #include <emcee/emcee.hpp>
 
+#include <emcee/object.hpp>
+#include <emcee/platform.hpp>
+#include <emcee/pow2.hpp>
+
 class SineDsp : public pious::Dsp {
  public:
   void Render(pious::Scope * scope) override {
@@ -34,5 +38,10 @@ class SineDsp : public pious::Dsp {
 };
 
 int main() {
+  auto platform = emcee::DefaultPlatform();
+  (void)emcee::Object(platform);
+  (void)Log2(1);
+  (void)IsPow2(1);
+  (void)ToPow2(1);
   return 0;
 }

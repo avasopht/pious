@@ -22,6 +22,7 @@
  */
 
 #include "var_rms.hpp"
+#include <emcee/pow2.hpp>
 
 namespace pious {
 

@@ -5,7 +5,7 @@ else ()
     message(FATAL_ERROR "Boost required.")
 endif ()
 
-include_directories(./include)
+include_directories(${PIOUS_HEADERS_DIR})
 add_subdirectory(include)
 add_subdirectory(pious)
 add_subdirectory(emcee)

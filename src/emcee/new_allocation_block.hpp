@@ -39,37 +39,37 @@ class Platform;
 class NewAllocationBlock {
  public:
 
-  explicit NewAllocationBlock(Platform * memory);
+  explicit NewAllocationBlock(Platform *memory);
 
-  NewAllocationBlock & WithDestructor(Destructor * d) {
+  NewAllocationBlock &WithDestructor(Destructor *d) {
     destructor_ = d;
     return *this;
   }
 
-  NewAllocationBlock & WithData(void * data) {
+  NewAllocationBlock &WithData(void *data) {
     data_ = data;
     return *this;
   }
 
-  NewAllocationBlock & WithCount(size_t count) {
+  NewAllocationBlock &WithCount(size_t count) {
     count_ = count;
     return *this;
   }
 
-  Destructor * destructor() { return destructor_; }
+  Destructor *destructor() { return destructor_; }
 
-  void * data() { return data_; }
+  void *data() { return data_; }
 
-  Platform * memory() { return memory_; }
+  Platform *memory() { return memory_; }
 
   size_t count() const { return count_; }
 
   NewAllocationBlock(const NewAllocationBlock &) = delete;
 
  private:
-  Platform * memory_;
-  void * data_;
-  Destructor * destructor_;
+  Platform *memory_;
+  void *data_;
+  Destructor *destructor_;
   size_t count_;
 
 };

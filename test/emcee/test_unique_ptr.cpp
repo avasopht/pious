@@ -23,9 +23,15 @@
 
 #include <gtest/gtest.h>
 #include <emcee/unique_ptr.hpp>
-#include "count_calls.hpp"
+#include "../pious/count_calls.hpp"
+
+#include <emcee/pow2.hpp>
 
 TEST(UniquePtr, creates_and_destroys) {
+  (void)Log2(1);
+  (void)ToPow2(1);
+  (void)IsPow2(1);
+
   emcee::DefaultPlatform memory;
   CountCalls::ClearCount();
   emcee::UniquePtr<CountCalls> ptr(&memory);

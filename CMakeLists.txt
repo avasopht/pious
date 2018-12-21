@@ -26,7 +26,6 @@ set(PIOUS_HEADERS_DIR ${PROJECT_SOURCE_DIR}/src)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
 include_directories(${PIOUS_INSTALL_INCLUDE_DIR})
-include_directories(${PIOUS_HEADERS_DIR})
 include_directories(${PIOUS_HEADERS_DIR}/include)
 
 

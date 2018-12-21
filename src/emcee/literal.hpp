@@ -25,7 +25,6 @@
         std::is_class            <decltype(message)>()\
     );
 
-
 namespace emcee {
 
 class Literal {
@@ -33,18 +32,18 @@ class Literal {
 
   //! Do not call directly, use LITERAL Macro.
   static Literal CreateIfReallyLiteral(const char *literal,
-          size_t size,
-          std::true_type,
-          std::false_type,
-          std::false_type,
-          std::false_type,
-          std::false_type);
+                                       size_t size,
+                                       std::true_type,
+                                       std::false_type,
+                                       std::false_type,
+                                       std::false_type,
+                                       std::false_type);
 
   //! Do not call directly
-  static Literal CreateIfReallyLiteral(const char *str, ...)=delete;
+  static Literal CreateIfReallyLiteral(const char *str, ...) = delete;
 
   size_t length() const;
-  const char * c_str() const;
+  const char *c_str() const;
 
   bool operator==(const Literal &rhs) const;
   bool operator<(const Literal &rhs) const;

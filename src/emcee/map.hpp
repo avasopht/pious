@@ -41,16 +41,16 @@ class Map : public virtual MemoryDependentWithCopy {
     T value;
     Key key;
 
-    explicit Node(Platform * memory) : next(memory), value(), key() {
+    explicit Node(Platform *memory) : next(memory), value(), key() {
       emcee::MemorySetter::Inject(&value, memory);
     }
 
-    Node & WithLevel(int level) {
+    Node &WithLevel(int level) {
       next.Resize(level);
       return *this;
     }
 
-    Node & WithKey(const Key & new_key) {
+    Node &WithKey(const Key &new_key) {
       key = new_key;
       return *this;
     }
@@ -58,23 +58,23 @@ class Map : public virtual MemoryDependentWithCopy {
 
   class Iterator {
    public:
-    explicit Iterator(SharedPtr<Node> & node) : current_(node) {}
+    explicit Iterator(SharedPtr<Node> &node) : current_(node) {}
 
     Iterator() {}
 
-    T & operator*() const { return value(); }
+    T &operator*() const { return value(); }
 
-    T & value() const {
+    T &value() const {
       assert(current_);
       return current_->value;
     }
 
-    Key & key() const {
+    Key &key() const {
       assert(current_);
       return current_->key;
     }
 
-    bool operator!=(const Iterator & rhs) const {
+    bool operator!=(const Iterator &rhs) const {
       if (&rhs == this)
         return false;
 
@@ -87,7 +87,7 @@ class Map : public virtual MemoryDependentWithCopy {
       return current_->key != rhs.current_->key;
     }
 
-    bool operator==(const Iterator & rhs) const {
+    bool operator==(const Iterator &rhs) const {
       if (&rhs == this)
         return true;
 
@@ -100,15 +100,15 @@ class Map : public virtual MemoryDependentWithCopy {
       return current_->key == rhs.current_->key;
     }
 
-    bool BothAreNull(const Iterator & lhs, const Iterator & rhs) const {
+    bool BothAreNull(const Iterator &lhs, const Iterator &rhs) const {
       return !lhs.current_ && !rhs.current_;
     }
 
-    bool OneIsNull(const Iterator & lhs, const Iterator & rhs) const {
+    bool OneIsNull(const Iterator &lhs, const Iterator &rhs) const {
       return !lhs.current_ ^ !rhs.current_;
     }
 
-    Iterator & operator++() {
+    Iterator &operator++() {
       assert(current_ && current_->next.size() > 0);
       current_ = current_->next[0];
     }
@@ -131,11 +131,11 @@ class Map : public virtual MemoryDependentWithCopy {
 
   Map() : head_(), levels_(0), size_(0) {}
 
-  explicit Map(Platform * memory) : head_(memory), levels_(1), size_(0) {
+  explicit Map(Platform *memory) : head_(memory), levels_(1), size_(0) {
     Init();
   }
 
-  Map(Platform * memory, const Map & other) : head_(memory), levels_(1) {
+  Map(Platform *memory, const Map &other) : head_(memory), levels_(1) {
     if (!head_.memory())
       head_.SetMemory(other.memory());
     Init();
@@ -144,7 +144,7 @@ class Map : public virtual MemoryDependentWithCopy {
     }
   }
 
-  void SetMemory(Platform * mem) {
+  void SetMemory(Platform *mem) {
     if (mem == memory())
       return;
 
@@ -166,14 +166,14 @@ class Map : public virtual MemoryDependentWithCopy {
 
   bool IsEmpty() const { return size_ == 0; }
 
-  T * Get(const Key & key) {
+  T *Get(const Key &key) {
     if (ContainsKey(key))
       return &operator[](key);
 
     return nullptr;
   }
 
-  T & operator[](const Key & key) {
+  T &operator[](const Key &key) {
     SharedPtr<Node> search = Find(key);
     if (search)
       return search->value;
@@ -191,7 +191,7 @@ class Map : public virtual MemoryDependentWithCopy {
 
     SharedPtr<Node> new_node(memory());
     new_node.Create()->WithLevel(level + 1).WithKey(key);
-    const SharedPtr<Node> * cur = &head_;
+    const SharedPtr<Node> *cur = &head_;
     for (int i = levels_ - 1; i >= 0; --i) {
       for (; (*cur)->next[i]; cur = &(*cur)->next[i]) {
         if ((*cur)->next[i]->key > key)
@@ -206,7 +206,7 @@ class Map : public virtual MemoryDependentWithCopy {
     return new_node->value;
   }
 
-  bool ContainsKey(const Key & key) {
+  bool ContainsKey(const Key &key) {
     SharedPtr<Node> cur = head_;
     for (int i = levels_ - 1; i >= 0; --i) {
       for (; cur->next[i]; cur = cur->next[i]) {
@@ -219,7 +219,7 @@ class Map : public virtual MemoryDependentWithCopy {
     return false;
   }
 
-  bool Remove(const Key & key) {
+  bool Remove(const Key &key) {
     SharedPtr<Node> cur = head_;
     bool found = false;
     for (int i = levels_ - 1; i >= 0; --i) {
@@ -242,14 +242,14 @@ class Map : public virtual MemoryDependentWithCopy {
 
   size_t size() const { return size_; }
 
-  Platform * memory() const { return head_.memory(); }
+  Platform *memory() const { return head_.memory(); }
 
  private:
   SharedPtr<Node> head_;
   int levels_;
   size_t size_;
 
-  SharedPtr<Node> Find(const Key & key) {
+  SharedPtr<Node> Find(const Key &key) {
     SharedPtr<Node> cur = head_;
     for (int i = levels_ - 1; i >= 0; --i) {
       for (; cur->next[i]; cur = cur->next[i]) {
