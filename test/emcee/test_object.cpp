@@ -31,9 +31,29 @@ TEST_F(ObjectTest, CanInstantiateAnObject) {
 
 class SmallInt : public emcee::Object {
  public:
+  SmallInt() : val_(0){}
+
+  void Initialize(int value) {
+    val_ = value;
+  }
+
+  emcee::UniquePtr<SmallInt> operator+(const SmallInt &rhs) {
+    auto ptr = Create<SmallInt>();
+    ptr->Initialize(val_ + rhs.val_);
+    return ptr;
+  }
+
+  int IntValue() const { return val_; }
+
+ private:
+  int val_;
 };
 
 TEST_F(ObjectTest, CanInstiateASubclass) {
   auto obj = emcee::Object(*platform_);
   auto number = obj.Create<SmallInt>();
+  number->Initialize(7);
+  ASSERT_EQ(7, number->IntValue());
+  auto sum = *number + *number;
+  ASSERT_EQ(14, sum->IntValue());
 }
