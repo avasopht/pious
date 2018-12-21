@@ -10,7 +10,21 @@ namespace emcee {
 
 #include "memory_dependent.hpp"
 
+/**! Workaround for lack of template packing or lambdas, etc. for use in Object subclass methods. e.g.:
+ *
+ *  void method() {
+ *      auto EMCEE_OBJECT_NEW(cat, AngryCat, traits, personality);
+ *  }
+ *
+ *  Only use in single initialization statement.
+ */
+#define EMCEE_OBJECT_NEW(variable, T, ...) \
+  (variable) = Create<T>(); \
+  (variable)->Initialize(__VA_ARGS__)
+
+
 class Platform;
+
 
 /**! \brief Base class for objects in Emcee
  *
@@ -27,17 +41,13 @@ class Object : public MemoryDependent {
     return MakeUnique<T>(*platform_);
   }
 
-  template<typename T>
-  static T *NewWithPlatform(void *address, Platform &p) {
-    T *ptr = new(address)T;
-    static_cast<Object *>(ptr)->platform_ = &p;
-    return ptr;
-
-  }
-
+  // This is used by emcee::New
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
   void SetPlatform(Platform &p) {
     platform_ = &p;
   }
+#pragma clang diagnostic pop
 
  protected:
   explicit Object();

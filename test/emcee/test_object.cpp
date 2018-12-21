@@ -11,13 +11,11 @@
 class ObjectTest : public ::testing::Test {
  protected:
 
-  virtual void SetUp() {
+  void SetUp() override {
     platform_ = boost::movelib::make_unique<emcee::DefaultPlatform>();
   }
 
-  virtual void TearDown() {
-
-  }
+  void TearDown() override {}
 
   boost::movelib::unique_ptr<emcee::Platform> platform_;
 };
@@ -28,10 +26,9 @@ TEST_F(ObjectTest, CanInstantiateAnObject) {
   ASSERT_TRUE(inst);
 }
 
-
 class SmallInt : public emcee::Object {
  public:
-  SmallInt() : val_(0){}
+  SmallInt() : val_(0) {}
 
   void Initialize(int value) {
     val_ = value;
@@ -44,6 +41,7 @@ class SmallInt : public emcee::Object {
   }
 
   int IntValue() const { return val_; }
+ protected:
 
  private:
   int val_;
@@ -51,9 +49,28 @@ class SmallInt : public emcee::Object {
 
 TEST_F(ObjectTest, CanInstiateASubclass) {
   auto obj = emcee::Object(*platform_);
+
   auto number = obj.Create<SmallInt>();
   number->Initialize(7);
+
   ASSERT_EQ(7, number->IntValue());
   auto sum = *number + *number;
   ASSERT_EQ(14, sum->IntValue());
+}
+
+#include <emcee/unique_ptr.hpp>
+#include <memory>
+
+TEST_F(ObjectTest, MACRO_MAGIC) {
+  auto factory = emcee::Object(*platform_);
+  class Obj : public emcee::Object {
+   public:
+    int Execute() {
+      auto EMCEE_OBJECT_NEW(count, SmallInt, 7);
+      return count->IntValue();
+    }
+  };
+
+  auto obj = factory.Create<Obj>();
+  ASSERT_EQ(7, obj->Execute());
 }
