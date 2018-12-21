@@ -24,4 +24,6 @@ class ObjectTest : public ::testing::Test {
 
 TEST_F(ObjectTest, CanInstantiateAnObject) {
   auto obj = emcee::Object(*platform_);
+  auto inst = obj.Create<emcee::Object>();
+  ASSERT_TRUE(inst);
 }

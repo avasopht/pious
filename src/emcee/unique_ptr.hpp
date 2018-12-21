@@ -40,27 +40,27 @@ class Deleter;
  *  pious::UniquePtr is a smart pointer that retains sole ownership of an object through a pointer,
  *  destroying that object when the unique pointer goes out of scope or is assigned to a new pointer.
  */
-template<typename T, typename DeleterType = TypedDeleter <T> >
+template<typename T, typename DeleterType = TypedDeleter<T> >
 class UniquePtr : public virtual MemoryDependent {
  public:
 
-  UniquePtr(const UniquePtr & other) : memory_(other.memory_), pointer_(other.pointer_), deleter_(other.deleter_) {
+  UniquePtr(const UniquePtr &other) : memory_(other.memory_), pointer_(other.pointer_), deleter_(other.deleter_) {
     const_cast<UniquePtr *>(&other)->pointer_ = nullptr;
     const_cast<UniquePtr *>(&other)->deleter_ = nullptr;
   }
 
-  explicit UniquePtr(Platform * memory) : memory_(memory), pointer_(nullptr) {}
+  explicit UniquePtr(Platform *memory) : memory_(memory), pointer_(nullptr) {}
 
   UniquePtr() : memory_(nullptr), pointer_(nullptr) {}
 
-  UniquePtr(Platform * mem, T * ptr) : memory_(mem), pointer_(ptr) {
+  UniquePtr(Platform *mem, T *ptr) : memory_(mem), pointer_(ptr) {
     deleter_ = emcee::New<DeleterType>(memory_).Create(DeleterType(memory_, ptr));
   }
 
-  UniquePtr & New() {
+  UniquePtr &New() {
     assert(memory_);
 
-    T * ptr = emcee::New<T>(memory_).Create();
+    T *ptr = emcee::New<T>(memory_).Create();
     assert(ptr);
     Reset(ptr);
     return *this;
@@ -68,10 +68,10 @@ class UniquePtr : public virtual MemoryDependent {
 
   explicit operator bool() const { return pointer_ != nullptr; }
 
-  Platform * memory() const { return memory_; }
+  Platform *memory() const { return memory_; }
 
-  T * Release() {
-    T * ptr = pointer_;
+  T *Release() {
+    T *ptr = pointer_;
     if (deleter_) {
       emcee::Delete(deleter_);
       deleter_ = nullptr;
@@ -81,12 +81,12 @@ class UniquePtr : public virtual MemoryDependent {
     return ptr;
   }
 
-  T & operator[](size_t idx) const {
+  T &operator[](size_t idx) const {
     assert(pointer_);
     return pointer_[idx];
   }
 
-  void Reset(T * ptr = nullptr) {
+  void Reset(T *ptr = nullptr) {
     assert(memory_);
     Destroy();
     pointer_ = ptr;
@@ -105,7 +105,7 @@ class UniquePtr : public virtual MemoryDependent {
     }
   }
 
-  void Swap(UniquePtr & b) {
+  void Swap(UniquePtr &b) {
     std::swap(memory_, b.memory_);
     std::swap(pointer_, b.pointer_);
     std::swap(deleter_, b.deleter_);
@@ -120,19 +120,19 @@ class UniquePtr : public virtual MemoryDependent {
     memory_ = nullptr;
   }
 
-  const T * get() const { return pointer_; }
+  const T *get() const { return pointer_; }
 
-  T * get() { return pointer_; }
+  T *get() { return pointer_; }
 
-  const T * operator->() const { return get(); }
+  const T *operator->() const { return get(); }
 
-  T * operator->() { return get(); }
+  T *operator->() { return get(); }
 
-  const T & operator*() const { return *get(); }
+  const T &operator*() const { return *get(); }
 
-  T & operator*() { return *get(); }
+  T &operator*() { return *get(); }
 
-  UniquePtr & operator=(const UniquePtr & rhs) {
+  UniquePtr &operator=(const UniquePtr &rhs) {
     assert(rhs.memory_ == memory_);
 
     if (&rhs == this) return *this;
@@ -147,10 +147,15 @@ class UniquePtr : public virtual MemoryDependent {
   }
 
  private:
-  Platform * memory_;
-  T * pointer_;
-  Deleter * deleter_;
+  Platform *memory_;
+  T *pointer_;
+  Deleter *deleter_;
 };
+
+template<typename T>
+UniquePtr<T> MakeUnique(Platform &platform) {
+  return UniquePtr<T>(&platform).New();
+}
 
 }
 

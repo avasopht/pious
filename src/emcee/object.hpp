@@ -2,9 +2,13 @@
 // Created by keldon on 20/12/18.
 //
 
+#include "unique_ptr.hpp"
+
 #ifndef PIOUS_OBJECT_HPP
 #define PIOUS_OBJECT_HPP
 namespace emcee {
+
+#include "memory_dependent.hpp"
 
 class Platform;
 
@@ -14,10 +18,17 @@ class Platform;
  *  to be able to instantiate objects and access "global" state.
  *
  */
-class Object {
+class Object : public MemoryDependent {
  public:
-  Object(Platform &platform);
-  virtual ~Object() = default;
+  //! Constructor for MemoryDependent
+  explicit Object(Platform *platform);
+  explicit Object(Platform &platform);
+
+  template<typename T>
+  UniquePtr<T> Create() {
+    return MakeUnique<T>(*platform_);
+  }
+
  protected:
   explicit Object();
  private:
